@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Channel>
+	<Subscription>
+		<Channel_Name>General</Channel_Name>
+		<Subscription_Name>BBC News</Subscription_Name>
+		<Subscription_URL>http://feeds.bbci.co.uk/news/rss.xml</Subscription_URL>
+		<Subscription_Update>24</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>NEWS</Channel_Name>
+		<Subscription_Name>CNN.com</Subscription_Name>
+		<Subscription_URL>http://rss.cnn.com/rss/cnn_world.rss</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>NEWS</Channel_Name>
+		<Subscription_Name>NYT</Subscription_Name>
+		<Subscription_URL>http://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>NEWS</Channel_Name>
+		<Subscription_Name>The Daily Evergreen</Subscription_Name>
+		<Subscription_URL>http://dailyevergreen.wsu.edu/public/rss.castle</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>PODCAST</Channel_Name>
+		<Subscription_Name>Adam Carolla</Subscription_Name>
+		<Subscription_URL>http://theadamcarollashow.libsyn.com/rss</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>NEWS</Channel_Name>
+		<Subscription_Name>The Seattle Times</Subscription_Name>
+		<Subscription_URL>http://seattletimes.com/rss/home.xml</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>Atom</Channel_Name>
+		<Subscription_Name>BlogZiNet</Subscription_Name>
+		<Subscription_URL>http://blogzinet.free.fr/atom.php</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>Atom</Channel_Name>
+		<Subscription_Name>Default Name</Subscription_Name>
+		<Subscription_URL>http://hayobethlehem.nl/feed/news.atom</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>Atom</Channel_Name>
+		<Subscription_Name>Atomic Starling</Subscription_Name>
+		<Subscription_URL>http://starling.us/starling_us_atom.xml</Subscription_URL>
+		<Subscription_Update>2</Subscription_Update>
+	</Subscription>
+	<Subscription>
+		<Channel_Name>General</Channel_Name>
+		<Subscription_Name>Joe Rogan</Subscription_Name>
+		<Subscription_URL>http://joeroganexp.joerogan.libsynpro.com/rss</Subscription_URL>
+		<Subscription_Update>24</Subscription_Update>
+	</Subscription>
+</Channel>

@@ -1,0 +1,35 @@
+﻿<html>
+<head>
+   <title>Sample</title>
+   <script type="text/javascript" src="http://www.google.com/jsapi?key=AIzaSyDoQ3Rma2pCrXPEIiDYdLuwK7ovlB2G2vM"> </script>
+   <script type="text/javascript">
+       var ge;
+       google.load("earth", "1");
+
+       function init() {
+           google.earth.createInstance('map3d', initCB, failureCB);
+       }
+
+       function initCB(instance) {
+           ge = instance;
+           ge.getWindow().setVisibility(true);
+
+           ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
+
+           ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
+           ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
+       }
+
+       function failureCB(errorCode) {
+       }
+
+       google.setOnLoadCallback(init);
+   </script>
+
+</head>
+<body>
+   <div id="map3d" style="height: 305px; width: 495px;">
+</div>
+	
+</body>
+</html> 
