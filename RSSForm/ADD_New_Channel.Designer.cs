@@ -1,4 +1,4 @@
-﻿namespace RSS
+﻿namespace RSSForm
 {
     partial class ADD_New_Channel
     {

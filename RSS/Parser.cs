@@ -269,8 +269,10 @@ namespace RSS
             {
                 System.IO.StringReader sr = new System.IO.StringReader(rss);
                 DataSet ds2 = new DataSet();
-
-                rssData.ReadXmlSchema("../../RSS-2_0-Schema.xsd");
+                using (var schemaStream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.RSS_2_0_Schema)))
+                {
+                    rssData.ReadXmlSchema(schemaStream);
+                }
                 //rssData.InferXmlSchema(sr, null);
                 rssData.EnforceConstraints = false;
                 rssData.ReadXml(sr, XmlReadMode.Auto);
@@ -328,7 +330,6 @@ namespace RSS
                 System.IO.StringReader sr = new System.IO.StringReader(rss);
                 DataSet ds2 = new DataSet();
              
-                //rssData.ReadXmlSchema("../../RSS-1_0-Schema.xsd");
                 rssData.ReadXml(sr, XmlReadMode.InferSchema);
                 if (rssData.Tables.Contains("channel"))
                 {
@@ -344,12 +345,12 @@ namespace RSS
                             foreach (DataRow itemRow in rssData.Tables["item"].Rows)
                             {
                                 Item inside = new Item();
-                                inside.titleI = dataRowContains("title", itemRow, rssData);//Convert.ToString(itemRow["title"]);
-                                inside.descriptionI = dataRowContains("description", itemRow, rssData);//Convert.ToString(itemRow["description"]);
-                                inside.linkI = dataRowContains("link", itemRow, rssData);//Convert.ToString(itemRow["link"]);
-                                inside.guidI = dataRowContains("guid", itemRow, rssData);//Convert.ToString(itemRow["guid"]);
+                                inside.titleI = dataRowContains("title", itemRow, rssData);
+                                inside.descriptionI = dataRowContains("description", itemRow, rssData);
+                                inside.linkI = dataRowContains("link", itemRow, rssData);
+                                inside.guidI = dataRowContains("guid", itemRow, rssData);
                                 //inside.guidI = Convert.ToString(rssData.Tables["guid"].Rows[counter].ItemArray[1]);                        
-                                inside.pubDateI = dataRowContains("pubDate", itemRow, rssData);//Convert.ToString(itemRow["pubDate"]);
+                                inside.pubDateI = dataRowContains("pubDate", itemRow, rssData);
                                 
                                 ch.item.Add(inside);
                                 counter++;

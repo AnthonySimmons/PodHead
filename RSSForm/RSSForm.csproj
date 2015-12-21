@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BA9DD17F-8B79-443B-97B0-FE3660C22B72}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RSSForm</RootNamespace>
+    <AssemblyName>RSSForm</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ADD RSS Subscription.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ADD RSS Subscription.Designer.cs">
+      <DependentUpon>ADD RSS Subscription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ADD_New_Channel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ADD_New_Channel.Designer.cs">
+      <DependentUpon>ADD_New_Channel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ERROR.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ERROR.Designer.cs">
+      <DependentUpon>ERROR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Remove_Rename_Chanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Remove_Rename_Chanel.Designer.cs">
+      <DependentUpon>Remove_Rename_Chanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RSSMainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RSSMainForm.Designer.cs">
+      <DependentUpon>RSSMainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RSS_Summary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RSS_Summary.Designer.cs">
+      <DependentUpon>RSS_Summary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Web_Browser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Web_Browser.Designer.cs">
+      <DependentUpon>Web_Browser.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ADD RSS Subscription.resx">
+      <DependentUpon>ADD RSS Subscription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ADD_New_Channel.resx">
+      <DependentUpon>ADD_New_Channel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ERROR.resx">
+      <DependentUpon>ERROR.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Remove_Rename_Chanel.resx">
+      <DependentUpon>Remove_Rename_Chanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RSSMainForm.resx">
+      <DependentUpon>RSSMainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RSS_Summary.resx">
+      <DependentUpon>RSS_Summary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Web_Browser.resx">
+      <DependentUpon>Web_Browser.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\AddIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\check_mark_green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\deleteIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\downloads-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HTMLPage1.htm" />
+    <Content Include="Images\RSS-Icon.png" />
+    <None Include="Images\PlayIcon.jpg" />
+    <None Include="Images\LoadIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RSS\RSS.csproj">
+      <Project>{80647706-98d4-44c6-b7f9-a03287e3ba29}</Project>
+      <Name>RSS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxWMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

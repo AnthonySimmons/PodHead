@@ -1,4 +1,4 @@
-﻿namespace RSS
+﻿namespace RSSForm
 {
     partial class Remove_Rename_Chanel
     {

@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{80647706-98D4-44C6-B7F9-A03287E3BA29}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RSS</RootNamespace>
     <AssemblyName>RSS</AssemblyName>
@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -33,6 +33,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,76 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="About.Designer.cs">
-      <DependentUpon>About.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ADD RSS Subscription.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ADD RSS Subscription.Designer.cs">
-      <DependentUpon>ADD RSS Subscription.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ADD_New_Channel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ADD_New_Channel.Designer.cs">
-      <DependentUpon>ADD_New_Channel.cs</DependentUpon>
-    </Compile>
     <Compile Include="Channel.cs" />
-    <Compile Include="ERROR.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ERROR.Designer.cs">
-      <DependentUpon>ERROR.cs</DependentUpon>
-    </Compile>
     <Compile Include="RSSConfig.cs" />
-    <Compile Include="RSSMainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RSSMainForm.Designer.cs">
-      <DependentUpon>RSSMainForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Item.cs" />
     <Compile Include="load_file.cs" />
     <Compile Include="Parser.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Remove_Rename_Chanel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Remove_Rename_Chanel.Designer.cs">
-      <DependentUpon>Remove_Rename_Chanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RSS_Summary.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RSS_Summary.Designer.cs">
-      <DependentUpon>RSS_Summary.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Web_Browser.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Web_Browser.Designer.cs">
-      <DependentUpon>Web_Browser.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="About.resx">
-      <DependentUpon>About.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ADD RSS Subscription.resx">
-      <DependentUpon>ADD RSS Subscription.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ADD_New_Channel.resx">
-      <DependentUpon>ADD_New_Channel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ERROR.resx">
-      <DependentUpon>ERROR.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RSSMainForm.resx">
-      <DependentUpon>RSSMainForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -126,16 +65,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Remove_Rename_Chanel.resx">
-      <DependentUpon>Remove_Rename_Chanel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="RSS_Summary.resx">
-      <DependentUpon>RSS_Summary.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Web_Browser.resx">
-      <DependentUpon>Web_Browser.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="Atom-1_0-Schema.xsd">
+    <None Include="Schemas\Atom-1_0-Schema.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\Settings.settings">
@@ -147,10 +77,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="RSS-1_0-Schema.xsd">
+    <None Include="Schemas\RSS-1_0-Schema.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="RSS-2_0-Schema.xsd">
+    <None Include="Schemas\RSS-2_0-Schema.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
@@ -158,36 +88,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="check_mark_green.png" />
-    <None Include="AddIcon.png" />
     <Content Include="Config.xml">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="deleteIcon.png" />
-    <None Include="downloads-icon.png" />
-    <Content Include="HTMLPage1.htm" />
-    <None Include="LoadIcon.png" />
-    <None Include="PlayIcon.jpg" />
-    <Content Include="RSS-Icon.png" />
     <Content Include="RSS_2_0.xml" />
-    <Content Include="XMLRSS-1_0%282%29.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlRSS-2_0%282%29.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlRSS-2_0.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlAtom2.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlAtom3.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="XmlRSS-1_0.xml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="AxWMPLib">

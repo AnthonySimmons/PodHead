@@ -10,8 +10,10 @@ using System.Net;
 using System.IO;
 using System.Xml;
 using System.Security.Permissions;
+using RSS;
+using WMPLib;
 
-namespace RSS
+namespace RSSForm
 {
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     [System.Runtime.InteropServices.ComVisibleAttribute(true)]
@@ -66,7 +68,7 @@ namespace RSS
             treeView1.BackColor = Color.CornflowerBlue;
             webBrowser1.Navigate(itunesPodcastUrl);
             webBrowser1.ObjectForScripting = this;
-            Bitmap ico = new Bitmap("../../RSS-Icon.png");
+            Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
 
             tabControl1.TabPages[0].Text = "Web Browser";
@@ -77,7 +79,7 @@ namespace RSS
         {
             treeView1.ContextMenuStrip = new ContextMenuStrip();
             treeView1.ContextMenuStrip.Items.Add("Add", Properties.Resources.AddIcon, TreeContextClick);
-            treeView1.ContextMenuStrip.Items.Add("Remove", Properties.Resources.DeleteIcon, TreeContextClick);
+            treeView1.ContextMenuStrip.Items.Add("Remove", Properties.Resources.deleteIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Show", null, TreeContextClick);
         }
@@ -85,8 +87,8 @@ namespace RSS
         public void SetupGridViewContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
-            menu.Items.Add("Download", Properties.Resources.DownloadsIcon, GridContextClick);
-            menu.Items.Add("Delete", Properties.Resources.DeleteIcon, GridContextClick);
+            menu.Items.Add("Download", Properties.Resources.downloads_icon, GridContextClick);
+            menu.Items.Add("Delete", Properties.Resources.deleteIcon, GridContextClick);
             menu.Items.Add("Play", Properties.Resources.PlayIcon, GridContextClick);
             
             foreach (DataGridViewColumn column in dataGridView1.Columns)
@@ -197,7 +199,7 @@ namespace RSS
         public void loadMessageForm()
         {
             msg = new Form();
-            Bitmap bmp = new Bitmap("../../RSS-Icon.png");
+            Bitmap bmp = new Bitmap(Properties.Resources.RSS_Icon);
             msg.Icon = Icon.FromHandle(bmp.GetHicon());
             msg.Height = 150;
             msg.Width = 350;
@@ -626,7 +628,7 @@ namespace RSS
             Bitmap bmp = new Bitmap(DownloadColumnWidth, DownloadColumnHeight);
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                g.DrawImage(Properties.Resources.DownloadsIcon, 0, 0, bmp.Width, bmp.Height);
+                g.DrawImage(Properties.Resources.downloads_icon, 0, 0, bmp.Width, bmp.Height);
             }
             return bmp;
         }
@@ -651,7 +653,7 @@ namespace RSS
             Bitmap bmp = new Bitmap(DownloadColumnWidth, DownloadColumnHeight);
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                g.DrawImage(Properties.Resources.DeleteIcon, 0, 0, bmp.Width, bmp.Height);
+                g.DrawImage(Properties.Resources.deleteIcon, 0, 0, bmp.Width, bmp.Height);
             }
             return bmp;
         }
@@ -805,11 +807,11 @@ namespace RSS
                         tabControl1.SelectTab(1);
                         if (it.IsDownloaded)
                         {
-                            axWindowsMediaPlayer1.URL = it.FilePath;
+                            //WindowsMediaPlayer1.URL = it.FilePath;
                         }
                         else
                         {
-                            axWindowsMediaPlayer1.URL = it.linkI;
+                            //WindowsMediaPlayer1.URL = it.linkI;
 
                         }
                     }

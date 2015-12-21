@@ -6,8 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using RSS;
 
-namespace RSS
+namespace RSSForm
 {
     public partial class About : Form
     {

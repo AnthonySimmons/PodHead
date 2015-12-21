@@ -34,7 +34,7 @@ namespace RSS
         {
             get 
             {
-                return _isDownloaded && CheckIsDownloaded();
+                return _isDownloaded;
             }
             set
             {

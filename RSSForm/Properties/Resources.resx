@@ -118,13 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Atom_1_0_Schema" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Schemas\Atom-1_0-Schema.xsd;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="AddIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\AddIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="RSS_1_0_Schema" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Schemas\RSS-1_0-Schema.xsd;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="check_mark_green" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\check_mark_green.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="RSS_2_0_Schema" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Schemas\RSS-2_0-Schema.xsd;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="deleteIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\deleteIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="downloads_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\downloads-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\LoadIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PlayIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\PlayIcon.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RSS_Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\RSS-Icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
