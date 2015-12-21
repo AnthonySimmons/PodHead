@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using RSS;
 
 namespace RSSForm
 {
@@ -26,6 +27,7 @@ namespace RSSForm
             }
             catch (Exception ex)
             {
+                ErrorLogger.Log(ex);
                 MessageBox.Show(ex.Message + ex.InnerException?.Message + ex.StackTrace);
             }
         }

@@ -58,7 +58,8 @@ namespace RSSForm
             myparser.UpdateProgressBar += UpdateProgressBar;
             myparser.Load(RSSConfig.ConfigFileName);
             myparser.parseAllFeeds();
-            
+            var podcastChannel = PodcastSource.GetPodcasts();
+            myparser.Channels.Add(podcastChannel);
             //populate the listbox feed_list_display with the Saved channels
             
             dateTimePicker1.Format = DateTimePickerFormat.Short;
@@ -70,9 +71,7 @@ namespace RSSForm
             webBrowser1.ObjectForScripting = this;
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
-
-            tabControl1.TabPages[0].Text = "Web Browser";
-            tabControl1.TabPages[1].Text = "Now Playing";
+            
         }
 
         public void SetupTreeViewContextMenu()
@@ -276,10 +275,16 @@ namespace RSSForm
                     }
                 }
 
+                if (ch.HasErrors)
+                {
+                    channelNode.BackColor = ch.HasErrors ? Color.Red : Color.Transparent;
+                }
+
                 if (!treeView1.Nodes.ContainsKey(channelNode.Name))
                 {
                     treeView1.Nodes.Add(channelNode);
                 }
+
             }
         }
 
@@ -437,9 +442,20 @@ namespace RSSForm
 
         }
 
-        private string getDateNums(string date)
+        private string GetDateTime(string date)
         {
-            if (date != "" && date.Contains('-'))
+            var formattedDateTime = string.Empty;
+            DateTime dateTime;
+
+            if (DateTime.TryParse(date, out dateTime))
+            {
+                //Use general date time pattern.
+                formattedDateTime = dateTime.ToString("g");
+            }
+
+            return formattedDateTime;
+
+            /*if (date != "" && date.Contains('-'))
             {
                 string[] strArr = date.Split('-');
                 int year = System.Convert.ToInt32(strArr[0]);
@@ -477,7 +493,7 @@ namespace RSSForm
 
                 return year.ToString() + "/" + month.ToString() + "/" + dayStr;
             }
-            else { return ""; }
+            else { return ""; }*/
         }
 
 
@@ -504,7 +520,7 @@ namespace RSSForm
 
             it.CalculateFilePath();
 
-            dataGridView1.Rows[count].Cells["Date"].Value = getDateNums(it.pubDateI);
+            dataGridView1.Rows[count].Cells["Date"].Value = GetDateTime(it.pubDateI);
             dataGridView1.Rows[count].Cells["Description"].Value = it.descriptionI.ToString();
             dataGridView1.Rows[count].Cells["Title"].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Italic);
             dataGridView1.Rows[count].Cells["Title"].Style.ForeColor = Color.Blue;
@@ -552,7 +568,7 @@ namespace RSSForm
                             bool filter = false;
                             if (filterDateBefore != "" && it.pubDateI != "")
                             {
-                                string dateTmp = getDateNums(it.pubDateI);
+                                string dateTmp = GetDateTime(it.pubDateI);
                                 string[] strArr = dateTmp.Split('/');
                                 string[] strArr2 = filterDateBefore.Split('/');
                                 int day1 = System.Convert.ToInt32(strArr[1].ToString());
@@ -570,7 +586,7 @@ namespace RSSForm
                             }
                             if (filterDateAfter != "" && it.pubDateI != "")
                             {
-                                string dateTmp = getDateNums(it.pubDateI);
+                                string dateTmp = GetDateTime(it.pubDateI);
                                 string[] strArr = dateTmp.Split('/');
                                 string[] strArr2 = filterDateAfter.Split('/');
                                 int day1 = System.Convert.ToInt32(strArr[1].ToString());
@@ -807,12 +823,11 @@ namespace RSSForm
                         tabControl1.SelectTab(1);
                         if (it.IsDownloaded)
                         {
-                            //WindowsMediaPlayer1.URL = it.FilePath;
+                            axWindowsMediaPlayer1.URL = it.FilePath;
                         }
                         else
                         {
-                            //WindowsMediaPlayer1.URL = it.linkI;
-
+                            axWindowsMediaPlayer1.URL = it.linkI;
                         }
                     }
                     else if (!String.IsNullOrEmpty(it.FilePath) && File.Exists(it.FilePath))

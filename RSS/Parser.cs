@@ -12,6 +12,14 @@ using System.Windows.Forms;
 
 namespace RSS
 {
+    public enum FeedType
+    {
+        Atom = 0,
+        Rss1 = 1,
+        Rss2 = 2,
+    }
+
+
     public class Parser
     {
         public List<Channel> Channels = new List<Channel>();
@@ -169,26 +177,30 @@ namespace RSS
             return it;
         }
 
-        public int getVersion(string rssString)
+        private FeedType GetFeedType(string rssString)
         {
-            int version = 0;
-            bool rss_section = false;
-            //string[] strArr = System.Text.RegularExpressions.Regex.Split(rssString, " ");
-            for (int i = 0; i < rssString.Length - 7; i++)
+            FeedType type = FeedType.Atom;
+
+            var doc = new XmlDocument();
+            doc.LoadXml(rssString);
+            var rssTags = doc.GetElementsByTagName("rss");
+            if (rssTags != null && rssTags.Count > 0)
             {
-                if (rssString.Substring(i, 4) == "<rss")
+                string rssVersion = rssTags[0].Attributes["version"].Value;
+                if (rssVersion == "1.0")
                 {
-                    version = 2;
-                    rss_section = true;
+                    type = FeedType.Rss1;
                 }
-                if (rssString.Substring(i, 4) == "<rdf")
+                if(rssVersion == "2.0")
                 {
-                    version = 1;
+                    type = FeedType.Rss2;
                 }
             }
-
-            return version;
+            
+            return type;
         }
+
+
         private string processDescription(string description)
         {
             string newDescrip = "";
@@ -213,7 +225,6 @@ namespace RSS
 
         public bool loadAnyVersion(Channel ch)
         {
-            //loadXMLRSS1_0(rss_sub);
             string url = ch.RssLink;
             string rss;
             WebClient wc = new WebClient();
@@ -225,24 +236,20 @@ namespace RSS
                 {
                     rss = sr.ReadToEnd();
                 }
-
-                //version=0 -> Atom 1.0
-                //version=1 -> RSS 1.0
-                //version=2 -> RSS 2.0
-                int version = getVersion(rss);
-                if (version == 0)
+                
+                FeedType feedType = GetFeedType(rss);
+                switch(feedType)
                 {
-                    loadXMLAtom(ch, rss);
+                    case FeedType.Atom:
+                        loadXMLAtom(ch, rss);
+                        break;
+                    case FeedType.Rss1:
+                        loadXMLRSS1_0(ch, rss);
+                        break;
+                    case FeedType.Rss2:
+                        loadXMLRSS2_0(ch, rss);
+                        break;
                 }
-                else if (version == 1)
-                {
-                    loadXMLRSS1_0(ch, rss);
-                }
-                else
-                {
-                    loadXMLRSS2_0(ch, rss);
-                }
-
                 return true;
             }
             catch (WebException e)
@@ -265,102 +272,102 @@ namespace RSS
         }
         public bool loadXMLRSS2_0(Channel ch, string rss)
         {
-            using (DataSet rssData = new DataSet())
+            bool success = true;
+            try
             {
-                System.IO.StringReader sr = new System.IO.StringReader(rss);
-                DataSet ds2 = new DataSet();
-                using (var schemaStream = new MemoryStream(Encoding.UTF8.GetBytes(Properties.Resources.RSS_2_0_Schema)))
+                var xmlDocument = new XmlDocument();
+                var bytes = Encoding.UTF8.GetBytes(rss);
+                using (var stream = new MemoryStream(bytes))
                 {
-                    rssData.ReadXmlSchema(schemaStream);
+                    xmlDocument.Load(stream);
                 }
-                //rssData.InferXmlSchema(sr, null);
-                rssData.EnforceConstraints = false;
-                rssData.ReadXml(sr, XmlReadMode.Auto);
-                string str = rssData.GetXmlSchema();
-                if (rssData.Tables.Contains("channel"))
+                var channels = xmlDocument.GetElementsByTagName("channel");
+                foreach (XmlElement channel in channels)
                 {
-                    foreach (DataRow dataRow in rssData.Tables["channel"].Rows)
+                    int counter = 0;
+                    ch.title = channel["title"]?.InnerText;
+                    ch.SiteLink = channel["link"]?.InnerText;
+                    ch.description = channel["description"]?.InnerText;
+                    ch.pubDate = channel["pubDate"]?.InnerText;
+                    ch.ttl = channel["ttl"]?.InnerText;
+                    ch.lastBuildDate = channel["lastBuildDate"]?.InnerText;
+
+                    var imageNodes = channel.GetElementsByTagName("image");
+                    if(imageNodes.Count > 0)
                     {
-                        //ch.title = dataRowContains("title", dataRow, rssData);//Convert.ToString(dataRow["title"]);
-                        
-                        //rss_sub.set_title(ch.title);
+                        var imageNode = imageNodes[0];
+                        ch.ImageUrl = imageNode["url"].InnerText;
+                    }
 
-                        ch.SiteLink = dataRowContains("link", dataRow, rssData);
-                        ch.description = dataRowContains("description", dataRow, rssData);
-                        
-                        ch.lastBuildDate = dataRowContains("lastBuildDate", dataRow, rssData);
-                        ch.pubDate = dataRowContains("pubDate", dataRow, rssData);
+                    var items = channel.GetElementsByTagName("item");
+                    foreach(XmlNode item in items)
+                    {
+                        var it = new Item();
+                        it.titleI = item["title"]?.InnerText;
+                        it.linkI = item["link"]?.InnerText;
+                        it.descriptionI = processDescription(item["description"]?.InnerText);
+                        it.guidI = item["guid"]?.InnerText;
+                        it.pubDateI = item["pubDate"]?.InnerText;
 
-                        ch.ttl = dataRowContains("ttl", dataRow, rssData);
-                      
-                        ch.title = dataRowContains("title", dataRow, rssData);
-                      
-
-                        foreach (DataRow im in rssData.Tables["image"].Rows)
-                        {
-                            ch.ImageUrl = dataRowContains("url", im, rssData);
-                        }
-
-                        int counter = 0;
-                        
-                        foreach (DataRow itemRow in rssData.Tables["item"].Rows)
-                        {
-                            Item inside = new Item();
-                            inside.titleI = dataRowContains("title", itemRow, rssData);
-                            string desc = dataRowContains("description", itemRow, rssData);
-                            inside.descriptionI = processDescription(desc);
-                            inside.linkI = dataRowContains("link", itemRow, rssData);
-                            inside.guidI = dataRowContains("guid", itemRow, rssData);
-                            inside.pubDateI = dataRowContains("pubDate", itemRow, rssData);
-                            
-                            ch.item.Add(inside);
-                            counter++;
-                            if (counter > maxItems) { break; }
-                        }
+                        ch.item.Add(it);
+                        counter++;
+                        if(counter > maxItems) { break; }
                     }
                 }
-                return true;
             }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex);
+                success = false;
+            }
+            ch.HasErrors = !success;
+            return success;
         }
 
         public bool loadXMLRSS1_0(Channel ch, string rss)
         {
-            using (DataSet rssData = new DataSet())
+            bool success = true;
+            try
             {
-                System.IO.StringReader sr = new System.IO.StringReader(rss);
-                DataSet ds2 = new DataSet();
-             
-                rssData.ReadXml(sr, XmlReadMode.InferSchema);
-                if (rssData.Tables.Contains("channel"))
+                var xmlDocument = new XmlDocument();
+                var bytes = Encoding.UTF8.GetBytes(rss);
+                using (var stream = new MemoryStream(bytes))
                 {
-                    foreach (DataRow dataRow in rssData.Tables["channel"].Rows)
-                    {
-                        ch.title = dataRowContains("title", dataRow, rssData);
-                                    
-                        ch.description = dataRowContains("description", dataRow, rssData);
-                        ch.SiteLink = dataRowContains("link", dataRow, rssData);
-                        int counter = 0;
-                        if (rssData.Tables.Contains("item"))
-                        {
-                            foreach (DataRow itemRow in rssData.Tables["item"].Rows)
-                            {
-                                Item inside = new Item();
-                                inside.titleI = dataRowContains("title", itemRow, rssData);
-                                inside.descriptionI = dataRowContains("description", itemRow, rssData);
-                                inside.linkI = dataRowContains("link", itemRow, rssData);
-                                inside.guidI = dataRowContains("guid", itemRow, rssData);
-                                //inside.guidI = Convert.ToString(rssData.Tables["guid"].Rows[counter].ItemArray[1]);                        
-                                inside.pubDateI = dataRowContains("pubDate", itemRow, rssData);
-                                
-                                ch.item.Add(inside);
-                                counter++;
-                                if (counter > maxItems) { break; }
-                            }
-                        }
-                    }
+                    xmlDocument.Load(stream);
                 }
-                return true;
+                var channels = xmlDocument.GetElementsByTagName("channel");
+                foreach (XmlElement channel in channels)
+                {
+                    int count = 0;
+                    ch.title = channel["title"]?.InnerText;
+                    ch.description = channel["description"]?.InnerText;
+                    ch.SiteLink = channel["link"]?.InnerText;
+
+                    var items = channel.GetElementsByTagName("item");
+                        
+                    foreach(XmlNode item in items)
+                    {
+                        var it = new Item();
+                        it.titleI = item["title"]?.InnerText;
+                        it.descriptionI = item["description"]?.InnerText;
+                        it.linkI = item["link"]?.InnerText;
+                        it.guidI = item["guid"]?.InnerText;
+                        it.pubDateI = item["pubDate"]?.InnerText;
+
+                        ch.item.Add(it);
+                        count++;
+                        if(count > maxItems) { break; }
+                    }
+
+                }
             }
+            catch(Exception ex)
+            {
+                ErrorLogger.Log(ex);
+                success = false;                
+            }
+            ch.HasErrors = !success;
+            return success;
         }
         public string dataRowContains(string name, DataRow dataRow, DataSet ds)
         {
@@ -380,73 +387,51 @@ namespace RSS
             }
         }
         public bool loadXMLAtom(Channel ch, string rss)
-        {      
-            using (DataSet rssData = new DataSet())
+        {
+            bool success = true;
+            try
             {
-                System.IO.StringReader sr = new System.IO.StringReader(rss);
-                DataSet ds2 = new DataSet();
-                rssData.ReadXml(sr, XmlReadMode.Auto);
-                string str = rssData.GetXmlSchema();
+                var doc = new XmlDocument();
+                doc.LoadXml(rss);
+                var feedNode = doc["feed"];
+                ch.title = feedNode["title"]?.InnerText;
+                
+                ch.ImageUrl = feedNode["icon"]?.InnerText;
 
-                if(rssData.Tables.Contains("feed"))
+                var entries = feedNode.GetElementsByTagName("entry");
+                foreach (XmlNode entry in entries)
                 {
-                    foreach (DataRow dataRow in rssData.Tables["feed"].Rows)
-                    {
-                        int c = rssData.Tables.Count;
+                    int count = 0;
+                    var item = new Item();
+                    item.titleI = entry["title"].InnerText;
+                    item.descriptionI = entry["summary"].InnerText;
+                    item.pubDateI = entry["updated"].InnerText;
 
-                        if (rssData.Tables.Contains("link"))
+                    item.linkI = entry["link"]?.Attributes["href"]?.Value;
+
+                    if (entry["author"] != null)
+                    {
+                        foreach (XmlNode authorNode in entry["author"])
                         {
-                            foreach (DataRow dr in rssData.Tables["link"].Rows)
-                            {
-                                ch.SiteLink = dataRowContains("href", dr, rssData);
-                                break;
-                            }
-                        }
-                        ch.title = dataRowContains("title", dataRow, rssData);
-                        
-                        ch.description = dataRowContains("subtitle", dataRow, rssData);//Convert.ToString(dataRow["subtitle"]);
-                        ch.pubDate = dataRowContains("updated", dataRow, rssData);//Convert.ToString(dataRow["updated"]);
-                        int counter = 0;
-                        if (rssData.Tables.Contains("entry"))
-                        {
-                            foreach (DataRow itemRow in rssData.Tables["entry"].Rows)
-                            {
-                                Item inside = new Item();
-                                inside.titleI = dataRowContains("title", itemRow, rssData);//Convert.ToString(itemRow["title"]);
-                                inside.descriptionI = dataRowContains("summary", itemRow, rssData);//Convert.ToString(itemRow["summary"]);
-                                inside.linkI = dataRowContains("id", itemRow, rssData);//Convert.ToString(rssData.Tables["id"]);
-                                inside.pubDateI = dataRowContains("updated", itemRow, rssData);//Convert.ToString(itemRow["updated"]);
-                                
-                                if (rssData.Tables.Contains("link"))
-                                {
-                                    foreach (DataRow dr in rssData.Tables["link"].Rows)
-                                    {
-                                        if (dr["href"].ToString().Contains(".html"))
-                                        {
-                                            inside.linkI = dr["href"].ToString();
-                                        }
-                                    }
-                                }
-                                if (rssData.Tables.Contains("author"))
-                                {
-                                    foreach (DataRow authorRow in rssData.Tables["author"].Rows)
-                                    {
-                                        author auth = new author();
-                                        auth.name = dataRowContains("name", authorRow, rssData);
-                                        auth.email = dataRowContains("email", authorRow, rssData);
-                                        inside.authors.Add(auth);
-                                    }
-                                }
-                                ch.item.Add(inside);
-                                counter++;
-                                if (counter > maxItems) { break; }
-                            }
+                            var auth = new author();
+                            auth.name = authorNode["name"].InnerText;
+                            auth.email = authorNode["email"].InnerText;
+                            item.authors.Add(auth);
                         }
                     }
-                    
+
+                    ch.item.Add(item);
+                    count++;
+                    if(count > maxItems) { break; }
                 }
-                return true;
             }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex);
+                success = false;
+            }
+            ch.HasErrors = !success;
+            return success;
         }
     }
 }

@@ -34,5 +34,7 @@ namespace RSS
         public string ImageUrl;
 
         public string Category;
+
+        public bool HasErrors;
     }
 }
