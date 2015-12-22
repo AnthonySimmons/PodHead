@@ -81,6 +81,7 @@ namespace RSSForm
             treeView1.ContextMenuStrip.Items.Add("Remove", Properties.Resources.deleteIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Show", null, TreeContextClick);
+            treeView1.ContextMenuStrip.Items.Add("Info", null, TreeContextClick);
         }
 
         public void SetupGridViewContextMenu()
@@ -133,9 +134,22 @@ namespace RSSForm
                 case "Show":
                     LoadChannelLink();
                     break;
+                case "Info":
+                    LoadChannelInfo(treeView1.SelectedNode.Text);
+                    break;
             }
         }
 
+
+        private void LoadChannelInfo(string channelTitle)
+        {
+            Channel ch = myparser.Channels.FirstOrDefault(c => c.title == channelTitle);
+            if(ch != null)
+            {
+                var info = new SubscriptionInfo(ch);
+                info.ShowDialog();
+            }
+        }
 
         private void LoadChannelLink()
         { 
@@ -198,6 +212,8 @@ namespace RSSForm
         public void loadMessageForm()
         {
             msg = new Form();
+            msg.ShowInTaskbar = false;
+            msg.FormBorderStyle = FormBorderStyle.FixedDialog;
             Bitmap bmp = new Bitmap(Properties.Resources.RSS_Icon);
             msg.Icon = Icon.FromHandle(bmp.GetHicon());
             msg.Height = 150;
@@ -229,12 +245,7 @@ namespace RSSForm
             Close();
         }
        
-        //Menu strip Web-Browser-Test: click just opens the integrated web browser for testing.
-        private void webBrowserTestToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Web_Browser web = new Web_Browser("http://www.google.com/");
-            DialogResult dr = web.ShowDialog();
-        }
+    
         //Menu strip About: click opens the About form which contains information on authors, version, and last updated
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {

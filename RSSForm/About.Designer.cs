@@ -91,9 +91,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(12, 52);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(62, 13);
+            this.label6.Size = new System.Drawing.Size(22, 13);
             this.label6.TabIndex = 5;
-            this.label6.Text = "Don\'t Know";
+            this.label6.Text = "2.0";
             // 
             // label7
             // 
@@ -110,9 +110,9 @@
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(12, 78);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(57, 13);
+            this.label8.Size = new System.Drawing.Size(101, 13);
             this.label8.TabIndex = 7;
-            this.label8.Text = "Don\'t Care";
+            this.label8.Text = "December 12, 2015";
             // 
             // ok
             // 
