@@ -42,8 +42,7 @@ namespace RSSForm
         bool webcheck = false;
 
         const string itunesPodcastUrl = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2";
-
-        public static Parser myparser = new Parser();
+        
         
         public Form msg = new Form();
         ProgressBar msgProg = new ProgressBar();
@@ -55,11 +54,11 @@ namespace RSSForm
             SetupGridViewContextMenu();
             loadMessageForm();
 
-            myparser.UpdateProgressBar += UpdateProgressBar;
-            myparser.Load(RSSConfig.ConfigFileName);
-            myparser.parseAllFeeds();
+            Feeds.Instance.UpdateProgressBar += UpdateProgressBar;
+            Feeds.Instance.Load(RSSConfig.ConfigFileName);
+            Feeds.Instance.parseAllFeeds();
             var podcastChannel = PodcastSource.GetPodcasts();
-            myparser.Channels.Add(podcastChannel);
+            Feeds.Instance.Channels.Add(podcastChannel);
             //populate the listbox feed_list_display with the Saved channels
             
             dateTimePicker1.Format = DateTimePickerFormat.Short;
@@ -82,6 +81,7 @@ namespace RSSForm
             treeView1.ContextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Show", null, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Info", null, TreeContextClick);
+            treeView1.ContextMenuStrip.Items.Add("Refresh", null, TreeContextClick);
         }
 
         public void SetupGridViewContextMenu()
@@ -123,8 +123,8 @@ namespace RSSForm
                     AddSubscription();
                     break;
                 case "Remove":
-                    myparser.RemoveChannel(GetTitleFromSelectedTreeNode());
-                    myparser.Save(RSSConfig.ConfigFileName);
+                    Feeds.Instance.RemoveChannel(GetTitleFromSelectedTreeNode());
+                    Feeds.Instance.Save(RSSConfig.ConfigFileName);
                     treeViewRefresh();
                     break;
                 case "Load":
@@ -137,13 +137,25 @@ namespace RSSForm
                 case "Info":
                     LoadChannelInfo(treeView1.SelectedNode.Text);
                     break;
+                case "Refresh":
+                    RefreshChannel(treeView1.SelectedNode.Text);
+                    break;
             }
         }
 
+        private void RefreshChannel(string channelTitle)
+        {
+            Channel ch = Feeds.Instance.Channels.FirstOrDefault(c => c.title == channelTitle);
+            if(ch != null)
+            {
+                Parser.LoadAnyVersion(ch, Feeds.Instance.MaxItems);
+                treeViewRefresh();
+            }
+        }
 
         private void LoadChannelInfo(string channelTitle)
         {
-            Channel ch = myparser.Channels.FirstOrDefault(c => c.title == channelTitle);
+            Channel ch = Feeds.Instance.Channels.FirstOrDefault(c => c.title == channelTitle);
             if(ch != null)
             {
                 var info = new SubscriptionInfo(ch);
@@ -155,7 +167,7 @@ namespace RSSForm
         { 
             if(!String.IsNullOrEmpty(treeView1.SelectedNode.Text))
             {
-                Channel ch = myparser.Channels.FirstOrDefault(m => m.title == treeView1.SelectedNode.Text);
+                Channel ch = Feeds.Instance.Channels.FirstOrDefault(m => m.title == treeView1.SelectedNode.Text);
                 if (ch != null)
                 { 
                     if(!String.IsNullOrEmpty(ch.SiteLink))
@@ -256,7 +268,7 @@ namespace RSSForm
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            myparser.Save(RSSConfig.ConfigFileName);
+            Feeds.Instance.Save(RSSConfig.ConfigFileName);
         }
 
 
@@ -272,7 +284,7 @@ namespace RSSForm
         {
             treeView1.Nodes.Clear();
 
-            foreach (Channel ch in myparser.Channels)
+            foreach (Channel ch in Feeds.Instance.Channels)
             {
                 TreeNode channelNode = new TreeNode(ch.title);
 
@@ -307,7 +319,7 @@ namespace RSSForm
             {
                 string str = treeView1.SelectedNode.Text;
 
-                foreach (Channel ch in myparser.Channels)
+                foreach (Channel ch in Feeds.Instance.Channels)
                 {
                     if (ch.title.Contains(str))
                     {
@@ -329,7 +341,7 @@ namespace RSSForm
 
         private string findDescFromTitle(string title)
         {
-            foreach (Channel ch in myparser.Channels)
+            foreach (Channel ch in Feeds.Instance.Channels)
             {
                 foreach (Item it in ch.item)
                 {
@@ -345,7 +357,7 @@ namespace RSSForm
         }
         private string findLinkFromTitle(string title)
         {
-            foreach (Channel ch in myparser.Channels)
+            foreach (Channel ch in Feeds.Instance.Channels)
             {
                 foreach (Item it in ch.item)
                 {
@@ -376,7 +388,7 @@ namespace RSSForm
                 if (dataGridView1.Rows[row].Cells["Title"].Value != null)
                 {
                     string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
-                    Item it = myparser.GetItem(title);
+                    Item it = Feeds.Instance.GetItem(title);
                     success = it.DeleteFile();
                     UpdateDataGridRow(it);
                 }                
@@ -393,7 +405,7 @@ namespace RSSForm
                 if (dataGridView1.Rows[row].Cells["Title"].Value != null)
                 {
                     string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
-                    Item it = myparser.GetItem(title);
+                    Item it = Feeds.Instance.GetItem(title);
 
                     it.DownloadProgress += DownloadProgressChangeCallBack;
                     it.DownloadComplete += DownloadCompleteCallBack;
@@ -566,7 +578,7 @@ namespace RSSForm
         {
             dataGridView1.Rows.Clear();
 
-            foreach (Channel ch in myparser.Channels)
+            foreach (Channel ch in Feeds.Instance.Channels)
             {
                 int count = 0;
                 if (!string.IsNullOrEmpty(channelTitle) && ch.title == channelTitle)
@@ -717,7 +729,7 @@ namespace RSSForm
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.ShowDialog();
-            myparser.Save(saveFileDialog1.FileName);
+            Feeds.Instance.Save(saveFileDialog1.FileName);
 
         }
 
@@ -725,19 +737,13 @@ namespace RSSForm
         {
             openFileDialog1.ShowDialog();
 
-            myparser.Load(openFileDialog1.FileName);
+            Feeds.Instance.Load(openFileDialog1.FileName);
         }
-
-        private void printToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            printDialog1.ShowDialog();
-
-            webBrowser1.Print();
-        }
+        
 
         private void setReadFromUrl(string url)
         {
-            foreach (Channel ch in myparser.Channels)
+            foreach (Channel ch in Feeds.Instance.Channels)
             {
                 foreach (Item it in ch.item)
                 {
@@ -776,7 +782,7 @@ namespace RSSForm
             {
                 string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
 
-                Item it = myparser.GetItem(title);
+                Item it = Feeds.Instance.GetItem(title);
 
                 if (it != null && (it.linkI.EndsWith(".mp3") || it.linkI.EndsWith(".mpeg") || it.linkI.EndsWith(".wma")))
                 {
@@ -806,9 +812,8 @@ namespace RSSForm
             {
                 if (selected[0].Value != null && selected[0].Value.ToString() == "Load 10 More")
                 {
-                    int max = myparser.maxItems + 10;
-                    myparser = new Parser();
-                    myparser.maxItems = max;
+                    Feeds.Instance.MaxItems += 10;
+                   
                     loadMessageForm();
                     //myparser.maxItems = max;
 
@@ -826,7 +831,7 @@ namespace RSSForm
                 {
                     ttl = dataGridView1.Rows[selected[0].RowIndex].Cells["Title"].Value.ToString();
 
-                    Item it = myparser.GetItem(ttl);
+                    Item it = Feeds.Instance.GetItem(ttl);
                     string str = it.linkI;
                  
                     if (str.EndsWith(".mp3") || str.EndsWith(".mpeg") || str.EndsWith(".wma"))
@@ -863,7 +868,7 @@ namespace RSSForm
             if (e.ColumnIndex == 1)
             {
                 string title = GetTitleFromSelectedDataGrid();
-                Item it = myparser.GetItem(title);
+                Item it = Feeds.Instance.GetItem(title);
 
                 if (it.CanBeDownloaded)
                 {
@@ -895,7 +900,7 @@ namespace RSSForm
                 Channel ch = new Channel();
                 ch.RssLink = form.return_url;
                 ch.update = form.return_update;
-                myparser.AddChannel(ch);
+                Feeds.Instance.AddChannel(ch);
                 form.Dispose();
                 treeViewRefresh();
             }

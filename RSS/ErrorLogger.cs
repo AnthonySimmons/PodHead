@@ -19,8 +19,10 @@ namespace RSS
         {
             using (var writer = File.Open(ErrorLogPath, FileMode.Append | FileMode.Create))
             {
-                var bytes = Encoding.UTF8.GetBytes(message);
-                writer.Write(bytes, 0, bytes.Length);
+                var dateBytes = Encoding.UTF8.GetBytes(DateTime.Now.ToLongDateString());
+                var messageBytes = Encoding.UTF8.GetBytes(message);
+                writer.Write(dateBytes, 0, dateBytes.Length);
+                writer.Write(messageBytes, 0, messageBytes.Length);
             }
         }
     }

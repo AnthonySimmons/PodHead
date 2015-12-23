@@ -46,14 +46,14 @@ namespace RSS
         {
             var url = GetPodcastSourceUrl();
 
-            var parser = new Parser();
+            
             var channel = new Channel()
             {
                 RssLink = url,
                 title = Genre.ToString(),
             };
 
-            parser.loadAnyVersion(channel);
+            Parser.LoadAnyVersion(channel, Feeds.Instance.MaxItems);
 
             return channel;
         }

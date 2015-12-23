@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using RSS;
 
-namespace RSS
+namespace RSSForm
 {
     public partial class SubscriptionInfo : Form
     {
@@ -19,6 +14,9 @@ namespace RSS
             InitializeComponent();
             _channel = ch;
             InitializeChannel();
+
+            Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
+            Icon = Icon.FromHandle(ico.GetHicon());
         }
 
         private void InitializeChannel()
@@ -30,7 +28,10 @@ namespace RSS
                 linkLabelSite.Text = _channel.SiteLink;
                 textBoxDate.Text = _channel.pubDate;
                 textBoxDescription.Text = _channel.description;
-                pictureBox1.Load(_channel.ImageUrl);
+                if (!string.IsNullOrEmpty(_channel.ImageUrl))
+                {
+                    pictureBox1.Load(_channel.ImageUrl);
+                }
             }
         }
 

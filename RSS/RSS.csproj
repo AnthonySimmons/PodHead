@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Channel.cs" />
     <Compile Include="ErrorLogger.cs" />
+    <Compile Include="Feeds.cs" />
     <Compile Include="PodcastSource.cs" />
     <Compile Include="RSSConfig.cs" />
     <Compile Include="Item.cs" />
@@ -90,9 +91,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Config.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="RSS_2_0.xml" />
   </ItemGroup>
   <ItemGroup>

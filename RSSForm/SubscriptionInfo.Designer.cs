@@ -1,4 +1,4 @@
-﻿namespace RSS
+﻿namespace RSSForm
 {
     partial class SubscriptionInfo
     {
@@ -46,6 +46,7 @@
             // 
             this.textBoxTitle.Location = new System.Drawing.Point(67, 216);
             this.textBoxTitle.Name = "textBoxTitle";
+            this.textBoxTitle.ReadOnly = true;
             this.textBoxTitle.Size = new System.Drawing.Size(248, 20);
             this.textBoxTitle.TabIndex = 0;
             // 
@@ -80,6 +81,7 @@
             // 
             this.textBoxDate.Location = new System.Drawing.Point(67, 294);
             this.textBoxDate.Name = "textBoxDate";
+            this.textBoxDate.ReadOnly = true;
             this.textBoxDate.Size = new System.Drawing.Size(248, 20);
             this.textBoxDate.TabIndex = 6;
             // 
@@ -97,6 +99,7 @@
             this.textBoxDescription.Location = new System.Drawing.Point(67, 320);
             this.textBoxDescription.Multiline = true;
             this.textBoxDescription.Name = "textBoxDescription";
+            this.textBoxDescription.ReadOnly = true;
             this.textBoxDescription.Size = new System.Drawing.Size(248, 78);
             this.textBoxDescription.TabIndex = 8;
             // 
@@ -111,6 +114,9 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(82, 22);
             this.pictureBox1.MaximumSize = new System.Drawing.Size(200, 175);
             this.pictureBox1.MinimumSize = new System.Drawing.Size(200, 175);
