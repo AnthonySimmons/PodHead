@@ -59,68 +59,5 @@ namespace RSS.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;xs:schema id=&quot;Atom-1_0-Schema&quot;
-        ///    xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
-        ///&gt;
-        ///  &lt;xs:element name=&quot;feed&quot;&gt;
-        ///    &lt;xs:complexType&gt;
-        ///      &lt;xs:sequence&gt;
-        ///        &lt;xs:element name=&quot;id&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot;/&gt;
-        ///        &lt;xs:element name=&quot;title&quot; type=&quot;xs:string&quot;/&gt;
-        ///        &lt;xs:element name=&quot;subtitle&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot;/&gt;
-        ///        &lt;xs:element name=&quot;updated&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot;/&gt;
-        ///        &lt;xs:element name=&quot;link&quot; type=&quot;xs:string&quot; minOccurs=&quot; [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Atom_1_0_Schema {
-            get {
-                return ResourceManager.GetString("Atom_1_0_Schema", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;xs:schema id=&quot;RSS-1_0-Schema&quot;
-        ///    xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
-        ///&gt;
-        ///  &lt;xs:element name=&quot;channel&quot;&gt;
-        ///    &lt;xs:complexType&gt;
-        ///      &lt;xs:sequence&gt;
-        ///        &lt;xs:element name=&quot;title&quot; type=&quot;xs:string&quot;/&gt;
-        ///        &lt;xs:element name=&quot;link&quot; type=&quot;xs:string&quot;/&gt;
-        ///        &lt;xs:element name=&quot;description&quot; type=&quot;xs:string&quot;/&gt;
-        ///        &lt;xs:element name=&quot;image&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot;/&gt;
-        ///      &lt;/xs:sequence&gt;
-        ///    &lt;/xs:complexType&gt;
-        ///  &lt;/xs:element&gt;
-        ///  &lt;xs:element name=&quot;i [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string RSS_1_0_Schema {
-            get {
-                return ResourceManager.GetString("RSS_1_0_Schema", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;xs:schema id=&quot;RSS-2_0-Schema&quot;
-        ///    xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;xs:element name = &quot;rss&quot;&gt;
-        ///    &lt;xs:complexType&gt;
-        ///      &lt;xs:sequence&gt;
-        ///        &lt;xs:element name=&quot;channel&quot;&gt;
-        ///          &lt;xs:complexType&gt;
-        ///            &lt;xs:sequence&gt;
-        ///              &lt;xs:element name=&quot;title&quot; type=&quot;xs:string&quot; minOccurs =&quot;0&quot;/&gt;
-        ///              &lt;xs:element name=&quot;link&quot; type=&quot;xs:string&quot; minOccurs =&quot;0&quot;/&gt;
-        ///              &lt;xs:element name=&quot;description&quot; type=&quot;xs:string&quot; minOccurs =&quot;0&quot;/&gt;        /// [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string RSS_2_0_Schema {
-            get {
-                return ResourceManager.GetString("RSS_2_0_Schema", resourceCulture);
-            }
-        }
     }
 }

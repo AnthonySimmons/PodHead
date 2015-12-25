@@ -28,7 +28,12 @@ namespace RSS
 
         public List<Channel> Channels = new List<Channel>();
 
-
+        public List<string> Categories => Channels.GroupBy(ch => ch.Category).Select(g => g.First().Category).ToList();
+       
+        public List<Channel> ChannelsByCategory(string category)
+        {
+            return Channels.Where(ch => ch.Category == category).ToList();
+        }
 
 
         public void RemoveChannel(string name)

@@ -24,21 +24,10 @@ namespace RSSForm
 
         int FileSizeColumnWidth = 75;
         int FileSizeColumnHeight = 25;
-
-        List<string> latlon = new List<string>();
-        string[] ttl1 = null;
-        string[] desc1 = null;
-        List<string> parse = null;
-        string longitude;
-        string latitude;
+        
         char[] delimit = { ' ', '\'' };
-        string desc;
+        
         string ttl;
-        string start = "'";
-        int strst = 0;
-        int stred = 0;
-        int i = 0;
-        int j = 0;
         bool webcheck = false;
 
         const string itunesPodcastUrl = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2";
@@ -79,7 +68,6 @@ namespace RSSForm
             treeView1.ContextMenuStrip.Items.Add("Add", Properties.Resources.AddIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Remove", Properties.Resources.deleteIcon, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
-            treeView1.ContextMenuStrip.Items.Add("Show", null, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Info", null, TreeContextClick);
             treeView1.ContextMenuStrip.Items.Add("Refresh", null, TreeContextClick);
         }
@@ -130,8 +118,6 @@ namespace RSSForm
                 case "Load":
                     string title = treeView1.SelectedNode.Text;
                     loadDataGrid(title);
-                    break;
-                case "Show":
                     LoadChannelLink();
                     break;
                 case "Info":
@@ -234,8 +220,9 @@ namespace RSSForm
             lbl.Name = "lbl";
             lbl.AutoSize = true;
             lbl.Visible = true;
+            lbl.Font = new Font(FontFamily.GenericSerif, 12, FontStyle.Bold);
             lbl.Enabled = true;
-            lbl.ForeColor = System.Drawing.Color.ForestGreen;
+            lbl.ForeColor = System.Drawing.Color.Black;
             lbl.Text = "Loading Saved Subscriptions...";
             lbl.Location = new System.Drawing.Point(50, 20);
 
@@ -284,31 +271,33 @@ namespace RSSForm
         {
             treeView1.Nodes.Clear();
 
-            foreach (Channel ch in Feeds.Instance.Channels)
+            foreach (string category in Feeds.Instance.Categories)
             {
-                TreeNode channelNode = new TreeNode(ch.title);
-
-
-                foreach (Item it in ch.item)
+                TreeNode categoryNode = new TreeNode(category);
+                categoryNode.NodeFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
+                 
+                foreach (Channel ch in Feeds.Instance.ChannelsByCategory(category))
                 {
-                    TreeNode itemNode = new TreeNode(it.titleI);
-                    if (!channelNode.Nodes.ContainsKey(it.titleI))
+                    TreeNode channelNode = new TreeNode(ch.title);
+                    channelNode.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
+
+                    if (ch.HasErrors)
                     {
-                        channelNode.Nodes.Add(it.titleI);
+                        channelNode.BackColor = ch.HasErrors ? Color.Red : Color.Transparent;
+                    }
+
+                    if(!categoryNode.Nodes.ContainsKey(channelNode.Name))
+                    {
+                        categoryNode.Nodes.Add(channelNode);
                     }
                 }
 
-                if (ch.HasErrors)
+                if (!treeView1.Nodes.ContainsKey(categoryNode.Name))
                 {
-                    channelNode.BackColor = ch.HasErrors ? Color.Red : Color.Transparent;
+                    treeView1.Nodes.Add(categoryNode);
                 }
-
-                if (!treeView1.Nodes.ContainsKey(channelNode.Name))
-                {
-                    treeView1.Nodes.Add(channelNode);
-                }
-
             }
+            treeView1.Refresh();
         }
 
 
@@ -376,8 +365,6 @@ namespace RSSForm
             return "";
         }
        
-        string mLink = "";
-              
 
         private bool DeleteFile()
         {
@@ -916,11 +903,6 @@ namespace RSSForm
             TreeNode node = treeView1.GetNodeAt(new Point(e.X, e.Y));
             treeView1.SelectedNode = node;
         }
-
-        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
-        {
-            
-        }
-
+        
     }    
 }
