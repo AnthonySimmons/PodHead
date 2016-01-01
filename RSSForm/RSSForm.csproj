@@ -59,32 +59,14 @@
     <Compile Include="ADD RSS Subscription.Designer.cs">
       <DependentUpon>ADD RSS Subscription.cs</DependentUpon>
     </Compile>
-    <Compile Include="ADD_New_Channel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ADD_New_Channel.Designer.cs">
-      <DependentUpon>ADD_New_Channel.cs</DependentUpon>
-    </Compile>
     <Compile Include="SubscriptionInfo.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SubscriptionInfo.Designer.cs">
       <DependentUpon>SubscriptionInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="ERROR.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ERROR.Designer.cs">
-      <DependentUpon>ERROR.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Remove_Rename_Chanel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Remove_Rename_Chanel.Designer.cs">
-      <DependentUpon>Remove_Rename_Chanel.cs</DependentUpon>
-    </Compile>
     <Compile Include="RSSMainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,14 +79,8 @@
     <EmbeddedResource Include="ADD RSS Subscription.resx">
       <DependentUpon>ADD RSS Subscription.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ADD_New_Channel.resx">
-      <DependentUpon>ADD_New_Channel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SubscriptionInfo.resx">
       <DependentUpon>SubscriptionInfo.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ERROR.resx">
-      <DependentUpon>ERROR.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -116,9 +92,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Remove_Rename_Chanel.resx">
-      <DependentUpon>Remove_Rename_Chanel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="RSSMainForm.resx">
       <DependentUpon>RSSMainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -149,7 +122,6 @@
     <None Include="Images\downloads-icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HTMLPage1.htm" />
     <Content Include="Images\RSS-Icon.png" />
     <None Include="Images\PlayIcon.jpg" />
     <None Include="Images\LoadIcon.png" />

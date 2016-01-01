@@ -26,13 +26,13 @@ namespace RSS
 
         public int MaxItems = 25;
 
-        public List<Channel> Channels = new List<Channel>();
+        public List<Subscription> Subscriptions = new List<Subscription>();
 
-        public List<string> Categories => Channels.GroupBy(ch => ch.Category).Select(g => g.First().Category).ToList();
+        public List<string> Categories => Subscriptions.GroupBy(ch => ch.Category).Select(g => g.First().Category).ToList();
        
-        public List<Channel> ChannelsByCategory(string category)
+        public List<Subscription> ChannelsByCategory(string category)
         {
-            return Channels.Where(ch => ch.Category == category).ToList();
+            return Subscriptions.Where(ch => ch.Category == category).ToList();
         }
 
 
@@ -40,33 +40,33 @@ namespace RSS
         {
             if (!String.IsNullOrEmpty(name))
             {
-                foreach (Channel ch in Channels)
+                foreach (Subscription ch in Subscriptions)
                 {
                     if (ch.title == name)
                     {
-                        Channels.Remove(ch);
+                        Subscriptions.Remove(ch);
                         break;
                     }
                 }
             }
         }
 
-        public void AddChannel(Channel ch)
+        public void AddChannel(Subscription ch)
         {
-            if (!String.IsNullOrEmpty(ch.RssLink) && !Channels.Any(m => m.RssLink == ch.RssLink))
+            if (!String.IsNullOrEmpty(ch.RssLink) && !Subscriptions.Any(m => m.RssLink == ch.RssLink))
             {
                 Parser.LoadAnyVersion(ch, MaxItems);
-                Channels.Add(ch);
+                Subscriptions.Add(ch);
             }
         }
 
         public void parseAllFeeds()
         {
             int count = 0;
-            foreach (Channel ch in Channels)
+            foreach (Subscription ch in Subscriptions)
             {
                 Parser.LoadAnyVersion(ch, MaxItems);
-                InvokeUpdateProgress(100 * count / Channels.Count);
+                InvokeUpdateProgress(100 * count / Subscriptions.Count);
                 count++;
             }
         }
@@ -89,7 +89,7 @@ namespace RSS
 
         public void setChannelFeed(string title, string feed)
         {
-            foreach (Channel ch in Channels)
+            foreach (Subscription ch in Subscriptions)
             {
                 if (ch.title == title)
                 {
@@ -100,7 +100,7 @@ namespace RSS
 
         public Item GetItem(string title)
         {
-            Channel ch = Channels.FirstOrDefault(m => m.item.Any(p => p.titleI == title));
+            Subscription ch = Subscriptions.FirstOrDefault(m => m.item.Any(p => p.titleI == title));
             Item it = null;
             if (ch != null)
             {
@@ -131,10 +131,10 @@ namespace RSS
                     writer.WriteStartDocument();
                     writer.WriteStartElement("RSS");
 
-                    foreach (Channel ch in Channels)
+                    foreach (Subscription ch in Subscriptions)
                     {
                         writer.WriteStartElement("Subscription");
-                        writer.WriteElementString("Category_Name", ch.title);
+                        writer.WriteElementString("Category_Name", ch.Category);
                         if (ch.title == "")
                         {
                             writer.WriteElementString("Subscription_Name", "Default Name");
@@ -165,19 +165,19 @@ namespace RSS
         {
             try
             {
-                Channels.Clear();
+                Subscriptions.Clear();
                 using (DataSet data = new DataSet())
                 {
 
                     data.ReadXml(fileName);
                     foreach (DataRow dataRow in data.Tables["Subscription"].Rows)
                     {
-                        Channel ch = new Channel();
+                        Subscription ch = new Subscription();
                         ch.Category = Convert.ToString(dataRow["Category_Name"]);
                         ch.title = Convert.ToString(dataRow["Subscription_Name"]);
                         ch.RssLink = Convert.ToString(dataRow["Subscription_URL"]);
                         ch.update = Convert.ToInt32(dataRow["Subscription_Update"]);
-                        Channels.Add(ch);
+                        Subscriptions.Add(ch);
                     }
 
                 }
@@ -190,9 +190,9 @@ namespace RSS
 
         #endregion Save and Load
 
-        public Channel findChannelName(string name)
+        public Subscription findChannelName(string name)
         {
-            foreach (Channel ch in Channels)
+            foreach (Subscription ch in Subscriptions)
             {
                 if (name == ch.title)
                 {

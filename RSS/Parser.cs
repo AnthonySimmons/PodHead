@@ -69,7 +69,7 @@ namespace RSS
             return newDescrip;
         }
 
-        public static bool LoadAnyVersion(Channel ch, int maxItems)
+        public static bool LoadAnyVersion(Subscription ch, int maxItems)
         {
             ch.item.Clear();
             string url = ch.RssLink;
@@ -108,7 +108,7 @@ namespace RSS
         }
 
        
-        public static bool LoadXMLRSS2_0(Channel ch, string rss, int maxItems)
+        public static bool LoadXMLRSS2_0(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -162,7 +162,7 @@ namespace RSS
             return success;
         }
 
-        public static bool LoadXMLRSS1_0(Channel ch, string rss, int maxItems)
+        public static bool LoadXMLRSS1_0(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -225,7 +225,7 @@ namespace RSS
             }
         }
 
-        public static bool LoadXMLAtom(Channel ch, string rss, int maxItems)
+        public static bool LoadXMLAtom(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
             try

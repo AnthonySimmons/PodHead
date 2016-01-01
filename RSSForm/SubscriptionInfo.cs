@@ -8,8 +8,8 @@ namespace RSSForm
 {
     public partial class SubscriptionInfo : Form
     {
-        private Channel _channel;
-        public SubscriptionInfo(Channel ch)
+        private Subscription _channel;
+        public SubscriptionInfo(Subscription ch)
         {
             InitializeComponent();
             _channel = ch;

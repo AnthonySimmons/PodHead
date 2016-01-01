@@ -42,12 +42,12 @@ namespace RSS
             return rss;
         }
 
-        public static Channel GetPodcasts()
+        public static Subscription GetPodcasts()
         {
             var url = GetPodcastSourceUrl();
 
             
-            var channel = new Channel()
+            var channel = new Subscription()
             {
                 RssLink = url,
                 title = Genre.ToString(),

@@ -33,13 +33,10 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newSubcriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reNameSubsciptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.newChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.showUnreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -63,6 +60,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -83,7 +81,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem,
-            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(745, 24);
@@ -94,9 +92,6 @@
             // 
             this.exitToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newSubcriptionToolStripMenuItem,
-            this.reNameSubsciptionToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.newChannelToolStripMenuItem,
             this.toolStripSeparator2,
             this.showUnreadToolStripMenuItem,
             this.exitToolStripMenuItem2});
@@ -107,52 +102,39 @@
             // newSubcriptionToolStripMenuItem
             // 
             this.newSubcriptionToolStripMenuItem.Name = "newSubcriptionToolStripMenuItem";
-            this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
+            this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.newSubcriptionToolStripMenuItem.Text = "New Subcription";
             this.newSubcriptionToolStripMenuItem.Click += new System.EventHandler(this.newSubcriptionToolStripMenuItem_Click);
-            // 
-            // reNameSubsciptionToolStripMenuItem
-            // 
-            this.reNameSubsciptionToolStripMenuItem.Name = "reNameSubsciptionToolStripMenuItem";
-            this.reNameSubsciptionToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-            this.reNameSubsciptionToolStripMenuItem.Text = "Re-Name/Remove Subsciption";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(234, 6);
-            // 
-            // newChannelToolStripMenuItem
-            // 
-            this.newChannelToolStripMenuItem.Name = "newChannelToolStripMenuItem";
-            this.newChannelToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-            this.newChannelToolStripMenuItem.Text = "New Channel";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(234, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
             // 
             // showUnreadToolStripMenuItem
             // 
+            this.showUnreadToolStripMenuItem.Checked = true;
+            this.showUnreadToolStripMenuItem.CheckOnClick = true;
+            this.showUnreadToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showUnreadToolStripMenuItem.Name = "showUnreadToolStripMenuItem";
-            this.showUnreadToolStripMenuItem.Size = new System.Drawing.Size(237, 22);
-            this.showUnreadToolStripMenuItem.Text = "Show Read/Unread";
+            this.showUnreadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.showUnreadToolStripMenuItem.Text = "Show Accessed Items";
             this.showUnreadToolStripMenuItem.Click += new System.EventHandler(this.showUnreadToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem2
             // 
             this.exitToolStripMenuItem2.Name = "exitToolStripMenuItem2";
-            this.exitToolStripMenuItem2.Size = new System.Drawing.Size(237, 22);
+            this.exitToolStripMenuItem2.Size = new System.Drawing.Size(187, 22);
             this.exitToolStripMenuItem2.Text = "Exit";
             this.exitToolStripMenuItem2.Click += new System.EventHandler(this.exitToolStripMenuItem2_Click);
             // 
-            // aboutToolStripMenuItem
+            // helpToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
             // 
             // treeView1
             // 
@@ -372,6 +354,13 @@
             this.splitContainer2.SplitterDistance = 243;
             this.splitContainer2.TabIndex = 10;
             // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
             // RSSMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -414,12 +403,9 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newSubcriptionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem reNameSubsciptionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem newChannelToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripMenuItem showUnreadToolStripMenuItem;
         private System.Windows.Forms.TreeView treeView1;
@@ -444,6 +430,7 @@
         private System.Windows.Forms.TabPage tabPage1;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

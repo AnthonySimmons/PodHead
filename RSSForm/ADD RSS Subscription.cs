@@ -12,25 +12,31 @@ namespace RSSForm
 {
     public partial class ADD_RSS_Subscription : Form
     {
-        public string return_url { get; set; }
-        public string return_name { get; set; }
-        public string return_channel { get; set; }
-        public int return_update { get; set; }
+        public Subscription NewSubscription { get; private set; }
+
+
         public ADD_RSS_Subscription()
         {
             InitializeComponent();
+            var icon_bmp = new Bitmap(Properties.Resources.AddIcon);
+            Icon = Icon.FromHandle(icon_bmp.GetHicon());
         }
         
         //ADDS the URL and Subcrition name to the list of RSS feeds.(not done)
         private void ADD_button_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            return_url = url_entry.Text;
-            return_channel = "General";
+            NewSubscription = new Subscription();
+            NewSubscription.RssLink = url_entry.Text;
+            NewSubscription.Category = textBoxCategory.Text;
+            
+            NewSubscription.update = (int)numericUpDown1.Value;
+            
             if (numericUpDown1.Value == 0)
             {
-                return_update = 24;
+                NewSubscription.update = 24;
             }
+
             this.Close();
         }
 

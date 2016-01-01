@@ -24,22 +24,22 @@ namespace RSSForm
 
         int FileSizeColumnWidth = 75;
         int FileSizeColumnHeight = 25;
-        
+
         char[] delimit = { ' ', '\'' };
-        
+
         string ttl;
         bool webcheck = false;
 
         const string itunesPodcastUrl = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2";
-        
-        
+
+
         public Form msg = new Form();
         ProgressBar msgProg = new ProgressBar();
 
         public RSSMainForm()
         {
             InitializeComponent();
-            SetupTreeViewContextMenu();
+            //SetupTreeViewContextMenu();
             SetupGridViewContextMenu();
             loadMessageForm();
 
@@ -47,9 +47,9 @@ namespace RSSForm
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
             Feeds.Instance.parseAllFeeds();
             var podcastChannel = PodcastSource.GetPodcasts();
-            Feeds.Instance.Channels.Add(podcastChannel);
+            Feeds.Instance.Subscriptions.Add(podcastChannel);
             //populate the listbox feed_list_display with the Saved channels
-            
+
             dateTimePicker1.Format = DateTimePickerFormat.Short;
             dateTimePicker2.Format = DateTimePickerFormat.Short;
             treeViewRefresh();
@@ -59,26 +59,37 @@ namespace RSSForm
             webBrowser1.ObjectForScripting = this;
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
-            
+
         }
 
-        public void SetupTreeViewContextMenu()
+
+        private ContextMenuStrip GetCategoryContextMenuStrip()
         {
-            treeView1.ContextMenuStrip = new ContextMenuStrip();
-            treeView1.ContextMenuStrip.Items.Add("Add", Properties.Resources.AddIcon, TreeContextClick);
-            treeView1.ContextMenuStrip.Items.Add("Remove", Properties.Resources.deleteIcon, TreeContextClick);
-            treeView1.ContextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
-            treeView1.ContextMenuStrip.Items.Add("Info", null, TreeContextClick);
-            treeView1.ContextMenuStrip.Items.Add("Refresh", null, TreeContextClick);
+            var contextMenuStrip = new ContextMenuStrip();
+            contextMenuStrip.Items.Add("Add", Properties.Resources.AddIcon, TreeContextClick);
+            contextMenuStrip.Items.Add("Refresh", null, TreeContextClick);
+            return contextMenuStrip;
         }
 
-        public void SetupGridViewContextMenu()
+
+        private ContextMenuStrip GetSubscriptionContextMenuStrip()
+        {
+            var contextMenuStrip = new ContextMenuStrip();
+            contextMenuStrip.Items.Add("Remove", Properties.Resources.deleteIcon, TreeContextClick);
+            contextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
+            contextMenuStrip.Items.Add("Info", null, TreeContextClick);
+            contextMenuStrip.Items.Add("Refresh", null, TreeContextClick);
+            return contextMenuStrip;
+        }
+
+
+        private void SetupGridViewContextMenu()
         {
             ContextMenuStrip menu = new ContextMenuStrip();
             menu.Items.Add("Download", Properties.Resources.downloads_icon, GridContextClick);
             menu.Items.Add("Delete", Properties.Resources.deleteIcon, GridContextClick);
             menu.Items.Add("Play", Properties.Resources.PlayIcon, GridContextClick);
-            
+
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
                 column.ContextMenuStrip = menu;
@@ -88,7 +99,7 @@ namespace RSSForm
         private void GridContextClick(object sender, EventArgs e)
         {
             ToolStripItem strip = (ToolStripItem)sender;
-            switch(strip.Text)
+            switch (strip.Text)
             {
                 case "Download":
                     DownloadFile();
@@ -105,7 +116,7 @@ namespace RSSForm
         private void TreeContextClick(object sender, EventArgs e)
         {
             ToolStripItem strip = (ToolStripItem)sender;
-            switch(strip.Text)
+            switch (strip.Text)
             {
                 case "Add":
                     AddSubscription();
@@ -131,8 +142,8 @@ namespace RSSForm
 
         private void RefreshChannel(string channelTitle)
         {
-            Channel ch = Feeds.Instance.Channels.FirstOrDefault(c => c.title == channelTitle);
-            if(ch != null)
+            Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(c => c.title == channelTitle);
+            if (ch != null)
             {
                 Parser.LoadAnyVersion(ch, Feeds.Instance.MaxItems);
                 treeViewRefresh();
@@ -141,8 +152,8 @@ namespace RSSForm
 
         private void LoadChannelInfo(string channelTitle)
         {
-            Channel ch = Feeds.Instance.Channels.FirstOrDefault(c => c.title == channelTitle);
-            if(ch != null)
+            Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(c => c.title == channelTitle);
+            if (ch != null)
             {
                 var info = new SubscriptionInfo(ch);
                 info.ShowDialog();
@@ -150,13 +161,13 @@ namespace RSSForm
         }
 
         private void LoadChannelLink()
-        { 
-            if(!String.IsNullOrEmpty(treeView1.SelectedNode.Text))
+        {
+            if (!String.IsNullOrEmpty(treeView1.SelectedNode.Text))
             {
-                Channel ch = Feeds.Instance.Channels.FirstOrDefault(m => m.title == treeView1.SelectedNode.Text);
+                Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(m => m.title == treeView1.SelectedNode.Text);
                 if (ch != null)
-                { 
-                    if(!String.IsNullOrEmpty(ch.SiteLink))
+                {
+                    if (!String.IsNullOrEmpty(ch.SiteLink))
                     {
                         webBrowser1.Navigate(ch.SiteLink);
                     }
@@ -243,8 +254,8 @@ namespace RSSForm
         {
             Close();
         }
-       
-    
+
+
         //Menu strip About: click opens the About form which contains information on authors, version, and last updated
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -263,7 +274,7 @@ namespace RSSForm
         private void showUnreadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showUnread = !showUnread;
-            loadDataGrid(treeView1.SelectedNode.Text);
+            loadDataGrid(treeView1?.SelectedNode?.Text);
             treeViewRefresh();
 
         }
@@ -275,18 +286,18 @@ namespace RSSForm
             {
                 TreeNode categoryNode = new TreeNode(category);
                 categoryNode.NodeFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
-                 
-                foreach (Channel ch in Feeds.Instance.ChannelsByCategory(category))
+                categoryNode.ContextMenuStrip = GetCategoryContextMenuStrip();
+                foreach (Subscription ch in Feeds.Instance.ChannelsByCategory(category))
                 {
                     TreeNode channelNode = new TreeNode(ch.title);
                     channelNode.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
-
+                    channelNode.ContextMenuStrip = GetSubscriptionContextMenuStrip();
                     if (ch.HasErrors)
                     {
                         channelNode.BackColor = ch.HasErrors ? Color.Red : Color.Transparent;
                     }
 
-                    if(!categoryNode.Nodes.ContainsKey(channelNode.Name))
+                    if (!categoryNode.Nodes.ContainsKey(channelNode.Name))
                     {
                         categoryNode.Nodes.Add(channelNode);
                     }
@@ -308,7 +319,7 @@ namespace RSSForm
             {
                 string str = treeView1.SelectedNode.Text;
 
-                foreach (Channel ch in Feeds.Instance.Channels)
+                foreach (Subscription ch in Feeds.Instance.Subscriptions)
                 {
                     if (ch.title.Contains(str))
                     {
@@ -324,13 +335,13 @@ namespace RSSForm
                         break;
                     }
                 }
-               
+
             }
         }
 
         private string findDescFromTitle(string title)
         {
-            foreach (Channel ch in Feeds.Instance.Channels)
+            foreach (Subscription ch in Feeds.Instance.Subscriptions)
             {
                 foreach (Item it in ch.item)
                 {
@@ -346,7 +357,7 @@ namespace RSSForm
         }
         private string findLinkFromTitle(string title)
         {
-            foreach (Channel ch in Feeds.Instance.Channels)
+            foreach (Subscription ch in Feeds.Instance.Subscriptions)
             {
                 foreach (Item it in ch.item)
                 {
@@ -364,7 +375,7 @@ namespace RSSForm
             }
             return "";
         }
-       
+
 
         private bool DeleteFile()
         {
@@ -378,11 +389,11 @@ namespace RSSForm
                     Item it = Feeds.Instance.GetItem(title);
                     success = it.DeleteFile();
                     UpdateDataGridRow(it);
-                }                
+                }
             }
             return success;
         }
-       
+
 
         private void DownloadFile()
         {
@@ -418,12 +429,12 @@ namespace RSSForm
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.FillRectangle(Brushes.Green, 0, 0, (int)(bmp.Width * ((float)percent / 100.0)), bmp.Height);
-                
+
                 g.DrawString(MbString, new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 4, bmp.Height / 4));
             }
 
             dataGridView1.Rows[row].Cells["DownloadProgress"].Value = bmp;
-        
+
         }
 
 
@@ -434,7 +445,7 @@ namespace RSSForm
 
             //webBrowser1.Width = this.Width - treeView1.Width - 50;
             //webBrowser1.Height = this.Height - 150;
-            
+
 
             dataGridView1.Width = this.Width - treeView1.Width;
             dataGridView1.Height = this.Height - webBrowser1.Height;
@@ -565,73 +576,72 @@ namespace RSSForm
         {
             dataGridView1.Rows.Clear();
 
-            foreach (Channel ch in Feeds.Instance.Channels)
+            Subscription sub = Feeds.Instance.Subscriptions.FirstOrDefault(s => s.title == channelTitle);
+            if (sub != null)
             {
                 int count = 0;
-                if (!string.IsNullOrEmpty(channelTitle) && ch.title == channelTitle)
-                {
-                    foreach (Item it in ch.item)
-                    {//4/22/2013
 
-                        if ((!showUnread || (showUnread && !it.read)))
+                foreach (Item it in sub.item)
+                {//4/22/2013
+
+                    if ((!showUnread || (showUnread && !it.read)))
+                    {
+                        bool filter = false;
+                        if (filterDateBefore != "" && it.pubDateI != "")
                         {
-                            bool filter = false;
-                            if (filterDateBefore != "" && it.pubDateI != "")
+                            string dateTmp = GetDateTime(it.pubDateI);
+                            string[] strArr = dateTmp.Split('/');
+                            string[] strArr2 = filterDateBefore.Split('/');
+                            int day1 = System.Convert.ToInt32(strArr[1].ToString());
+                            int month1 = System.Convert.ToInt32(strArr[0]);
+                            int year1 = System.Convert.ToInt32(strArr[2]);
+
+                            int day2 = System.Convert.ToInt32(strArr2[1].ToString());
+                            int month2 = System.Convert.ToInt32(strArr2[0]);
+                            int year2 = System.Convert.ToInt32(strArr2[2]);
+
+
+                            if (year1 < year2) { filter = true; }
+                            if (year1 == year2 && month1 < month2) { filter = true; }
+                            if (month1 == month2 && year1 == year2 && day1 < day2) { filter = true; }
+                        }
+                        if (filterDateAfter != "" && it.pubDateI != "")
+                        {
+                            string dateTmp = GetDateTime(it.pubDateI);
+                            string[] strArr = dateTmp.Split('/');
+                            string[] strArr2 = filterDateAfter.Split('/');
+                            int day1 = System.Convert.ToInt32(strArr[1].ToString());
+                            int month1 = System.Convert.ToInt32(strArr[0]);
+                            int year1 = System.Convert.ToInt32(strArr[2]);
+
+                            int day2 = System.Convert.ToInt32(strArr2[1].ToString());
+                            int month2 = System.Convert.ToInt32(strArr2[0]);
+                            int year2 = System.Convert.ToInt32(strArr2[2]);
+
+
+                            if (year1 > year2) { filter = true; }
+                            if (year1 == year2 && month1 > month2) { filter = true; }
+                            if (month1 == month2 && year1 == year2 && day1 > day2) { filter = true; }
+                        }
+
+                        if (!filter)
+                        {
+                            if (it.read)
                             {
-                                string dateTmp = GetDateTime(it.pubDateI);
-                                string[] strArr = dateTmp.Split('/');
-                                string[] strArr2 = filterDateBefore.Split('/');
-                                int day1 = System.Convert.ToInt32(strArr[1].ToString());
-                                int month1 = System.Convert.ToInt32(strArr[0]);
-                                int year1 = System.Convert.ToInt32(strArr[2]);
-
-                                int day2 = System.Convert.ToInt32(strArr2[1].ToString());
-                                int month2 = System.Convert.ToInt32(strArr2[0]);
-                                int year2 = System.Convert.ToInt32(strArr2[2]);
-
-
-                                if (year1 < year2) { filter = true; }
-                                if (year1 == year2 && month1 < month2) { filter = true; }
-                                if (month1 == month2 && year1 == year2 && day1 < day2) { filter = true; }
+                                dataGridView1.Rows.Add(null, null, "+ " + it.titleI);
                             }
-                            if (filterDateAfter != "" && it.pubDateI != "")
+                            else
                             {
-                                string dateTmp = GetDateTime(it.pubDateI);
-                                string[] strArr = dateTmp.Split('/');
-                                string[] strArr2 = filterDateAfter.Split('/');
-                                int day1 = System.Convert.ToInt32(strArr[1].ToString());
-                                int month1 = System.Convert.ToInt32(strArr[0]);
-                                int year1 = System.Convert.ToInt32(strArr[2]);
-
-                                int day2 = System.Convert.ToInt32(strArr2[1].ToString());
-                                int month2 = System.Convert.ToInt32(strArr2[0]);
-                                int year2 = System.Convert.ToInt32(strArr2[2]);
-
-
-                                if (year1 > year2) { filter = true; }
-                                if (year1 == year2 && month1 > month2) { filter = true; }
-                                if (month1 == month2 && year1 == year2 && day1 > day2) { filter = true; }
+                                dataGridView1.Rows.Add(null, null, it.titleI);
                             }
 
-                            if (!filter)
-                            {
-                                if (it.read)
-                                {
-                                    dataGridView1.Rows.Add(null, null, "+ " + it.titleI);
-                                }
-                                else
-                                {
-                                    dataGridView1.Rows.Add(null, null, it.titleI);
-                                }
-
-                                UpdateDataGridRow(it, count);
-                                count++;
-                            }
+                            UpdateDataGridRow(it, count);
+                            count++;
                         }
                     }
-                    break;
                 }
-                
+
+
             }
             dataGridView1.Sort(dataGridView1.Columns["Date"], ListSortDirection.Descending);
             dataGridView1.Rows.Add(null, GetBlankBitmap(), "Load 10 More");
@@ -683,7 +693,7 @@ namespace RSSForm
             }
             return bmp;
         }
-        
+
 
         private void webBrowser1_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
@@ -726,11 +736,11 @@ namespace RSSForm
 
             Feeds.Instance.Load(openFileDialog1.FileName);
         }
-        
+
 
         private void setReadFromUrl(string url)
         {
-            foreach (Channel ch in Feeds.Instance.Channels)
+            foreach (Subscription ch in Feeds.Instance.Subscriptions)
             {
                 foreach (Item it in ch.item)
                 {
@@ -800,7 +810,7 @@ namespace RSSForm
                 if (selected[0].Value != null && selected[0].Value.ToString() == "Load 10 More")
                 {
                     Feeds.Instance.MaxItems += 10;
-                   
+
                     loadMessageForm();
                     //myparser.maxItems = max;
 
@@ -820,7 +830,7 @@ namespace RSSForm
 
                     Item it = Feeds.Instance.GetItem(ttl);
                     string str = it.linkI;
-                 
+
                     if (str.EndsWith(".mp3") || str.EndsWith(".mpeg") || str.EndsWith(".wma"))
                     {
                         tabControl1.SelectTab(1);
@@ -835,7 +845,7 @@ namespace RSSForm
                     }
                     else if (!String.IsNullOrEmpty(it.FilePath) && File.Exists(it.FilePath))
                     {
-                        webBrowser1.Navigate(it.FilePath); 
+                        webBrowser1.Navigate(it.FilePath);
                     }
                     else if (str != "")
                     {
@@ -884,10 +894,7 @@ namespace RSSForm
 
             if (result == System.Windows.Forms.DialogResult.OK)
             {
-                Channel ch = new Channel();
-                ch.RssLink = form.return_url;
-                ch.update = form.return_update;
-                Feeds.Instance.AddChannel(ch);
+                Feeds.Instance.AddChannel(form.NewSubscription);
                 form.Dispose();
                 treeViewRefresh();
             }
@@ -903,6 +910,6 @@ namespace RSSForm
             TreeNode node = treeView1.GetNodeAt(new Point(e.X, e.Y));
             treeView1.SelectedNode = node;
         }
-        
-    }    
+
+    }
 }
