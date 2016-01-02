@@ -21,7 +21,7 @@ namespace RSSForm
                 RSSMainForm form = new RSSMainForm();
                 form.Show();
 
-                form.treeViewRefresh();
+                form.LoadSubscriptions();
                 form.msg.Close();
                 Application.Run(form);
             }

@@ -12,50 +12,32 @@ namespace RSS
 {
     public class Item
     {
-        public string titleI;
+        public string Title { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+
+        public string Link { get; set; } = string.Empty;
+
+        public string Guid { get; set; } = string.Empty;
+
+        public string PubDate { get; set; } = string.Empty;
      
-        public string descriptionI;
-     
-        public string linkI;
-     
-        public string guidI;
-     
-        public string pubDateI;
-     
-        public List<author> authors = new List<author>();
+        public List<author> Authors = new List<author>();
         
-        public bool read = false;
+        public bool Read { get; set; } = false;
+
+        public string Subscription { get; set; } = string.Empty;
+
+        public bool IsDownloaded { get; set; } = false;
         
-        public string subscription;
-
-        private bool _isDownloaded;
-
-        public bool IsDownloaded
-        {
-            get 
-            {
-                return _isDownloaded;
-            }
-            set
-            {
-                _isDownloaded = value;
-            }
-        }
-
-        public bool CanBeDownloaded
-        {
-            get
-            {
-                
-                return !String.IsNullOrEmpty(linkI) && !String.IsNullOrEmpty(Path.GetExtension(linkI));
-            }
-        }
+        public bool CanBeDownloaded =>
+                !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(Path.GetExtension(Link));
         
         public int MbSize;
 
-        public string FilePath;
+        public string FilePath { get; set; } = string.Empty;
 
-        public int rowNum;
+        public int RowNum { get; set; } = 0;
 
         public delegate void DownloadProgressEvent(string MbString, float percent, int row);
 
@@ -67,7 +49,7 @@ namespace RSS
 
         public void DownloadFile()
         {
-            if (!String.IsNullOrEmpty(linkI))
+            if (!String.IsNullOrEmpty(Link))
             {
                 if (!Directory.Exists(RSSConfig.DownloadFolder))
                 {
@@ -78,7 +60,7 @@ namespace RSS
                 {
                     client.DownloadProgressChanged += client_DownloadProgressChanged;
                     client.DownloadFileCompleted += client_DownloadFileCompleted;
-                    client.DownloadFileAsync(new Uri(linkI), FilePath);
+                    client.DownloadFileAsync(new Uri(Link), FilePath);
                 }
             }
         }
@@ -95,7 +77,7 @@ namespace RSS
             DownloadCompleteEvent completeCopy = DownloadComplete;
             if (completeCopy != null)
             {
-                completeCopy(rowNum, MbSize);
+                completeCopy(RowNum, MbSize);
 
                 DownloadComplete -= completeCopy;
                 DownloadProgress -= progressCopy;
@@ -111,14 +93,14 @@ namespace RSS
             DownloadProgressEvent copy = DownloadProgress;
             if (copy != null)
             {
-                copy(MbString, e.ProgressPercentage, rowNum);
+                copy(MbString, e.ProgressPercentage, RowNum);
             }
         }
 
         private string GetFileType()
         {
             string type = "";
-            string[] strArr = linkI.Split('.');
+            string[] strArr = Link.Split('.');
             if (strArr.Length > 0)
             {
                 type = "." + strArr[strArr.Length - 1];
@@ -128,7 +110,7 @@ namespace RSS
 
         private string GetCleanFileName()
         {
-            string filename = titleI;
+            string filename = Title;
             string cleanFileName = "";
             if (!string.IsNullOrEmpty(filename))
             {
@@ -174,7 +156,7 @@ namespace RSS
         public bool DeleteFile()
         {
             bool success = false;
-            string url = linkI;
+            string url = Link;
             if (CanBeDownloaded)
             {
                 if (File.Exists(FilePath))

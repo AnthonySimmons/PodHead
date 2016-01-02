@@ -71,7 +71,7 @@ namespace RSS
 
         public static bool LoadAnyVersion(Subscription ch, int maxItems)
         {
-            ch.item.Clear();
+            ch.Items.Clear();
             string url = ch.RssLink;
             string rss;
             WebClient wc = new WebClient();
@@ -102,12 +102,40 @@ namespace RSS
             catch (WebException e)
             {
                 ch.HasErrors = true;
-                MessageBox.Show(e.Message + ".\n" + ch.title);
+                MessageBox.Show(e.Message + ".\n" + ch.Title);
             }
             return false;
         }
 
-       
+
+
+        private static string GetXmlElementValue(XmlNode parentNode, string elementName)
+        {
+            string value = string.Empty;
+
+            if (parentNode[elementName] != null)
+            {
+                value = parentNode[elementName].InnerText;
+            }
+
+            return value;
+        }
+
+        private static string GetXmlAttribute(XmlNode xmlNode, string attributeName)
+        {
+            string attribute = string.Empty;
+            if (xmlNode != null)
+            {
+                string value = xmlNode.Attributes[attributeName]?.Value;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    attribute = value;
+                }
+            }
+
+            return attribute;
+        }
+
         public static bool LoadXMLRSS2_0(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
@@ -123,31 +151,37 @@ namespace RSS
                 foreach (XmlElement channel in channels)
                 {
                     int counter = 0;
-                    ch.title = channel["title"]?.InnerText;
-                    ch.SiteLink = channel["link"]?.InnerText;
-                    ch.description = channel["description"]?.InnerText;
-                    ch.pubDate = channel["pubDate"]?.InnerText;
-                    ch.ttl = channel["ttl"]?.InnerText;
-                    ch.lastBuildDate = channel["lastBuildDate"]?.InnerText;
+                    ch.Title = GetXmlElementValue(channel, "title");
+                    ch.SiteLink = GetXmlElementValue(channel, "link");
+                    ch.Description = GetXmlElementValue(channel, "description");
+                    ch.PubDate = GetXmlElementValue(channel, "pubDate");
+                    ch.Ttl = GetXmlElementValue(channel, "ttl");
+                    ch.LastBuildDate = GetXmlElementValue(channel, "lastBuildDate");
 
                     var imageNodes = channel.GetElementsByTagName("image");
                     if(imageNodes.Count > 0)
                     {
                         var imageNode = imageNodes[0];
-                        ch.ImageUrl = imageNode["url"].InnerText;
+                        ch.ImageUrl = GetXmlElementValue(imageNode, "url");
                     }
 
                     var items = channel.GetElementsByTagName("item");
                     foreach(XmlNode item in items)
                     {
                         var it = new Item();
-                        it.titleI = item["title"]?.InnerText;
-                        it.linkI = item["link"]?.InnerText;
-                        it.descriptionI = processDescription(item["description"]?.InnerText);
-                        it.guidI = item["guid"]?.InnerText;
-                        it.pubDateI = item["pubDate"]?.InnerText;
+                        it.Title = GetXmlElementValue(item, "title");
+                        it.Link = GetXmlElementValue(item, "link");
 
-                        ch.item.Add(it);
+                        if (item["enclosure"] != null)
+                        {
+                            it.Link = GetXmlAttribute(item["enclosure"], "url");
+                        }
+
+                        it.Description = processDescription(GetXmlElementValue(item, "description"));
+                        it.Guid = GetXmlElementValue(item, "guid");
+                        it.PubDate = GetXmlElementValue(item, "pubDate");
+
+                        ch.Items.Add(it);
                         counter++;
                         if(counter > maxItems) { break; }
                     }
@@ -177,22 +211,22 @@ namespace RSS
                 foreach (XmlElement channel in channels)
                 {
                     int count = 0;
-                    ch.title = channel["title"]?.InnerText;
-                    ch.description = channel["description"]?.InnerText;
-                    ch.SiteLink = channel["link"]?.InnerText;
+                    ch.Title = GetXmlElementValue(channel, "title");
+                    ch.Description = GetXmlElementValue(channel, "description");
+                    ch.SiteLink = GetXmlElementValue(channel, "link");
 
                     var items = channel.GetElementsByTagName("item");
                         
                     foreach(XmlNode item in items)
                     {
                         var it = new Item();
-                        it.titleI = item["title"]?.InnerText;
-                        it.descriptionI = item["description"]?.InnerText;
-                        it.linkI = item["link"]?.InnerText;
-                        it.guidI = item["guid"]?.InnerText;
-                        it.pubDateI = item["pubDate"]?.InnerText;
+                        it.Title = GetXmlElementValue(item, "title");
+                        it.Description = GetXmlElementValue(item, "description");
+                        it.Link = GetXmlElementValue(item, "link");
+                        it.Guid = GetXmlElementValue(item, "guid");
+                        it.PubDate = GetXmlElementValue(item, "pubDate");
 
-                        ch.item.Add(it);
+                        ch.Items.Add(it);
                         count++;
                         if(count > maxItems) { break; }
                     }
@@ -207,23 +241,8 @@ namespace RSS
             ch.HasErrors = !success;
             return success;
         }
-        public static string dataRowContains(string name, DataRow dataRow, DataSet ds)
-        {
-            if (dataRow.Table.Columns.Contains(name))
-            {
-                return dataRow[name].ToString();
-            }
-            else if (ds.Tables.Contains(name))
-            {
-                string str = ds.Tables[name].ToString();
-                string s = "";
-                return s;
-            }
-            else
-            {
-                return "";
-            }
-        }
+        
+
 
         public static bool LoadXMLAtom(Subscription ch, string rss, int maxItems)
         {
@@ -233,33 +252,31 @@ namespace RSS
                 var doc = new XmlDocument();
                 doc.LoadXml(rss);
                 var feedNode = doc["feed"];
-                ch.title = feedNode["title"]?.InnerText;
-                
-                ch.ImageUrl = feedNode["icon"]?.InnerText;
+                ch.Title = GetXmlElementValue(feedNode, "title");
+                ch.ImageUrl = GetXmlElementValue(feedNode, "icon");
 
                 var entries = feedNode.GetElementsByTagName("entry");
                 foreach (XmlNode entry in entries)
                 {
                     int count = 0;
                     var item = new Item();
-                    item.titleI = entry["title"].InnerText;
-                    item.descriptionI = entry["summary"].InnerText;
-                    item.pubDateI = entry["updated"].InnerText;
-
-                    item.linkI = entry["link"]?.Attributes["href"]?.Value;
-
+                    item.Title = GetXmlElementValue(entry, "title");
+                    item.Description = GetXmlElementValue(entry, "summary");
+                    item.PubDate = GetXmlElementValue(entry, "updated");
+                    
+                    item.Link = GetXmlAttribute(entry["link"], "href");
                     if (entry["author"] != null)
                     {
                         foreach (XmlNode authorNode in entry["author"])
                         {
                             var auth = new author();
-                            auth.name = authorNode["name"].InnerText;
-                            auth.email = authorNode["email"].InnerText;
-                            item.authors.Add(auth);
+                            auth.name = GetXmlElementValue(authorNode, "name");
+                            auth.email = GetXmlElementValue(authorNode, "email");
+                            item.Authors.Add(auth);
                         }
                     }
 
-                    ch.item.Add(item);
+                    ch.Items.Add(item);
                     count++;
                     if(count > maxItems) { break; }
                 }

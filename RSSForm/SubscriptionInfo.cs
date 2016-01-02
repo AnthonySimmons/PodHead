@@ -8,29 +8,62 @@ namespace RSSForm
 {
     public partial class SubscriptionInfo : Form
     {
-        private Subscription _channel;
-        public SubscriptionInfo(Subscription ch)
+        private Subscription _subscription;
+
+        private Item _item;
+
+        private SubscriptionInfo()
         {
             InitializeComponent();
-            _channel = ch;
-            InitializeChannel();
 
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             Icon = Icon.FromHandle(ico.GetHicon());
         }
 
-        private void InitializeChannel()
+        public SubscriptionInfo(Subscription sub) 
+            : this()
+        {            
+            _subscription = sub;
+            LoadSubscription();
+        }
+
+        public SubscriptionInfo(Subscription sub, Item it)
+            : this()
         {
-            if (_channel != null)
+            _subscription = sub;
+            _item = it;
+            LoadItem();
+        }
+
+        private void LoadSubscription()
+        {
+            if (_subscription != null)
             {
-                textBoxTitle.Text = _channel.title;
-                linkLabelFeed.Text = _channel.RssLink;
-                linkLabelSite.Text = _channel.SiteLink;
-                textBoxDate.Text = _channel.pubDate;
-                textBoxDescription.Text = _channel.description;
-                if (!string.IsNullOrEmpty(_channel.ImageUrl))
+                textBoxTitle.Text = _subscription.Title;
+                linkLabelFeed.Text = _subscription.RssLink;
+                linkLabelSite.Text = _subscription.SiteLink;
+                textBoxDate.Text = _subscription.PubDate;
+                textBoxDescription.Text = _subscription.Description;
+                if (!string.IsNullOrEmpty(_subscription.ImageUrl))
                 {
-                    pictureBox1.Load(_channel.ImageUrl);
+                    pictureBox1.Load(_subscription.ImageUrl);
+                }
+            }
+        }
+
+        private void LoadItem()
+        {
+            if(_item != null)
+            {
+                textBoxTitle.Text = _item.Title;
+                linkLabelSite.Text = _item.Link;
+                linkLabelFeed.Text = _subscription.RssLink;
+                textBoxDescription.Text = _item.Description;
+                textBoxDate.Text = _item.PubDate;
+
+                if (!string.IsNullOrEmpty(_subscription.ImageUrl))
+                {
+                    pictureBox1.Load(_subscription.ImageUrl);
                 }
             }
         }

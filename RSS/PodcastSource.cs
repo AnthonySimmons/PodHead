@@ -4,32 +4,110 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
+using System.Text.RegularExpressions;
 
 namespace RSS
 {
     public enum PodcastGenre
     {
         Comedy = 1303,
-
     }
 
-    public static class PodcastSource
+    public class PodcastSource
     {
+        private static PodcastSource _instance;
+        private static object _instanceLock = new object();
+
+        public static PodcastSource Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    lock(_instanceLock)
+                    {
+                        _instance = new PodcastSource();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        public List<Subscription> Podcasts { get; } = new List<Subscription>();
+
+        //https://itunes.apple.com/lookup?id=260190086&entity=podcast
+        private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
+
         public const string iTunesPodcastFormat = "https://itunes.apple.com/us/rss/toppodcasts/limit={0}/genre={1}/xml";
+
+        private const string EntityPodcast = "podcast";
 
         public static int Limit { get; set; } = 10;
 
         public static PodcastGenre Genre { get; set; } = PodcastGenre.Comedy;
 
-        private static string GetPodcastSourceUrl()
+        public PodcastSource()
+        {
+            GetPodcasts();
+        }
+
+        private static string GetPodcastInfoJson(string podcastId)
+        {
+            string json = string.Empty;
+            string url = string.Format(iTunesLookupUrlFormat, podcastId, EntityPodcast);
+
+            var webClient = new WebClient();
+            Stream st = webClient.OpenRead(url);
+
+            using (var sr = new StreamReader(st))
+            {
+                json = sr.ReadToEnd();
+            }
+
+            return json;
+        }
+
+        private static Subscription GetSubscription(string json)
+        {
+            //Ex.
+            //https://itunes.apple.com/lookup?id=278981407&entity=podcast
+            var sub = new Subscription();
+
+            string feedUrl = string.Empty;
+            JToken rootToken = JObject.Parse(json);
+            JToken resultsToken = rootToken["results"];
+            JToken subToken = resultsToken.First;
+
+            sub.RssLink = (string)subToken["feedUrl"];
+            sub.Category = "Podcasts";
+            sub.Title = (string)subToken["collectionName"];
+            return sub;
+        }
+
+        private static string GetPodcastId(string itunesPodcastUrl)
+        {
+            //Ex.
+            //https://itunes.apple.com/us/podcast/monday-morning-podcast/id480486345?mt=2&ign-mpt=uo=2
+            // /id(\d)+
+            string id = string.Empty;
+
+            var match = Regex.Match(itunesPodcastUrl, @"/id(?<ID>(\d)+)");
+            id = match.Groups["ID"].Value;
+
+            return id;
+        }
+
+        private static string GetiTunesSourceUrl()
         {
             return string.Format(iTunesPodcastFormat, Limit, (int)Genre);
         }
 
-        private static string GetPodcastSourceRss()
+        private static string GetiTunesSourceRss()
         {
             var rss = string.Empty;
-            var url = GetPodcastSourceUrl();
+            var url = GetiTunesSourceUrl();
             var webClient = new WebClient();
 
             Stream st = webClient.OpenRead(url);
@@ -42,20 +120,36 @@ namespace RSS
             return rss;
         }
 
-        public static Subscription GetPodcasts()
+        private static Subscription GetiTunesPodcasts()
         {
-            var url = GetPodcastSourceUrl();
-
-            
+            var url = GetiTunesSourceUrl();
+                        
             var channel = new Subscription()
             {
                 RssLink = url,
-                title = Genre.ToString(),
+                Title = Genre.ToString(),
+                Category = "iTunes"
             };
 
             Parser.LoadAnyVersion(channel, Feeds.Instance.MaxItems);
 
             return channel;
+        }
+
+        private void GetPodcasts()
+        {
+            var podcastsChart = GetiTunesPodcasts();
+
+            foreach (var podcast in podcastsChart.Items)
+            {
+                var podcastId = GetPodcastId(podcast.Link);
+                var podcastInfoJson = GetPodcastInfoJson(podcastId);
+                var subscription = GetSubscription(podcastInfoJson);
+                Parser.LoadAnyVersion(subscription, Feeds.Instance.MaxItems);
+                Podcasts.Add(subscription);
+            }
+            
+
         }
 
     }

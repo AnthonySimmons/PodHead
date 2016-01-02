@@ -37,8 +37,8 @@
             this.showUnreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.DownloadProgress = new System.Windows.Forms.DataGridViewImageColumn();
@@ -60,7 +60,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelSource = new System.Windows.Forms.Label();
+            this.comboBoxSource = new System.Windows.Forms.ComboBox();
+            this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -75,6 +80,8 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -136,16 +143,12 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
-            // treeView1
+            // aboutToolStripMenuItem
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(243, 551);
-            this.treeView1.TabIndex = 2;
-            this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
-            this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // splitContainer1
             // 
@@ -345,7 +348,7 @@
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.treeView1);
+            this.splitContainer2.Panel1.Controls.Add(this.tableLayoutPanel1);
             // 
             // splitContainer2.Panel2
             // 
@@ -354,12 +357,88 @@
             this.splitContainer2.SplitterDistance = 243;
             this.splitContainer2.TabIndex = 10;
             // 
-            // aboutToolStripMenuItem
+            // tableLayoutPanel1
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.treeView1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.56863F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 78.43137F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // treeView1
+            // 
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.treeView1.Location = new System.Drawing.Point(3, 121);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(237, 427);
+            this.treeView1.TabIndex = 0;
+            this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
+            this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.labelSource, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 2);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 112);
+            this.tableLayoutPanel2.TabIndex = 1;
+            // 
+            // labelSource
+            // 
+            this.labelSource.AutoSize = true;
+            this.labelSource.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSource.Location = new System.Drawing.Point(3, 0);
+            this.labelSource.Name = "labelSource";
+            this.labelSource.Size = new System.Drawing.Size(231, 37);
+            this.labelSource.TabIndex = 0;
+            this.labelSource.Text = "Source:";
+            this.labelSource.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // comboBoxSource
+            // 
+            this.comboBoxSource.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxSource.FormattingEnabled = true;
+            this.comboBoxSource.Items.AddRange(new object[] {
+            "Subscriptions",
+            "Top Charts",
+            "Downloads"});
+            this.comboBoxSource.Location = new System.Drawing.Point(3, 40);
+            this.comboBoxSource.Name = "comboBoxSource";
+            this.comboBoxSource.Size = new System.Drawing.Size(231, 33);
+            this.comboBoxSource.TabIndex = 1;
+            this.comboBoxSource.SelectedIndexChanged += new System.EventHandler(this.comboBoxDisplay_SelectedIndexChanged);
+            // 
+            // comboBoxGenre
+            // 
+            this.comboBoxGenre.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBoxGenre.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxGenre.FormattingEnabled = true;
+            this.comboBoxGenre.Location = new System.Drawing.Point(3, 77);
+            this.comboBoxGenre.Name = "comboBoxGenre";
+            this.comboBoxGenre.Size = new System.Drawing.Size(231, 33);
+            this.comboBoxGenre.TabIndex = 2;
+            this.comboBoxGenre.Visible = false;
             // 
             // RSSMainForm
             // 
@@ -393,6 +472,9 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -408,7 +490,6 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripMenuItem showUnreadToolStripMenuItem;
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         public System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.DataGridView dataGridView1;
@@ -431,6 +512,12 @@
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.Label labelSource;
+        private System.Windows.Forms.ComboBox comboBoxSource;
+        private System.Windows.Forms.ComboBox comboBoxGenre;
     }
 }
 

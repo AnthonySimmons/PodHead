@@ -30,11 +30,11 @@ namespace RSSForm
             NewSubscription.RssLink = url_entry.Text;
             NewSubscription.Category = textBoxCategory.Text;
             
-            NewSubscription.update = (int)numericUpDown1.Value;
+            NewSubscription.Update = (int)numericUpDown1.Value;
             
             if (numericUpDown1.Value == 0)
             {
-                NewSubscription.update = 24;
+                NewSubscription.Update = 24;
             }
 
             this.Close();

@@ -42,7 +42,7 @@ namespace RSS
             {
                 foreach (Subscription ch in Subscriptions)
                 {
-                    if (ch.title == name)
+                    if (ch.Title == name)
                     {
                         Subscriptions.Remove(ch);
                         break;
@@ -60,7 +60,7 @@ namespace RSS
             }
         }
 
-        public void parseAllFeeds()
+        public void ParseAllFeeds()
         {
             int count = 0;
             foreach (Subscription ch in Subscriptions)
@@ -91,24 +91,29 @@ namespace RSS
         {
             foreach (Subscription ch in Subscriptions)
             {
-                if (ch.title == title)
+                if (ch.Title == title)
                 {
-                    ch.feed = feed;
+                    ch.Feed = feed;
                 }
             }
         }
 
         public Item GetItem(string title)
         {
-            Subscription ch = Subscriptions.FirstOrDefault(m => m.item.Any(p => p.titleI == title));
+            Subscription ch = Subscriptions.FirstOrDefault(m => m.Items.Any(p => p.Title == title));
             Item it = null;
             if (ch != null)
             {
-                it = ch.item.FirstOrDefault(m => m.titleI == title);
+                it = ch.Items.FirstOrDefault(m => m.Title == title);
             }
             return it;
         }
 
+
+        public bool ContainsSubscription(string subscriptionTitle)
+        {
+            return Subscriptions.FirstOrDefault(s => s.Title == subscriptionTitle) != null;
+        }
 
         #region Save and Load
 
@@ -135,16 +140,16 @@ namespace RSS
                     {
                         writer.WriteStartElement("Subscription");
                         writer.WriteElementString("Category_Name", ch.Category);
-                        if (ch.title == "")
+                        if (ch.Title == "")
                         {
                             writer.WriteElementString("Subscription_Name", "Default Name");
                         }
                         else
                         {
-                            writer.WriteElementString("Subscription_Name", ch.title);
+                            writer.WriteElementString("Subscription_Name", ch.Title);
                         }
                         writer.WriteElementString("Subscription_URL", ch.RssLink);
-                        writer.WriteElementString("Subscription_Update", ch.update.ToString());
+                        writer.WriteElementString("Subscription_Update", ch.Update.ToString());
 
                         writer.WriteEndElement();
                     }
@@ -174,9 +179,9 @@ namespace RSS
                     {
                         Subscription ch = new Subscription();
                         ch.Category = Convert.ToString(dataRow["Category_Name"]);
-                        ch.title = Convert.ToString(dataRow["Subscription_Name"]);
+                        ch.Title = Convert.ToString(dataRow["Subscription_Name"]);
                         ch.RssLink = Convert.ToString(dataRow["Subscription_URL"]);
-                        ch.update = Convert.ToInt32(dataRow["Subscription_Update"]);
+                        ch.Update = Convert.ToInt32(dataRow["Subscription_Update"]);
                         Subscriptions.Add(ch);
                     }
 
@@ -194,7 +199,7 @@ namespace RSS
         {
             foreach (Subscription ch in Subscriptions)
             {
-                if (name == ch.title)
+                if (name == ch.Title)
                 {
                     return ch;
                 }

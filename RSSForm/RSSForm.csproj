@@ -122,6 +122,9 @@
     <None Include="Images\downloads-icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Images\bookmark-ribbon.jpg" />
+    <None Include="Images\info.jpg" />
+    <None Include="Images\reload.png" />
     <Content Include="Images\RSS-Icon.png" />
     <None Include="Images\PlayIcon.jpg" />
     <None Include="Images\LoadIcon.png" />
