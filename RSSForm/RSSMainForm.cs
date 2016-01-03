@@ -33,38 +33,47 @@ namespace RSSForm
         const string itunesPodcastUrl = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2";
 
 
-        public Form msg = new Form();
-        ProgressBar msgProg = new ProgressBar();
-
         public RSSMainForm()
         {
             InitializeComponent();
-            //SetupTreeViewContextMenu();
+
+            toolStripProgressBar1.Dock = DockStyle.Fill;
+
             SetupGridViewContextMenu();
-            loadMessageForm();
 
             treeView1.ImageList = new ImageList();
-            treeView1.ImageList.Images.Add(nameof(Properties.Resources.RSS_Icon), Properties.Resources.RSS_Icon);
+            treeView1.ImageList.Images.Add(new Bitmap(1, 1));
             treeView1.ImageList.Images.Add(nameof(Properties.Resources.bookmark_ribbon), Properties.Resources.bookmark_ribbon);
 
             comboBoxSource.SelectedIndex = 0;
 
-            Feeds.Instance.UpdateProgressBar += UpdateProgressBar;
+            PodcastSource.Instance.PodcastSourceUpdated += PodcastSourceUpdated;
+            PodcastSource.Instance.ErrorEncountered += PodcastSourceErrorEncountered;
+
+            Feeds.Instance.FeedUpdated += FeedLoadUpdate;
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
-            Feeds.Instance.ParseAllFeeds();
-            
+
             //populate the listbox feed_list_display with the Saved channels
 
             dateTimePicker1.Format = DateTimePickerFormat.Short;
             dateTimePicker2.Format = DateTimePickerFormat.Short;
             LoadSubscriptions();
-            //treeView1.CheckBoxes = true;
+
+
             treeView1.BackColor = Color.CornflowerBlue;
             webBrowser1.Navigate(itunesPodcastUrl);
             webBrowser1.ObjectForScripting = this;
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
 
+            LoadPodcastGenres();
+        }
+
+
+        private void LoadPodcastGenres()
+        {
+            comboBoxGenre.Items.Clear();
+            comboBoxGenre.Items.AddRange(PodcastSource.PodcastGenreCodes.Keys.ToArray());
         }
 
 
@@ -168,8 +177,11 @@ namespace RSSForm
             if (sub != null)
             {
                 Feeds.Instance.AddChannel(sub);
+                Feeds.Instance.Save(RSSConfig.ConfigFileName);
+                SetSubscriptionNodeImage(treeView1.SelectedNode, sub.Title);
             }
         }
+
 
         private void RefreshChannel(string channelTitle)
         {
@@ -198,7 +210,7 @@ namespace RSSForm
             {
                 string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
                 string subscriptionTitle = selectedSub;
-                
+
                 Subscription sub = GetSubscription(subscriptionTitle);
                 Item it = sub.Items.FirstOrDefault(i => i.Title == title);
 
@@ -208,7 +220,7 @@ namespace RSSForm
                     info.ShowDialog();
                 }
             }
-            
+
         }
 
 
@@ -260,46 +272,6 @@ namespace RSSForm
             }
             return title;
         }
-
-        public void UpdateProgressBar(int val)
-        {
-            msgProg.Value = val;
-            msgProg.Refresh();
-            msg.Refresh();
-            msg.BringToFront();
-            msg.Activate();
-        }
-
-        public void loadMessageForm()
-        {
-            msg = new Form();
-            msg.ShowInTaskbar = false;
-            msg.FormBorderStyle = FormBorderStyle.FixedDialog;
-            Bitmap bmp = new Bitmap(Properties.Resources.RSS_Icon);
-            msg.Icon = Icon.FromHandle(bmp.GetHicon());
-            msg.Height = 150;
-            msg.Width = 350;
-            Label lbl = new Label();
-            lbl.Name = "lbl";
-            lbl.AutoSize = true;
-            lbl.Visible = true;
-            lbl.Font = new Font(FontFamily.GenericSerif, 12, FontStyle.Bold);
-            lbl.Enabled = true;
-            lbl.ForeColor = System.Drawing.Color.Black;
-            lbl.Text = "Loading Saved Subscriptions...";
-            lbl.Location = new System.Drawing.Point(50, 20);
-
-            msgProg = new ProgressBar();
-            msgProg.Width = 250;
-            msgProg.Location = new Point(40, 50);
-
-            msg.Controls.Add(msgProg);
-            msg.Controls.Add(lbl);
-            msg.Location = new Point(700, 800);
-            msg.Show();
-            msg.Refresh();
-        }
-
 
         //Menu strip File -> Exit: closes the program.
         private void exitToolStripMenuItem2_Click(object sender, EventArgs e)
@@ -376,19 +348,18 @@ namespace RSSForm
             treeView1.BeginUpdate();
             treeView1.SuspendLayout();
             treeView1.Nodes.Clear();
-            foreach(Subscription sub in PodcastSource.Instance.Podcasts)
+
+            var podcasts = PodcastSource.Instance.Podcasts.ToList();
+            foreach (Subscription sub in podcasts)
             {
                 TreeNode subNode = new TreeNode();
                 subNode.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
                 subNode.Text = sub.Title;
                 subNode.ContextMenuStrip = GetTopChartContextMenuStrip();
 
-                if(Feeds.Instance.ContainsSubscription(sub.Title))
-                {
-                    subNode.SelectedImageKey = nameof(Properties.Resources.bookmark_ribbon);
-                }
+                SetSubscriptionNodeImage(subNode, sub.Title);
 
-                if(!treeView1.Nodes.ContainsKey(subNode.Name))
+                if (!treeView1.Nodes.ContainsKey(subNode.Name))
                 {
                     treeView1.Nodes.Add(subNode);
                 }
@@ -398,6 +369,20 @@ namespace RSSForm
             treeView1.Refresh();
         }
 
+        private void SetSubscriptionNodeImage(TreeNode node, string subscriptionTitle)
+        {
+            if (Feeds.Instance.ContainsSubscription(subscriptionTitle))
+            {
+                node.SelectedImageKey = nameof(Properties.Resources.bookmark_ribbon);
+                node.ImageKey = node.SelectedImageKey;
+                node.SelectedImageIndex = 1;
+                node.ImageIndex = node.SelectedImageIndex;
+            }
+            else
+            {
+                node.SelectedImageIndex = 0;
+            }
+        }
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -525,14 +510,14 @@ namespace RSSForm
         {
             splitContainer1.Height = this.Height - 55;
             splitContainer1.Width = this.Width - treeView1.Width - 25;
-                        
+
             dataGridView1.Width = this.Width - treeView1.Width;
             dataGridView1.Height = this.Height - webBrowser1.Height;
             dataGridView1.Dock = DockStyle.Fill;
 
             treeView1.Height = this.Height;
             textBox1.Width = webBrowser1.Width;
-            
+
         }
 
         private string GetDateTime(string date)
@@ -606,7 +591,7 @@ namespace RSSForm
         private Subscription GetSubscription(string subscriptionTitle)
         {
             var sub = Feeds.Instance.Subscriptions.FirstOrDefault(s => s.Title == subscriptionTitle);
-            if(sub == null)
+            if (sub == null)
             {
                 sub = PodcastSource.Instance.Podcasts.FirstOrDefault(s => s.Title == subscriptionTitle);
             }
@@ -617,7 +602,7 @@ namespace RSSForm
         {
             Item it = null;
             var sub = GetSubscription(subscriptionTitle);
-            if(sub != null)
+            if (sub != null)
             {
                 it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
             }
@@ -866,7 +851,6 @@ namespace RSSForm
                 {
                     Feeds.Instance.MaxItems += 10;
 
-                    loadMessageForm();
                     //myparser.maxItems = max;
 
                     if (selectedSub != "")
@@ -921,7 +905,7 @@ namespace RSSForm
             {
                 string title = GetTitleFromSelectedDataGrid();
                 Item it = GetItem(selectedSub, title);
-                
+
                 if (it != null && it.CanBeDownloaded)
                 {
                     if (it.IsDownloaded)
@@ -952,19 +936,22 @@ namespace RSSForm
                 Feeds.Instance.AddChannel(form.NewSubscription);
                 form.Dispose();
                 LoadSubscriptions();
+                Feeds.Instance.Save(RSSConfig.ConfigFileName);
             }
         }
 
         private void UpdateDisplay(string selectedDisplay)
         {
-            switch(selectedDisplay)
+            switch (selectedDisplay)
             {
                 case "Subscriptions":
                     comboBoxGenre.Visible = false;
+                    buttonLoadMoreCharts.Visible = false;
                     LoadSubscriptions();
                     break;
                 case "Top Charts":
                     comboBoxGenre.Visible = true;
+                    buttonLoadMoreCharts.Visible = true;
                     LoadTopCharts();
                     break;
                 case "Downloads":
@@ -987,6 +974,79 @@ namespace RSSForm
         {
             UpdateDisplay(comboBoxSource?.SelectedItem?.ToString());
         }
-        
+
+        private void comboBoxGenre_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PodcastSource.Limit = PodcastSource.DefaultLimit;
+            PodcastSource.Instance.Podcasts.Clear();
+            PodcastSource.Genre = comboBoxGenre.SelectedItem.ToString();
+            PodcastSource.Instance.GetPodcastsAsync();
+        }
+
+        private void buttonLoadMoreCharts_Click(object sender, EventArgs e)
+        {
+            PodcastSource.Limit += 10;
+            PodcastSource.Instance.GetPodcastsAsync();
+        }
+
+
+        private void PodcastSourceUpdated(double updatePercentage)
+        {
+            this.Invoke(new Action(() =>
+            {
+                UpdateToolStripProgressBar(updatePercentage);
+                if (updatePercentage >= 1.0)
+                {
+                    LoadTopCharts();
+                }
+            }
+            ));
+        }
+
+        private void UpdateToolStripProgressBar(double updatePercentage)
+        {
+            toolStripProgressBar1.Visible = true;
+            int value = (int)(updatePercentage * 100);
+            if (value >= toolStripProgressBar1.Maximum)
+            {
+                value = toolStripProgressBar1.Minimum;
+                toolStripProgressBar1.Visible = false;
+            }
+
+            toolStripProgressBar1.Value = value;
+        }
+
+        private void PodcastSourceErrorEncountered(string errorMessage)
+        {
+            MessageBox.Show(errorMessage);
+        }
+
+        private void FeedLoadUpdate(double updatePercentage)
+        {
+            this.Invoke(new Action(() =>
+            {
+                UpdateToolStripProgressBar(updatePercentage);
+                if (updatePercentage >= 1.0)
+                {
+                    LoadSubscriptions();
+                }
+            }
+            ));
+        }
+
+        private void RSSMainForm_Load(object sender, EventArgs e)
+        {
+            Feeds.Instance.ParseAllFeedsAsync();
+        }
+
+        private void RSSMainForm_SizeChanged(object sender, EventArgs e)
+        {
+            toolStripProgressBar1.Width = Math.Max(50, statusStrip1.Width = 50);
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Feeds.Instance.ParseAllFeedsAsync();
+        }
     }
 }

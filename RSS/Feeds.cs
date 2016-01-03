@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Threading;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -60,32 +62,47 @@ namespace RSS
             }
         }
 
-        public void ParseAllFeeds()
+        public void ParseAllFeedsAsync()
         {
-            int count = 0;
-            foreach (Subscription ch in Subscriptions)
-            {
-                Parser.LoadAnyVersion(ch, MaxItems);
-                InvokeUpdateProgress(100 * count / Subscriptions.Count);
-                count++;
-            }
+            var thread = new Thread(ParseAllFeeds);
+            thread.Start();
         }
 
-
-
-        public delegate void UpdateProgress(int val);
-        public event UpdateProgress UpdateProgressBar;
-
-
-
-        private void InvokeUpdateProgress(int val)
+        private void ParseAllFeeds()
         {
-            UpdateProgress copy = UpdateProgressBar;
-            if (copy != null)
+            subsParsed = 0;
+            foreach (Subscription sub in Subscriptions)
             {
-                copy(val);
+                var bw = new BackgroundWorker();
+                bw.DoWork += Bw_DoWork;
+                bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+                bw.RunWorkerAsync(sub);
             }
         }
+        int subsParsed = 0;
+
+        private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            FeedUpdated?.Invoke((double)++subsParsed / (double)Subscriptions.Count);
+        }
+
+        private void Bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var sub = e.Argument as Subscription;
+            if (sub != null)
+            {
+                Parser.LoadAnyVersion(sub, MaxItems);
+            }
+        }
+        
+
+        public delegate void FeedUpdatedEventHandler(double updatePercentage);
+        public event FeedUpdatedEventHandler FeedUpdated;
+
+
+        private Feeds() { }
+
+
 
         public void setChannelFeed(string title, string feed)
         {
@@ -97,6 +114,8 @@ namespace RSS
                 }
             }
         }
+
+
 
         public Item GetItem(string title)
         {

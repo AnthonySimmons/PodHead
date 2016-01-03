@@ -66,6 +66,10 @@
             this.labelSource = new System.Windows.Forms.Label();
             this.comboBoxSource = new System.Windows.Forms.ComboBox();
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
+            this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -82,6 +86,7 @@
             this.splitContainer2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -101,6 +106,7 @@
             this.newSubcriptionToolStripMenuItem,
             this.toolStripSeparator2,
             this.showUnreadToolStripMenuItem,
+            this.refreshToolStripMenuItem,
             this.exitToolStripMenuItem2});
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -359,6 +365,7 @@
             // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.treeView1, 0, 1);
@@ -367,8 +374,8 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 21.56863F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 78.43137F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 75F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -376,38 +383,41 @@
             // 
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.treeView1.Location = new System.Drawing.Point(3, 121);
+            this.treeView1.Location = new System.Drawing.Point(3, 140);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(237, 427);
+            this.treeView1.Size = new System.Drawing.Size(237, 408);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
             this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
             // 
             // tableLayoutPanel2
             // 
+            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.labelSource, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.buttonLoadMoreCharts, 0, 3);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 112);
+            this.tableLayoutPanel2.RowCount = 4;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 131);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // labelSource
             // 
             this.labelSource.AutoSize = true;
             this.labelSource.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelSource.Location = new System.Drawing.Point(3, 0);
             this.labelSource.Name = "labelSource";
-            this.labelSource.Size = new System.Drawing.Size(231, 37);
+            this.labelSource.Size = new System.Drawing.Size(231, 22);
             this.labelSource.TabIndex = 0;
             this.labelSource.Text = "Source:";
             this.labelSource.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -416,13 +426,14 @@
             // 
             this.comboBoxSource.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxSource.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.comboBoxSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxSource.FormattingEnabled = true;
             this.comboBoxSource.Items.AddRange(new object[] {
             "Subscriptions",
             "Top Charts",
             "Downloads"});
-            this.comboBoxSource.Location = new System.Drawing.Point(3, 40);
+            this.comboBoxSource.Location = new System.Drawing.Point(3, 25);
             this.comboBoxSource.Name = "comboBoxSource";
             this.comboBoxSource.Size = new System.Drawing.Size(231, 33);
             this.comboBoxSource.TabIndex = 1;
@@ -430,21 +441,62 @@
             // 
             // comboBoxGenre
             // 
+            this.comboBoxGenre.BackColor = System.Drawing.SystemColors.Window;
             this.comboBoxGenre.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxGenre.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.comboBoxGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBoxGenre.ForeColor = System.Drawing.SystemColors.ControlText;
             this.comboBoxGenre.FormattingEnabled = true;
-            this.comboBoxGenre.Location = new System.Drawing.Point(3, 77);
+            this.comboBoxGenre.Location = new System.Drawing.Point(3, 65);
             this.comboBoxGenre.Name = "comboBoxGenre";
             this.comboBoxGenre.Size = new System.Drawing.Size(231, 33);
             this.comboBoxGenre.TabIndex = 2;
             this.comboBoxGenre.Visible = false;
+            this.comboBoxGenre.SelectedIndexChanged += new System.EventHandler(this.comboBoxGenre_SelectedIndexChanged);
+            // 
+            // buttonLoadMoreCharts
+            // 
+            this.buttonLoadMoreCharts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonLoadMoreCharts.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonLoadMoreCharts.Location = new System.Drawing.Point(3, 105);
+            this.buttonLoadMoreCharts.Name = "buttonLoadMoreCharts";
+            this.buttonLoadMoreCharts.Size = new System.Drawing.Size(231, 23);
+            this.buttonLoadMoreCharts.TabIndex = 3;
+            this.buttonLoadMoreCharts.Text = "Load More";
+            this.buttonLoadMoreCharts.UseVisualStyleBackColor = true;
+            this.buttonLoadMoreCharts.Visible = false;
+            this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripProgressBar1});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 575);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(745, 22);
+            this.statusStrip1.TabIndex = 11;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripProgressBar1
+            // 
+            this.toolStripProgressBar1.Name = "toolStripProgressBar1";
+            this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
+            this.toolStripProgressBar1.Visible = false;
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // RSSMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(745, 597);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.dateTimePicker2);
@@ -453,8 +505,11 @@
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer2);
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(400, 400);
             this.Name = "RSSMainForm";
             this.Text = "RSS Reader";
+            this.Load += new System.EventHandler(this.RSSMainForm_Load);
+            this.SizeChanged += new System.EventHandler(this.RSSMainForm_SizeChanged);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -475,6 +530,8 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -518,6 +575,10 @@
         private System.Windows.Forms.Label labelSource;
         private System.Windows.Forms.ComboBox comboBoxSource;
         private System.Windows.Forms.ComboBox comboBoxGenre;
+        private System.Windows.Forms.Button buttonLoadMoreCharts;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
+        private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
     }
 }
 

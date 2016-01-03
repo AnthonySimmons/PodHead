@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
@@ -10,13 +12,34 @@ using System.Text.RegularExpressions;
 
 namespace RSS
 {
-    public enum PodcastGenre
-    {
-        Comedy = 1303,
-    }
+    public delegate void PodcastSourceUpdateEventHandler(double updatePercentage);
+
+    public delegate void PodcastSourceErrorEventHandler(string errorMessage);
 
     public class PodcastSource
     {
+        
+
+        public static Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int>
+        {
+            ["Arts"] = 1301,
+            ["Business"] = 1321,
+            ["Comedy"] = 1303,
+            ["Education"] = 1304,
+            ["Games & Hobbies"] = 1323,
+            ["Government & Organizations"] = 1325,
+            ["Health"] = 1307,
+            ["Kids & Family"] = 1305,
+            ["Music"] = 1310,
+            ["News & Politics"] = 1311,
+            ["Religion & Spirituality"] = 1314,
+            ["Science & Medicine"] = 1315,
+            ["Society & Culture"] = 1324,
+            ["Sports & Recreation"] = 1316,
+            ["Technology"] = 1318,
+            ["TV & Film"] = 1309,
+        };
+
         private static PodcastSource _instance;
         private static object _instanceLock = new object();
 
@@ -44,14 +67,18 @@ namespace RSS
 
         private const string EntityPodcast = "podcast";
 
-        public static int Limit { get; set; } = 10;
+        public static int Limit { get; set; } = DefaultLimit;
 
-        public static PodcastGenre Genre { get; set; } = PodcastGenre.Comedy;
+        public static string Genre { get; set; } = "Comedy";
 
-        public PodcastSource()
-        {
-            GetPodcasts();
-        }
+        public const int DefaultLimit = 10;
+
+        public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
+
+        public event PodcastSourceErrorEventHandler ErrorEncountered;
+
+        private PodcastSource() { }
+
 
         private static string GetPodcastInfoJson(string podcastId)
         {
@@ -101,7 +128,7 @@ namespace RSS
 
         private static string GetiTunesSourceUrl()
         {
-            return string.Format(iTunesPodcastFormat, Limit, (int)Genre);
+            return string.Format(iTunesPodcastFormat, Limit, PodcastGenreCodes[Genre]);
         }
 
         private static string GetiTunesSourceRss()
@@ -138,18 +165,62 @@ namespace RSS
 
         private void GetPodcasts()
         {
-            var podcastsChart = GetiTunesPodcasts();
-
-            foreach (var podcast in podcastsChart.Items)
+            try
             {
-                var podcastId = GetPodcastId(podcast.Link);
-                var podcastInfoJson = GetPodcastInfoJson(podcastId);
-                var subscription = GetSubscription(podcastInfoJson);
-                Parser.LoadAnyVersion(subscription, Feeds.Instance.MaxItems);
+                var podcastsChart = GetiTunesPodcasts();
+                
+                int count = 0;
+                foreach (var podcast in podcastsChart.Items)
+                {
+                    var bw = new BackgroundWorker();
+                    bw.DoWork += Bw_DoWork;
+                    bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
+                    bw.RunWorkerAsync(podcast);
+
+                    //double percent = (double)(++count) / (double)podcastsChart.Items.Count;
+                    //PodcastSourceUpdated?.Invoke(percent);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex);
+                ErrorEncountered?.Invoke(ex.Message);
+            }
+        }
+
+        private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            double percent = (double)(Podcasts.Count+1) / (double)Limit;
+            PodcastSourceUpdated?.Invoke(percent);
+        }
+
+        private void Bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var item = e.Argument as Item;
+            if(item != null)
+            {
+                GetPodcastFromItem(item);
+            }
+        }
+
+        private void GetPodcastFromItem(Item podcastItem)
+        {
+            var podcastId = GetPodcastId(podcastItem.Link);
+            var podcastInfoJson = GetPodcastInfoJson(podcastId);
+            var subscription = GetSubscription(podcastInfoJson);
+            Parser.LoadAnyVersion(subscription, Feeds.Instance.MaxItems);
+
+            if (Podcasts.FirstOrDefault(p => p.Title == subscription.Title) == null)
+            {
                 Podcasts.Add(subscription);
             }
-            
 
+        }
+
+        public void GetPodcastsAsync()
+        {
+            var thread = new Thread(GetPodcasts);
+            thread.Start();
         }
 
     }
