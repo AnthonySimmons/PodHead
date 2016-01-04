@@ -25,13 +25,6 @@ namespace RSSForm
         int FileSizeColumnWidth = 75;
         int FileSizeColumnHeight = 25;
 
-        char[] delimit = { ' ', '\'' };
-
-        string ttl;
-        bool webcheck = false;
-
-        const string itunesPodcastUrl = "https://itunes.apple.com/us/genre/podcasts/id26?mt=2";
-
 
         public RSSMainForm()
         {
@@ -60,7 +53,6 @@ namespace RSSForm
 
 
             treeView1.BackColor = Color.CornflowerBlue;
-            webBrowser1.Navigate(itunesPodcastUrl);
             webBrowser1.ObjectForScripting = this;
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
@@ -116,6 +108,8 @@ namespace RSSForm
             {
                 column.ContextMenuStrip = menu;
             }
+            
+
         }
 
         private void GridContextClick(object sender, EventArgs e)
@@ -482,26 +476,6 @@ namespace RSSForm
             }
             return "";
         }
-        private string findLinkFromTitle(string title)
-        {
-            foreach (Subscription ch in Feeds.Instance.Subscriptions)
-            {
-                foreach (Item it in ch.Items)
-                {
-                    if (title == it.Title)
-                    {
-                        if (webcheck == true)
-                        {
-                            it.Read = true;
-                        }
-
-                        return it.Link;
-
-                    }
-                }
-            }
-            return "";
-        }
 
 
         private bool DeleteFile()
@@ -799,25 +773,7 @@ namespace RSSForm
             Feeds.Instance.Load(openFileDialog1.FileName);
         }
 
-
-        private void setReadFromUrl(string url)
-        {
-            foreach (Subscription ch in Feeds.Instance.Subscriptions)
-            {
-                foreach (Item it in ch.Items)
-                {
-                    if (url == it.Link)
-                    {
-                        if (webcheck == true)
-                        {
-                            it.Read = true;
-                        }
-                        //return it.descriptionI;
-
-                    }
-                }
-            }
-        }
+        
 
         
         private void PlaySelected()
@@ -858,22 +814,16 @@ namespace RSSForm
                 if (selected[0].Value != null && selected[0].Value.ToString() == "Load 10 More")
                 {
                     Feeds.Instance.MaxItems += 10;
-
-                    //myparser.maxItems = max;
-
+                    
                     if (selectedSub != "")
                     {
-                        //string select = treeView1.SelectedNode.Text;
                         LoadSubscriptions();
-                        if (webcheck == true)
-                        {
-                            LoadDataGrid(selectedSub);
-                        }
+                        LoadDataGrid(selectedSub);
                     }
                 }
                 else if (selected[0].Value != null)
                 {
-                    ttl = dataGridView1.Rows[selected[0].RowIndex].Cells["Title"].Value.ToString();
+                    string ttl = dataGridView1.Rows[selected[0].RowIndex].Cells["Title"].Value.ToString();
 
                     Item it = GetItem(selectedSub, ttl);
                     string str = it.Link;
