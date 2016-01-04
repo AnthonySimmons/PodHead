@@ -47,16 +47,15 @@ namespace RSSForm
 
             comboBoxSource.SelectedIndex = 0;
 
-            PodcastSource.Instance.PodcastSourceUpdated += PodcastSourceUpdated;
-            PodcastSource.Instance.ErrorEncountered += PodcastSourceErrorEncountered;
+            PodcastCharts.Instance.PodcastSourceUpdated += PodcastSourceUpdated;
+            PodcastCharts.Instance.ErrorEncountered += PodcastSourceErrorEncountered;
+
+            PodcastSearch.Instance.SearchResultReceived += PodcastSearchResultReceived;
+            PodcastSearch.Instance.ErrorEncountered += PodcastSourceErrorEncountered;
 
             Feeds.Instance.FeedUpdated += FeedLoadUpdate;
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
-
-            //populate the listbox feed_list_display with the Saved channels
-
-            dateTimePicker1.Format = DateTimePickerFormat.Short;
-            dateTimePicker2.Format = DateTimePickerFormat.Short;
+            
             LoadSubscriptions();
 
 
@@ -73,7 +72,7 @@ namespace RSSForm
         private void LoadPodcastGenres()
         {
             comboBoxGenre.Items.Clear();
-            comboBoxGenre.Items.AddRange(PodcastSource.PodcastGenreCodes.Keys.ToArray());
+            comboBoxGenre.Items.AddRange(PodcastCharts.PodcastGenreCodes.Keys.ToArray());
         }
 
 
@@ -156,6 +155,7 @@ namespace RSSForm
                     string title = treeView1.SelectedNode.Text;
                     LoadDataGrid(title);
                     LoadChannelLink();
+                    LoadSubscriptionInfoTab(title);
                     break;
                 case "Info":
                     LoadSubscriptionInfo(treeView1.SelectedNode.Text);
@@ -173,7 +173,7 @@ namespace RSSForm
         {
             Subscription sub;
             string subTitle = treeView1.SelectedNode.Text;
-            sub = PodcastSource.Instance.Podcasts.FirstOrDefault(p => p.Title == subTitle);
+            sub = GetSubscription(subTitle);
             if (sub != null)
             {
                 Feeds.Instance.AddChannel(sub);
@@ -188,7 +188,7 @@ namespace RSSForm
             Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(c => c.Title == channelTitle);
             if (ch != null)
             {
-                Parser.LoadAnyVersion(ch, Feeds.Instance.MaxItems);
+                Parser.LoadSubscriptionAsync(ch, Feeds.Instance.MaxItems);
                 LoadSubscriptions();
             }
         }
@@ -302,7 +302,32 @@ namespace RSSForm
             LoadSubscriptions();
 
         }
-        public void LoadSubscriptions()
+
+        private void LoadSearchResults(List<Subscription> searchResults)
+        {
+            treeView1.SuspendLayout();
+            treeView1.Nodes.Clear();
+
+            foreach(var sub in searchResults)
+            {
+                TreeNode node = new TreeNode();
+
+                node.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
+                node.Text = sub.Title;
+                node.ContextMenuStrip = GetTopChartContextMenuStrip();
+
+                SetSubscriptionNodeImage(node, sub.Title);
+
+                if (!treeView1.Nodes.ContainsKey(node.Text))
+                {
+                    treeView1.Nodes.Add(node);
+                }
+            }
+
+            treeView1.ResumeLayout();
+        }
+
+        private void LoadSubscriptions()
         {
             treeView1.BeginUpdate();
             treeView1.SuspendLayout();
@@ -349,7 +374,7 @@ namespace RSSForm
             treeView1.SuspendLayout();
             treeView1.Nodes.Clear();
 
-            var podcasts = PodcastSource.Instance.Podcasts.ToList();
+            var podcasts = PodcastCharts.Instance.Podcasts.ToList();
             foreach (Subscription sub in podcasts)
             {
                 TreeNode subNode = new TreeNode();
@@ -384,14 +409,47 @@ namespace RSSForm
             }
         }
 
+        private void LoadSubscriptionInfoTab(string subscriptionTitle)
+        {
+            var sub = GetSubscription(subscriptionTitle);
+            if(sub != null)
+            {
+                LoadSubscriptionInfoTab(sub);
+            }
+        }
+
+        private void LoadSubscriptionInfoTab(Subscription sub)
+        {
+            tabControl1.SelectedIndex = 2;
+            tabPageSubscription.SuspendLayout();
+
+            labelSubscriptionTitle.Visible = true;
+            linkLabelFeed.Visible = true;
+            linkLabelSite.Visible = true;
+
+            labelSubscriptionTitle.Text = sub.Title;
+            textBoxSubDescription.Text = sub.Description;
+            pictureBoxSubInfo.ImageLocation = sub.ImageUrl;
+            linkLabelFeed.Text = sub.RssLink;
+            linkLabelSite.Text = sub.SiteLink;
+
+            tabPageSubscription.ResumeLayout();
+        }
+
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (treeView1.SelectedNode != null)
             {
                 string str = treeView1.SelectedNode.Text;
                 var sub = GetSubscription(str);
+                
                 if (sub != null)
                 {
+                    if(!sub.IsLoaded)
+                    {
+                        Parser.LoadSubscription(sub, Feeds.Instance.MaxItems);
+                    }
+
                     selectedSub = sub.Title;
                     if (!string.IsNullOrEmpty(sub.SiteLink))
                     {
@@ -401,6 +459,7 @@ namespace RSSForm
                     {
                         webBrowser1.Navigate(sub.ImageUrl);
                     }
+                    LoadSubscriptionInfoTab(sub);
                     LoadDataGrid(str);
                 }
             }
@@ -593,7 +652,11 @@ namespace RSSForm
             var sub = Feeds.Instance.Subscriptions.FirstOrDefault(s => s.Title == subscriptionTitle);
             if (sub == null)
             {
-                sub = PodcastSource.Instance.Podcasts.FirstOrDefault(s => s.Title == subscriptionTitle);
+                sub = PodcastCharts.Instance.Podcasts.FirstOrDefault(s => s.Title == subscriptionTitle);
+            }
+            if(sub == null)
+            {
+                sub = PodcastSearch.Instance.Results.FirstOrDefault(s => s.Title == subscriptionTitle);
             }
             return sub;
         }
@@ -625,58 +688,17 @@ namespace RSSForm
                 {
                     if ((!showUnread || (showUnread && !it.Read)))
                     {
-                        bool filter = false;
-                        if (filterDateBefore != "" && it.PubDate != "")
+                        if (it.Read)
                         {
-                            string dateTmp = GetDateTime(it.PubDate);
-                            string[] strArr = dateTmp.Split('/');
-                            string[] strArr2 = filterDateBefore.Split('/');
-                            int day1 = System.Convert.ToInt32(strArr[1].ToString());
-                            int month1 = System.Convert.ToInt32(strArr[0]);
-                            int year1 = System.Convert.ToInt32(strArr[2]);
-
-                            int day2 = System.Convert.ToInt32(strArr2[1].ToString());
-                            int month2 = System.Convert.ToInt32(strArr2[0]);
-                            int year2 = System.Convert.ToInt32(strArr2[2]);
-
-
-                            if (year1 < year2) { filter = true; }
-                            if (year1 == year2 && month1 < month2) { filter = true; }
-                            if (month1 == month2 && year1 == year2 && day1 < day2) { filter = true; }
+                            dataGridView1.Rows.Add(null, null, "+ " + it.Title);
                         }
-                        if (filterDateAfter != "" && it.PubDate != "")
+                        else
                         {
-                            string dateTmp = GetDateTime(it.PubDate);
-                            string[] strArr = dateTmp.Split('/');
-                            string[] strArr2 = filterDateAfter.Split('/');
-                            int day1 = System.Convert.ToInt32(strArr[1].ToString());
-                            int month1 = System.Convert.ToInt32(strArr[0]);
-                            int year1 = System.Convert.ToInt32(strArr[2]);
-
-                            int day2 = System.Convert.ToInt32(strArr2[1].ToString());
-                            int month2 = System.Convert.ToInt32(strArr2[0]);
-                            int year2 = System.Convert.ToInt32(strArr2[2]);
-
-
-                            if (year1 > year2) { filter = true; }
-                            if (year1 == year2 && month1 > month2) { filter = true; }
-                            if (month1 == month2 && year1 == year2 && day1 > day2) { filter = true; }
+                            dataGridView1.Rows.Add(null, null, it.Title);
                         }
 
-                        if (!filter)
-                        {
-                            if (it.Read)
-                            {
-                                dataGridView1.Rows.Add(null, null, "+ " + it.Title);
-                            }
-                            else
-                            {
-                                dataGridView1.Rows.Add(null, null, it.Title);
-                            }
-
-                            UpdateDataGridRow(it, count);
-                            count++;
-                        }
+                        UpdateDataGridRow(it, count);
+                        count++;
                     }
                 }
 
@@ -797,21 +819,7 @@ namespace RSSForm
             }
         }
 
-
-        string filterDateBefore = "";
-        string filterDateAfter = "";
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
-        {
-            filterDateAfter = dateTimePicker1.Text;
-            LoadDataGrid(selectedSub);
-        }
-
-        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
-        {
-            filterDateBefore = dateTimePicker2.Text;
-            LoadDataGrid(selectedSub);
-        }
-
+        
         private void PlaySelected()
         {
             int row = dataGridView1.SelectedCells[0].RowIndex;
@@ -977,16 +985,16 @@ namespace RSSForm
 
         private void comboBoxGenre_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PodcastSource.Limit = PodcastSource.DefaultLimit;
-            PodcastSource.Instance.Podcasts.Clear();
-            PodcastSource.Genre = comboBoxGenre.SelectedItem.ToString();
-            PodcastSource.Instance.GetPodcastsAsync();
+            PodcastCharts.Limit = PodcastCharts.DefaultLimit;
+            PodcastCharts.Instance.Podcasts.Clear();
+            PodcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
+            PodcastCharts.Instance.GetPodcastsAsync();
         }
 
         private void buttonLoadMoreCharts_Click(object sender, EventArgs e)
         {
-            PodcastSource.Limit += 10;
-            PodcastSource.Instance.GetPodcastsAsync();
+            PodcastCharts.Limit += 10;
+            PodcastCharts.Instance.GetPodcastsAsync();
         }
 
 
@@ -1047,6 +1055,51 @@ namespace RSSForm
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Feeds.Instance.ParseAllFeedsAsync();
+        }
+
+
+        private void PodcastSearchResultReceived(List<Subscription> subscriptions)
+        {
+            LoadSearchResults(subscriptions);
+        }
+
+        private void textBoxSearch_Enter(object sender, EventArgs e)
+        {
+            textBoxSearch.Text = string.Empty;
+        }
+
+        private void textBoxSearch_Leave(object sender, EventArgs e)
+        {
+            textBoxSearch.Text = "Search...";
+        }
+
+        private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Enter)
+            {
+                PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+            }
+        }
+
+        private void dataGridView1_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            var cell = sender as DataGridViewCell;
+            if(cell != null)
+            {
+                cell.Selected = true;
+            }
+        }
+
+        private void linkLabelFeed_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            tabControl1.SelectedIndex = 0;
+            webBrowser1.Navigate(linkLabelFeed.Text);
+        }
+
+        private void linkLabelSite_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            tabControl1.SelectedIndex = 0;
+            webBrowser1.Navigate(linkLabelSite.Text);
         }
     }
 }

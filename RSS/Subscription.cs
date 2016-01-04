@@ -36,5 +36,7 @@ namespace RSS
         public string Category { get; set; } = string.Empty;
 
         public bool HasErrors { get; set; } = false;
+
+        public bool IsLoaded { get; set; } = false;
     }
 }

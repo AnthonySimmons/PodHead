@@ -39,6 +39,11 @@ namespace RSSForm
         {
             if (_subscription != null)
             {
+                if(!_subscription.IsLoaded)
+                {
+                    Parser.LoadSubscription(_subscription, Feeds.Instance.MaxItems);
+                }
+
                 textBoxTitle.Text = _subscription.Title;
                 linkLabelFeed.Text = _subscription.RssLink;
                 linkLabelSite.Text = _subscription.SiteLink;

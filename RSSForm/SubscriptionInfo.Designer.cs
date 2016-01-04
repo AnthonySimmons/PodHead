@@ -148,7 +148,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(351, 422);
+            this.ClientSize = new System.Drawing.Size(359, 411);
             this.Controls.Add(this.linkLabelSite);
             this.Controls.Add(this.linkLabelFeed);
             this.Controls.Add(this.pictureBox1);
@@ -160,6 +160,7 @@
             this.Controls.Add(this.labelFeed);
             this.Controls.Add(this.labelTitle);
             this.Controls.Add(this.textBoxTitle);
+            this.MinimumSize = new System.Drawing.Size(375, 450);
             this.Name = "SubscriptionInfo";
             this.Text = "Subscription Info";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

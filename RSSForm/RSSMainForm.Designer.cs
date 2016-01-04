@@ -35,6 +35,7 @@
             this.newSubcriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.showUnreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,24 +53,26 @@
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.tabPageSubscription = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanelSubInfo = new System.Windows.Forms.TableLayoutPanel();
+            this.textBoxSubDescription = new System.Windows.Forms.TextBox();
+            this.labelSubscriptionTitle = new System.Windows.Forms.Label();
+            this.pictureBoxSubInfo = new System.Windows.Forms.PictureBox();
+            this.linkLabelSite = new System.Windows.Forms.LinkLabel();
+            this.linkLabelFeed = new System.Windows.Forms.LinkLabel();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.labelSource = new System.Windows.Forms.Label();
             this.comboBoxSource = new System.Windows.Forms.ComboBox();
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -80,6 +83,9 @@
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+            this.tabPageSubscription.SuspendLayout();
+            this.tableLayoutPanelSubInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -133,6 +139,13 @@
             this.showUnreadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.showUnreadToolStripMenuItem.Text = "Show Accessed Items";
             this.showUnreadToolStripMenuItem.Click += new System.EventHandler(this.showUnreadToolStripMenuItem_Click);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem2
             // 
@@ -193,6 +206,7 @@
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
+            this.dataGridView1.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDown);
             // 
             // DownloadProgress
             // 
@@ -237,6 +251,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPageSubscription);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -298,6 +313,104 @@
             this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 262);
             this.axWindowsMediaPlayer1.TabIndex = 3;
             // 
+            // tabPageSubscription
+            // 
+            this.tabPageSubscription.Controls.Add(this.tableLayoutPanelSubInfo);
+            this.tabPageSubscription.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSubscription.Name = "tabPageSubscription";
+            this.tabPageSubscription.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSubscription.Size = new System.Drawing.Size(475, 268);
+            this.tabPageSubscription.TabIndex = 2;
+            this.tabPageSubscription.Text = "Subscription";
+            this.tabPageSubscription.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanelSubInfo
+            // 
+            this.tableLayoutPanelSubInfo.ColumnCount = 2;
+            this.tableLayoutPanelSubInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelSubInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelSubInfo.Controls.Add(this.textBoxSubDescription, 0, 3);
+            this.tableLayoutPanelSubInfo.Controls.Add(this.labelSubscriptionTitle, 0, 0);
+            this.tableLayoutPanelSubInfo.Controls.Add(this.pictureBoxSubInfo, 0, 1);
+            this.tableLayoutPanelSubInfo.Controls.Add(this.linkLabelSite, 1, 1);
+            this.tableLayoutPanelSubInfo.Controls.Add(this.linkLabelFeed, 1, 2);
+            this.tableLayoutPanelSubInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelSubInfo.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanelSubInfo.Name = "tableLayoutPanelSubInfo";
+            this.tableLayoutPanelSubInfo.RowCount = 4;
+            this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 70F));
+            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(469, 262);
+            this.tableLayoutPanelSubInfo.TabIndex = 3;
+            // 
+            // textBoxSubDescription
+            // 
+            this.textBoxSubDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxSubDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxSubDescription.Location = new System.Drawing.Point(237, 81);
+            this.textBoxSubDescription.Multiline = true;
+            this.textBoxSubDescription.Name = "textBoxSubDescription";
+            this.textBoxSubDescription.ReadOnly = true;
+            this.textBoxSubDescription.Size = new System.Drawing.Size(229, 178);
+            this.textBoxSubDescription.TabIndex = 3;
+            // 
+            // labelSubscriptionTitle
+            // 
+            this.labelSubscriptionTitle.AutoSize = true;
+            this.tableLayoutPanelSubInfo.SetColumnSpan(this.labelSubscriptionTitle, 2);
+            this.labelSubscriptionTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelSubscriptionTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSubscriptionTitle.Location = new System.Drawing.Point(3, 0);
+            this.labelSubscriptionTitle.Name = "labelSubscriptionTitle";
+            this.labelSubscriptionTitle.Size = new System.Drawing.Size(463, 26);
+            this.labelSubscriptionTitle.TabIndex = 1;
+            this.labelSubscriptionTitle.Text = "Title";
+            this.labelSubscriptionTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelSubscriptionTitle.Visible = false;
+            // 
+            // pictureBoxSubInfo
+            // 
+            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
+            this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 29);
+            this.pictureBoxSubInfo.Name = "pictureBoxSubInfo";
+            this.tableLayoutPanelSubInfo.SetRowSpan(this.pictureBoxSubInfo, 3);
+            this.pictureBoxSubInfo.Size = new System.Drawing.Size(228, 230);
+            this.pictureBoxSubInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxSubInfo.TabIndex = 0;
+            this.pictureBoxSubInfo.TabStop = false;
+            // 
+            // linkLabelSite
+            // 
+            this.linkLabelSite.AutoSize = true;
+            this.linkLabelSite.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.linkLabelSite.Location = new System.Drawing.Point(237, 26);
+            this.linkLabelSite.Name = "linkLabelSite";
+            this.linkLabelSite.Size = new System.Drawing.Size(229, 26);
+            this.linkLabelSite.TabIndex = 4;
+            this.linkLabelSite.TabStop = true;
+            this.linkLabelSite.Text = "Site";
+            this.linkLabelSite.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.linkLabelSite.Visible = false;
+            this.linkLabelSite.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelSite_LinkClicked);
+            // 
+            // linkLabelFeed
+            // 
+            this.linkLabelFeed.AutoSize = true;
+            this.linkLabelFeed.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.linkLabelFeed.Location = new System.Drawing.Point(237, 52);
+            this.linkLabelFeed.Name = "linkLabelFeed";
+            this.linkLabelFeed.Size = new System.Drawing.Size(229, 26);
+            this.linkLabelFeed.TabIndex = 5;
+            this.linkLabelFeed.TabStop = true;
+            this.linkLabelFeed.Text = "Feed";
+            this.linkLabelFeed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.linkLabelFeed.Visible = false;
+            this.linkLabelFeed.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelFeed_LinkClicked);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
@@ -309,40 +422,6 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(0, 13);
             this.label1.TabIndex = 4;
-            // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(533, 4);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(200, 20);
-            this.dateTimePicker1.TabIndex = 1;
-            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
-            // 
-            // dateTimePicker2
-            // 
-            this.dateTimePicker2.Location = new System.Drawing.Point(263, 4);
-            this.dateTimePicker2.Name = "dateTimePicker2";
-            this.dateTimePicker2.Size = new System.Drawing.Size(200, 20);
-            this.dateTimePicker2.TabIndex = 7;
-            this.dateTimePicker2.ValueChanged += new System.EventHandler(this.dateTimePicker2_ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(222, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(32, 13);
-            this.label2.TabIndex = 8;
-            this.label2.Text = "After:";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(495, 7);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
-            this.label3.TabIndex = 9;
-            this.label3.Text = "Before:";
             // 
             // splitContainer2
             // 
@@ -395,10 +474,10 @@
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.labelSource, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.buttonLoadMoreCharts, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxSearch, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -409,18 +488,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 131);
             this.tableLayoutPanel2.TabIndex = 1;
-            // 
-            // labelSource
-            // 
-            this.labelSource.AutoSize = true;
-            this.labelSource.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelSource.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSource.Location = new System.Drawing.Point(3, 0);
-            this.labelSource.Name = "labelSource";
-            this.labelSource.Size = new System.Drawing.Size(231, 22);
-            this.labelSource.TabIndex = 0;
-            this.labelSource.Text = "Source:";
-            this.labelSource.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // comboBoxSource
             // 
@@ -433,7 +500,7 @@
             "Subscriptions",
             "Top Charts",
             "Downloads"});
-            this.comboBoxSource.Location = new System.Drawing.Point(3, 25);
+            this.comboBoxSource.Location = new System.Drawing.Point(3, 27);
             this.comboBoxSource.Name = "comboBoxSource";
             this.comboBoxSource.Size = new System.Drawing.Size(231, 33);
             this.comboBoxSource.TabIndex = 1;
@@ -448,7 +515,7 @@
             this.comboBoxGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxGenre.ForeColor = System.Drawing.SystemColors.ControlText;
             this.comboBoxGenre.FormattingEnabled = true;
-            this.comboBoxGenre.Location = new System.Drawing.Point(3, 65);
+            this.comboBoxGenre.Location = new System.Drawing.Point(3, 66);
             this.comboBoxGenre.Name = "comboBoxGenre";
             this.comboBoxGenre.Size = new System.Drawing.Size(231, 33);
             this.comboBoxGenre.TabIndex = 2;
@@ -468,6 +535,19 @@
             this.buttonLoadMoreCharts.Visible = false;
             this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
             // 
+            // textBoxSearch
+            // 
+            this.textBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxSearch.Location = new System.Drawing.Point(3, 3);
+            this.textBoxSearch.Name = "textBoxSearch";
+            this.textBoxSearch.Size = new System.Drawing.Size(231, 23);
+            this.textBoxSearch.TabIndex = 4;
+            this.textBoxSearch.Text = "Search...";
+            this.textBoxSearch.Enter += new System.EventHandler(this.textBoxSearch_Enter);
+            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
+            this.textBoxSearch.Leave += new System.EventHandler(this.textBoxSearch_Leave);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -484,23 +564,12 @@
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
             // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
             // RSSMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(745, 597);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.dateTimePicker2);
-            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer2);
@@ -523,6 +592,10 @@
             this.tabPage2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+            this.tabPageSubscription.ResumeLayout(false);
+            this.tableLayoutPanelSubInfo.ResumeLayout(false);
+            this.tableLayoutPanelSubInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
@@ -554,10 +627,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
-        private System.Windows.Forms.DateTimePicker dateTimePicker2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.DataGridViewImageColumn DownloadProgress;
         private System.Windows.Forms.DataGridViewImageColumn Download;
         private System.Windows.Forms.DataGridViewTextBoxColumn Title;
@@ -572,13 +641,20 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.Label labelSource;
         private System.Windows.Forms.ComboBox comboBoxSource;
         private System.Windows.Forms.ComboBox comboBoxGenre;
         private System.Windows.Forms.Button buttonLoadMoreCharts;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxSearch;
+        private System.Windows.Forms.TabPage tabPageSubscription;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelSubInfo;
+        private System.Windows.Forms.Label labelSubscriptionTitle;
+        private System.Windows.Forms.PictureBox pictureBoxSubInfo;
+        private System.Windows.Forms.LinkLabel linkLabelSite;
+        private System.Windows.Forms.LinkLabel linkLabelFeed;
+        private System.Windows.Forms.TextBox textBoxSubDescription;
     }
 }
 

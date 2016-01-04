@@ -14,9 +14,9 @@ namespace RSS
 {
     public delegate void PodcastSourceUpdateEventHandler(double updatePercentage);
 
-    public delegate void PodcastSourceErrorEventHandler(string errorMessage);
+    public delegate void ErrorEventHandler(string errorMessage);
 
-    public class PodcastSource
+    public class PodcastCharts
     {
         
 
@@ -40,18 +40,18 @@ namespace RSS
             ["TV & Film"] = 1309,
         };
 
-        private static PodcastSource _instance;
+        private static PodcastCharts _instance;
         private static object _instanceLock = new object();
 
-        public static PodcastSource Instance
+        public static PodcastCharts Instance
         {
             get
             {
-                if(_instance == null)
+                lock (_instanceLock)
                 {
-                    lock(_instanceLock)
+                    if (_instance == null)
                     {
-                        _instance = new PodcastSource();
+                        _instance = new PodcastCharts();
                     }
                 }
                 return _instance;
@@ -75,9 +75,9 @@ namespace RSS
 
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 
-        public event PodcastSourceErrorEventHandler ErrorEncountered;
+        public event ErrorEventHandler ErrorEncountered;
 
-        private PodcastSource() { }
+        private PodcastCharts() { }
 
 
         private static string GetPodcastInfoJson(string podcastId)
@@ -96,21 +96,26 @@ namespace RSS
             return json;
         }
 
-        private static Subscription GetSubscription(string json)
+        public static List<Subscription> DeserializeSubscriptions(string json)
         {
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast
-            var sub = new Subscription();
-
+            var subscriptions = new List<Subscription>();
+                        
             string feedUrl = string.Empty;
             JToken rootToken = JObject.Parse(json);
             JToken resultsToken = rootToken["results"];
-            JToken subToken = resultsToken.First;
 
-            sub.RssLink = (string)subToken["feedUrl"];
-            sub.Category = "Podcasts";
-            sub.Title = (string)subToken["collectionName"];
-            return sub;
+            foreach (var subToken in resultsToken)
+            {
+                var sub = new Subscription();
+                sub.RssLink = (string)subToken["feedUrl"];
+                sub.Category = "Podcasts";
+                sub.Title = (string)subToken["collectionName"];
+                subscriptions.Add(sub);
+            }
+
+            return subscriptions;
         }
 
         private static string GetPodcastId(string itunesPodcastUrl)
@@ -158,7 +163,7 @@ namespace RSS
                 Category = "iTunes"
             };
 
-            Parser.LoadAnyVersion(channel, Feeds.Instance.MaxItems);
+            Parser.LoadSubscription(channel, Feeds.Instance.MaxItems);
 
             return channel;
         }
@@ -172,13 +177,15 @@ namespace RSS
                 int count = 0;
                 foreach (var podcast in podcastsChart.Items)
                 {
-                    var bw = new BackgroundWorker();
+                    /*var bw = new BackgroundWorker();
                     bw.DoWork += Bw_DoWork;
                     bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
-                    bw.RunWorkerAsync(podcast);
+                    bw.RunWorkerAsync(podcast);*/
+                    
+                    GetPodcastFromItem(podcast);
 
-                    //double percent = (double)(++count) / (double)podcastsChart.Items.Count;
-                    //PodcastSourceUpdated?.Invoke(percent);
+                    double percent = (double)(++count) / (double)podcastsChart.Items.Count;
+                    PodcastSourceUpdated?.Invoke(percent);
                 }
             }
             catch (Exception ex)
@@ -207,12 +214,12 @@ namespace RSS
         {
             var podcastId = GetPodcastId(podcastItem.Link);
             var podcastInfoJson = GetPodcastInfoJson(podcastId);
-            var subscription = GetSubscription(podcastInfoJson);
-            Parser.LoadAnyVersion(subscription, Feeds.Instance.MaxItems);
-
-            if (Podcasts.FirstOrDefault(p => p.Title == subscription.Title) == null)
+            var subscriptions = DeserializeSubscriptions(podcastInfoJson);
+            var sub = subscriptions.First();
+            
+            if (Podcasts.FirstOrDefault(p => p.Title == sub.Title) == null)
             {
-                Podcasts.Add(subscription);
+                Podcasts.Add(sub);
             }
 
         }

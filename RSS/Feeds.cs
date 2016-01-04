@@ -13,18 +13,25 @@ namespace RSS
 {
     public class Feeds
     {
+        private static object _instanceLock = new object();
+
         private static Feeds _instance;
         public static Feeds Instance
         {
             get
             {
-                if(_instance == null)
+                lock(_instanceLock)
                 {
-                    _instance = new Feeds();
+                    if (_instance == null)
+                    {
+                        _instance = new Feeds();
+                    }
                 }
                 return _instance;
             }
         }
+        
+        private Feeds() { }
 
         public int MaxItems = 25;
 
@@ -57,7 +64,7 @@ namespace RSS
         {
             if (!String.IsNullOrEmpty(ch.RssLink) && !Subscriptions.Any(m => m.RssLink == ch.RssLink))
             {
-                Parser.LoadAnyVersion(ch, MaxItems);
+                Parser.LoadSubscriptionAsync(ch, MaxItems);
                 Subscriptions.Add(ch);
             }
         }
@@ -73,10 +80,11 @@ namespace RSS
             subsParsed = 0;
             foreach (Subscription sub in Subscriptions)
             {
-                var bw = new BackgroundWorker();
+                Parser.LoadSubscriptionAsync(sub, MaxItems);
+                /*var bw = new BackgroundWorker();
                 bw.DoWork += Bw_DoWork;
                 bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
-                bw.RunWorkerAsync(sub);
+                bw.RunWorkerAsync(sub);*/
             }
         }
         int subsParsed = 0;
@@ -91,7 +99,7 @@ namespace RSS
             var sub = e.Argument as Subscription;
             if (sub != null)
             {
-                Parser.LoadAnyVersion(sub, MaxItems);
+                Parser.LoadSubscriptionAsync(sub, MaxItems);
             }
         }
         
@@ -99,11 +107,7 @@ namespace RSS
         public delegate void FeedUpdatedEventHandler(double updatePercentage);
         public event FeedUpdatedEventHandler FeedUpdated;
 
-
-        private Feeds() { }
-
-
-
+        
         public void setChannelFeed(string title, string feed)
         {
             foreach (Subscription ch in Subscriptions)

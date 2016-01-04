@@ -53,10 +53,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PodcastSearch.cs" />
+    <Compile Include="RssWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Subscription.cs" />
     <Compile Include="ErrorLogger.cs" />
     <Compile Include="Feeds.cs" />
-    <Compile Include="PodcastSource.cs" />
+    <Compile Include="PodcastCharts.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

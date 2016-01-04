@@ -70,45 +70,97 @@ namespace RSS
         }
         
 
-        public static bool LoadAnyVersion(Subscription ch, int maxItems)
+        public static bool LoadSubscriptionAsync(Subscription sub, int maxItems)
         {
-            ch.Items.Clear();
-            string url = ch.RssLink;
-            string rss;
+            sub.Items.Clear();
+            string url = sub.RssLink;
+            bool success = true;
+            try
+            {
+                using (var client = new RssWebClient(sub, maxItems))
+                {
+                    client.OpenReadCompleted += LoadSubscriptionOpenReadCompleted;
+                    client.OpenReadAsync(new Uri(url));
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex);
+                success = false;
+            }
+            return success;
+        }
+
+        public static bool LoadSubscription(Subscription sub, int maxItems)
+        {
+            sub.Items.Clear();
+            string url = sub.RssLink;
+            bool success = true;
+            try
+            {
+                Stream rssStream;
+                using (var client = new RssWebClient(sub, maxItems))
+                {
+                    client.OpenReadCompleted += LoadSubscriptionOpenReadCompleted;
+                    rssStream = client.OpenRead(url);
+                }
+                using (var reader = new StreamReader(rssStream))
+                {
+                    string rss = reader.ReadToEnd();
+                    LoadSubscription(sub, rss, maxItems);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorLogger.Log(ex);
+                success = false;
+            }
+            return success;
+        }
+
+        private static bool LoadSubscription(Subscription sub, string rss, int maxItems)
+        {
             WebClient wc = new WebClient();
             try
             {
-                Stream st = wc.OpenRead(url);
-
-                using (StreamReader sr = new StreamReader(st))
-                {
-                    rss = sr.ReadToEnd();
-                }
-                
                 FeedType feedType = GetFeedType(rss);
-                switch(feedType)
+                bool success = false;
+                switch (feedType)
                 {
                     case FeedType.Atom:
-                        LoadXMLAtom(ch, rss, maxItems);
+                        success = LoadXMLAtom(sub, rss, maxItems);
                         break;
                     case FeedType.Rss1:
-                        LoadXMLRSS1_0(ch, rss, maxItems);
+                        success = LoadXMLRSS1_0(sub, rss, maxItems);
                         break;
                     case FeedType.Rss2:
-                        LoadXMLRSS2_0(ch, rss, maxItems);
+                        success = LoadXMLRSS2_0(sub, rss, maxItems);
                         break;
                 }
-                return true;
+                sub.IsLoaded = success;
+                return success;
             }
             catch (WebException e)
             {
-                ch.HasErrors = true;
-                MessageBox.Show(e.Message + ".\n" + ch.Title);
+                sub.HasErrors = true;
+                MessageBox.Show(e.Message + ".\n" + sub.Title);
             }
             return false;
         }
 
-
+        private static void LoadSubscriptionOpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
+        {
+            var rss = string.Empty;
+            using (StreamReader sr = new StreamReader(e.Result))
+            {
+                rss = sr.ReadToEnd();
+            }
+            var rssWebClient = sender as RssWebClient;
+            if (rssWebClient != null)
+            {
+                LoadSubscription(rssWebClient.Subscription, rss, rssWebClient.MaxItems);
+            }
+        }
 
         private static string GetXmlElementValue(XmlNode parentNode, string elementName)
         {
@@ -137,7 +189,7 @@ namespace RSS
             return attribute;
         }
 
-        public static bool LoadXMLRSS2_0(Subscription ch, string rss, int maxItems)
+        private static bool LoadXMLRSS2_0(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -197,7 +249,7 @@ namespace RSS
             return success;
         }
 
-        public static bool LoadXMLRSS1_0(Subscription ch, string rss, int maxItems)
+        private static bool LoadXMLRSS1_0(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -245,7 +297,7 @@ namespace RSS
         
 
 
-        public static bool LoadXMLAtom(Subscription ch, string rss, int maxItems)
+        private static bool LoadXMLAtom(Subscription ch, string rss, int maxItems)
         {
             bool success = true;
             try
