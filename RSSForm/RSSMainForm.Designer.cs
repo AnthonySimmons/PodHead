@@ -69,10 +69,11 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.comboBoxSource = new System.Windows.Forms.ComboBox();
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
-            this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.buttonSearch = new System.Windows.Forms.Button();
+            this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -370,7 +371,9 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.Size = new System.Drawing.Size(483, 294);
             this.dataGridView1.TabIndex = 12;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
+            this.dataGridView1.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDown);
             // 
             // DownloadProgress
             // 
@@ -453,8 +456,8 @@
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 75F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -462,9 +465,9 @@
             // 
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.treeView1.Location = new System.Drawing.Point(3, 140);
+            this.treeView1.Location = new System.Drawing.Point(3, 168);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(237, 408);
+            this.treeView1.Size = new System.Drawing.Size(237, 380);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
             this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
@@ -474,19 +477,21 @@
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.buttonLoadMoreCharts, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.textBoxSearch, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.buttonLoadMoreCharts, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.textBoxSearch, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.buttonSearch, 0, 3);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 4;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.RowCount = 5;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 131);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 159);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // comboBoxSource
@@ -499,8 +504,8 @@
             this.comboBoxSource.Items.AddRange(new object[] {
             "Subscriptions",
             "Top Charts",
-            "Downloads"});
-            this.comboBoxSource.Location = new System.Drawing.Point(3, 25);
+            "Search"});
+            this.comboBoxSource.Location = new System.Drawing.Point(3, 3);
             this.comboBoxSource.Name = "comboBoxSource";
             this.comboBoxSource.Size = new System.Drawing.Size(231, 33);
             this.comboBoxSource.TabIndex = 1;
@@ -515,38 +520,12 @@
             this.comboBoxGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxGenre.ForeColor = System.Drawing.SystemColors.ControlText;
             this.comboBoxGenre.FormattingEnabled = true;
-            this.comboBoxGenre.Location = new System.Drawing.Point(3, 65);
+            this.comboBoxGenre.Location = new System.Drawing.Point(3, 42);
             this.comboBoxGenre.Name = "comboBoxGenre";
             this.comboBoxGenre.Size = new System.Drawing.Size(231, 33);
             this.comboBoxGenre.TabIndex = 2;
             this.comboBoxGenre.Visible = false;
             this.comboBoxGenre.SelectedIndexChanged += new System.EventHandler(this.comboBoxGenre_SelectedIndexChanged);
-            // 
-            // buttonLoadMoreCharts
-            // 
-            this.buttonLoadMoreCharts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonLoadMoreCharts.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonLoadMoreCharts.Location = new System.Drawing.Point(3, 105);
-            this.buttonLoadMoreCharts.Name = "buttonLoadMoreCharts";
-            this.buttonLoadMoreCharts.Size = new System.Drawing.Size(231, 23);
-            this.buttonLoadMoreCharts.TabIndex = 3;
-            this.buttonLoadMoreCharts.Text = "Load More";
-            this.buttonLoadMoreCharts.UseVisualStyleBackColor = true;
-            this.buttonLoadMoreCharts.Visible = false;
-            this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
-            // 
-            // textBoxSearch
-            // 
-            this.textBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSearch.Location = new System.Drawing.Point(3, 3);
-            this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(231, 23);
-            this.textBoxSearch.TabIndex = 4;
-            this.textBoxSearch.Text = "Search...";
-            this.textBoxSearch.Enter += new System.EventHandler(this.textBoxSearch_Enter);
-            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
-            this.textBoxSearch.Leave += new System.EventHandler(this.textBoxSearch_Leave);
             // 
             // statusStrip1
             // 
@@ -563,6 +542,45 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
+            // 
+            // textBoxSearch
+            // 
+            this.textBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxSearch.Location = new System.Drawing.Point(3, 81);
+            this.textBoxSearch.Name = "textBoxSearch";
+            this.textBoxSearch.Size = new System.Drawing.Size(231, 23);
+            this.textBoxSearch.TabIndex = 5;
+            this.textBoxSearch.Text = "Search...";
+            this.textBoxSearch.Visible = false;
+            this.textBoxSearch.Enter += new System.EventHandler(this.textBoxSearch_Enter);
+            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
+            this.textBoxSearch.Leave += new System.EventHandler(this.textBoxSearch_Leave);
+            // 
+            // buttonSearch
+            // 
+            this.buttonSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonSearch.Location = new System.Drawing.Point(3, 110);
+            this.buttonSearch.Name = "buttonSearch";
+            this.buttonSearch.Size = new System.Drawing.Size(231, 23);
+            this.buttonSearch.TabIndex = 6;
+            this.buttonSearch.Text = "Search";
+            this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Visible = false;
+            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            // 
+            // buttonLoadMoreCharts
+            // 
+            this.buttonLoadMoreCharts.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonLoadMoreCharts.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonLoadMoreCharts.Location = new System.Drawing.Point(3, 139);
+            this.buttonLoadMoreCharts.Name = "buttonLoadMoreCharts";
+            this.buttonLoadMoreCharts.Size = new System.Drawing.Size(231, 20);
+            this.buttonLoadMoreCharts.TabIndex = 7;
+            this.buttonLoadMoreCharts.Text = "Load More";
+            this.buttonLoadMoreCharts.UseVisualStyleBackColor = true;
+            this.buttonLoadMoreCharts.Visible = false;
+            this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
             // 
             // RSSMainForm
             // 
@@ -631,11 +649,9 @@
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.ComboBox comboBoxSource;
         private System.Windows.Forms.ComboBox comboBoxGenre;
-        private System.Windows.Forms.Button buttonLoadMoreCharts;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-        private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.DataGridViewTextBoxColumn Description;
         private System.Windows.Forms.DataGridViewTextBoxColumn Date;
         private System.Windows.Forms.DataGridViewTextBoxColumn Title;
@@ -655,6 +671,9 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.Button buttonSearch;
+        private System.Windows.Forms.TextBox textBoxSearch;
+        private System.Windows.Forms.Button buttonLoadMoreCharts;
     }
 }
 

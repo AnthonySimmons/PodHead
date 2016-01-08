@@ -903,16 +903,24 @@ namespace RSSForm
             switch (selectedDisplay)
             {
                 case "Subscriptions":
+                    buttonSearch.Visible = false;
+                    textBoxSearch.Visible = false;
+                    buttonLoadMoreCharts.Visible = false;
                     comboBoxGenre.Visible = false;
                     buttonLoadMoreCharts.Visible = false;
                     LoadSubscriptions();
                     break;
                 case "Top Charts":
-                    comboBoxGenre.Visible = true;
+                    buttonSearch.Visible = false;
+                    textBoxSearch.Visible = false;
                     buttonLoadMoreCharts.Visible = true;
+                    comboBoxGenre.Visible = true;
                     LoadTopCharts();
                     break;
-                case "Downloads":
+                case "Search":
+                    comboBoxGenre.Visible = false;
+                    textBoxSearch.Visible = true;
+                    buttonSearch.Visible = true;
                     break;
             }
         }
@@ -939,12 +947,21 @@ namespace RSSForm
             PodcastCharts.Instance.Podcasts.Clear();
             PodcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
             PodcastCharts.Instance.GetPodcastsAsync();
+            buttonLoadMoreCharts.Visible = true;
         }
 
         private void buttonLoadMoreCharts_Click(object sender, EventArgs e)
         {
             PodcastCharts.Limit += 10;
-            PodcastCharts.Instance.GetPodcastsAsync();
+            switch(comboBoxSource.SelectedItem.ToString())
+            {
+                case "Top Charts":
+                    PodcastCharts.Instance.GetPodcastsAsync();
+                    break;
+                case "Search":
+                    PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+                    break;
+            }
         }
 
 
@@ -1015,12 +1032,18 @@ namespace RSSForm
 
         private void textBoxSearch_Enter(object sender, EventArgs e)
         {
-            textBoxSearch.Text = string.Empty;
+            if (textBoxSearch.Text == "Search...")
+            {
+                textBoxSearch.Text = string.Empty;
+            }
         }
 
         private void textBoxSearch_Leave(object sender, EventArgs e)
         {
-            textBoxSearch.Text = "Search...";
+            if (string.IsNullOrEmpty(textBoxSearch.Text))
+            {
+                textBoxSearch.Text = "Search...";
+            }
         }
 
         private void textBoxSearch_KeyDown(object sender, KeyEventArgs e)
@@ -1050,6 +1073,11 @@ namespace RSSForm
         {
             tabControl1.SelectedIndex = 0;
             webBrowser1.Navigate(linkLabelSite.Text);
+        }
+
+        private void buttonSearch_Click(object sender, EventArgs e)
+        {
+            PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
         }
     }
 }
