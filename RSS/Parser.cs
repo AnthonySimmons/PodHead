@@ -7,8 +7,6 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Net;
 using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
 
 namespace RSS
 {
@@ -20,9 +18,13 @@ namespace RSS
     }
 
 
+    public delegate void SubscriptionParsedCompleteEventHandler(Subscription subscription);
+
     public static class Parser
     {
+        public static event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
         
+
         private static FeedType GetFeedType(string rssString)
         {
             FeedType type = FeedType.Atom;
@@ -143,7 +145,7 @@ namespace RSS
             catch (WebException e)
             {
                 sub.HasErrors = true;
-                MessageBox.Show(e.Message + ".\n" + sub.Title);
+                ErrorLogger.Log(e);
             }
             return false;
         }
@@ -159,6 +161,16 @@ namespace RSS
             if (rssWebClient != null)
             {
                 LoadSubscription(rssWebClient.Subscription, rss, rssWebClient.MaxItems);
+            }
+            OnSubscriptionParsedComplete(rssWebClient.Subscription);
+        }
+
+        private static void OnSubscriptionParsedComplete(Subscription subscription)
+        {
+            var copy = SubscriptionParsedComplete;
+            if(copy != null)
+            {
+                copy.Invoke(subscription);
             }
         }
 
@@ -177,9 +189,9 @@ namespace RSS
         private static string GetXmlAttribute(XmlNode xmlNode, string attributeName)
         {
             string attribute = string.Empty;
-            if (xmlNode != null)
+			if (xmlNode != null && xmlNode.Attributes != null && xmlNode.Attributes[attributeName] != null)
             {
-                string value = xmlNode.Attributes[attributeName]?.Value;
+                string value = xmlNode.Attributes[attributeName].Value;
                 if (!string.IsNullOrEmpty(value))
                 {
                     attribute = value;
@@ -233,10 +245,11 @@ namespace RSS
                         it.Description = processDescription(GetXmlElementValue(item, "description"));
                         it.Guid = GetXmlElementValue(item, "guid");
                         it.PubDate = GetXmlElementValue(item, "pubDate");
-
+                        it.RowNum = counter;
+                        it.ParentSubscription = ch;
                         ch.Items.Add(it);
                         counter++;
-                        if(counter > maxItems) { break; }
+                        if(counter > ch.MaxItems) { break; }
                     }
                 }
             }
@@ -278,10 +291,11 @@ namespace RSS
                         it.Link = GetXmlElementValue(item, "link");
                         it.Guid = GetXmlElementValue(item, "guid");
                         it.PubDate = GetXmlElementValue(item, "pubDate");
-
+                        it.RowNum = count;
+                        it.ParentSubscription = ch;
                         ch.Items.Add(it);
                         count++;
-                        if(count > maxItems) { break; }
+                        if(count > ch.MaxItems) { break; }
                     }
 
                 }
@@ -328,10 +342,11 @@ namespace RSS
                             item.Authors.Add(auth);
                         }
                     }
-
+                    item.RowNum = count;
+                    item.ParentSubscription = ch;
                     ch.Items.Add(item);
                     count++;
-                    if(count > maxItems) { break; }
+                    if(count > ch.MaxItems) { break; }
                 }
             }
             catch (Exception ex)

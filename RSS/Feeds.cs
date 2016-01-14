@@ -6,7 +6,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace RSS
@@ -14,6 +13,8 @@ namespace RSS
     public class Feeds
     {
         private static object _instanceLock = new object();
+
+        public event EventHandler AllFeedsParsed;
 
         private static Feeds _instance;
         public static Feeds Instance
@@ -37,7 +38,13 @@ namespace RSS
 
         public List<Subscription> Subscriptions = new List<Subscription>();
 
-        public List<string> Categories => Subscriptions.GroupBy(ch => ch.Category).Select(g => g.First().Category).ToList();
+		public List<string> Categories 
+		{
+			get 
+			{
+				return Subscriptions.GroupBy (ch => ch.Category).Select (g => g.First ().Category).ToList ();
+			}
+		}
        
         public List<Subscription> ChannelsByCategory(string category)
         {
@@ -81,18 +88,23 @@ namespace RSS
             foreach (Subscription sub in Subscriptions)
             {
                 Parser.LoadSubscriptionAsync(sub, MaxItems);
-                /*var bw = new BackgroundWorker();
-                bw.DoWork += Bw_DoWork;
-                bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
-                bw.RunWorkerAsync(sub);*/
             }
         }
         int subsParsed = 0;
 
         private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            FeedUpdated?.Invoke((double)++subsParsed / (double)Subscriptions.Count);
+            OnFeedUpdated((double)++subsParsed / (double)Subscriptions.Count);
         }
+
+		private void OnFeedUpdated(double percentUpdate)
+		{
+			var copy = FeedUpdated;
+			if (copy != null) 
+			{
+				copy (percentUpdate);
+			}
+		}
 
         private void Bw_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -184,7 +196,6 @@ namespace RSS
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex);
-                MessageBox.Show(ex.Message);
             }
         }
 
@@ -212,7 +223,7 @@ namespace RSS
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                ErrorLogger.Log(e);
             }
         }
 

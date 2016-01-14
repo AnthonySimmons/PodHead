@@ -12,40 +12,55 @@ namespace RSS
 {
     public class Item
     {
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; set; }
 
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; set; }
 
-        public string Link { get; set; } = string.Empty;
+        public string Link { get; set; }
 
-        public string Guid { get; set; } = string.Empty;
+        public string Guid { get; set; }
 
-        public string PubDate { get; set; } = string.Empty;
+        public string PubDate { get; set; }
      
         public List<author> Authors = new List<author>();
         
-        public bool Read { get; set; } = false;
+        public bool Read { get; set; }
 
-        public string Subscription { get; set; } = string.Empty;
+        public Subscription ParentSubscription { get; set; }
 
-        public bool IsDownloaded { get; set; } = false;
+        public bool IsDownloaded { get; set; }
         
-        public bool CanBeDownloaded =>
-                !String.IsNullOrEmpty(Link) && !String.IsNullOrEmpty(Path.GetExtension(Link));
+        public bool CanBeDownloaded 
+		{
+			get
+			{
+				return !String.IsNullOrEmpty (Link) && !String.IsNullOrEmpty (Path.GetExtension (Link));
+			}
+		}
         
         public int MbSize;
 
-        public string FilePath { get; set; } = string.Empty;
+        public string FilePath { get; set; }
 
-        public int RowNum { get; set; } = 0;
+        public int RowNum;
 
         public delegate void DownloadProgressEvent(string MbString, float percent, int row);
 
         public delegate void DownloadCompleteEvent(int row, int size);
 
-        public DownloadCompleteEvent DownloadComplete;
+        public event DownloadCompleteEvent DownloadComplete;
 
-        public DownloadProgressEvent DownloadProgress;
+        public event DownloadProgressEvent DownloadProgress;
+
+		public Item()
+		{
+			Title = string.Empty;
+			Description = string.Empty;
+			Link = string.Empty;
+			Guid = string.Empty;
+			PubDate = string.Empty;
+			FilePath = string.Empty;
+		}
 
         public void DownloadFile()
         {

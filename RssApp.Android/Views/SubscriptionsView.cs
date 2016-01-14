@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 using Xamarin.Forms;
 using RSS;
+
 
 using Button = Xamarin.Forms.Button;
 
@@ -19,21 +14,27 @@ namespace RssApp.Android.Views
 {
     public delegate void SubscriptionSelectedEventHandler(Subscription subscription);
     
-    class SubscriptionsView : TableView
+    class SubscriptionsView : StackLayout
     {
+        protected TableView tableView = new TableView();
+
         public event SubscriptionSelectedEventHandler SubscriptionSelected;
         private Button LoadMoreButton = new Button();
-        private Button RefreshButton = new Button();
-        List<Subscription> _subscriptions;
+        protected Button RefreshButton = new Button();
+        
+        protected ProgressBar progressBar = new ProgressBar();
 
+        List<Subscription> _subscriptions;
+        
         public SubscriptionsView()
         {
-            Root = new TableRoot();
             Initialize();
         }
 
         private void Initialize()
         {
+            tableView.Root = new TableRoot();
+            
             Feeds.Instance.FeedUpdated += Instance_FeedUpdated;
 
             LoadMoreButton.Clicked += LoadMoreButton_Clicked;
@@ -42,6 +43,13 @@ namespace RssApp.Android.Views
 
             RefreshButton.Text = "Refresh";
             RefreshButton.Clicked += RefreshButton_Clicked;
+            
+            progressBar.IsVisible = false;
+            progressBar.BackgroundColor = Color.Gray;
+            
+            Children.Add(RefreshButton);
+            Children.Add(tableView);
+            Children.Add(progressBar);
         }
 
         private void Instance_FeedUpdated(double updatePercentage)
@@ -65,54 +73,38 @@ namespace RssApp.Android.Views
 
         public void LoadSubscriptions(List<Subscription> subscriptions)
         {
-            Root.Clear();
+            tableView.Root.Clear();
             _subscriptions = subscriptions;
             if(subscriptions.Count == 0)
             {
                 var cell = new TextCell();
                 cell.Text = "No Results";
-                Root.Add(new TableSection() { cell });
+                tableView.Root.Add(new TableSection() { cell });
             }
 
             foreach (var sub in subscriptions)
             {
                 var titleCell = new TextCell { Text = sub.Title, TextColor = Color.Black, };
                 var descCell = new TextCell { Text = sub.Description, TextColor = Color.Black, };
-                //var imageCell =
-                // new ImageCell { ImageSource = sub.ImageUrl, Text = sub.ImageUrl, TextColor = Color.Black, };
-
+                
                 titleCell.Tapped += SubscriptionChartTapped;
                 titleCell.BindingContext = sub;
                 descCell.Tapped += SubscriptionChartTapped;
-                //imageCell.Tapped += SubscriptionChartTapped;
-
-                var subscribeButton = new Xamarin.Forms.Button();
-                
-                var stackLayout = new StackLayout();
-                //stackLayout.Children.Add(stackLayout);
-                //stackLayout.
-
-                var viewCell = new ViewCell()
-                {
-                    View = stackLayout,
-                };
-                
+                                
                 var tableSection = new TableSection()
                 {
-                    //viewCell,
                     titleCell,
-                    //imageCell,       
-
+                    descCell,
                 };
-                
-                Root.Add(tableSection);
+
+                tableView.Root.Add(tableSection);
             }
                         
             var loadMoreSection = new TableSection()
             {
                 new ViewCell { View = LoadMoreButton }
             };
-            Root.Add(loadMoreSection);
+            tableView.Root.Add(loadMoreSection);
         }
 
         private void LoadMoreButton_Clicked(object sender, EventArgs e)

@@ -20,25 +20,24 @@ namespace RSS
     {
         
 
-        public static Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int>
-        {
-            ["Arts"] = 1301,
-            ["Business"] = 1321,
-            ["Comedy"] = 1303,
-            ["Education"] = 1304,
-            ["Games & Hobbies"] = 1323,
-            ["Government & Organizations"] = 1325,
-            ["Health"] = 1307,
-            ["Kids & Family"] = 1305,
-            ["Music"] = 1310,
-            ["News & Politics"] = 1311,
-            ["Religion & Spirituality"] = 1314,
-            ["Science & Medicine"] = 1315,
-            ["Society & Culture"] = 1324,
-            ["Sports & Recreation"] = 1316,
-            ["Technology"] = 1318,
-            ["TV & Film"] = 1309,
-        };
+        public static Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int> {
+			{ "Arts", 1301 },
+			{ "Business", 1321 },
+			{ "Comedy", 1303 },
+			{ "Education", 1304 },
+			{ "Games & Hobbies", 1323 },
+			{ "Government & Organizations", 1325 },
+			{ "Health", 1307 },
+			{ "Kids & Family", 1305 },
+			{ "Music", 1310 },
+			{ "News & Politics", 1311 },
+			{ "Religion & Spirituality", 1314 },
+			{ "Science & Medicine", 1315 },
+			{ "Society & Culture", 1324 },
+			{ "Sports & Recreation", 1316 },
+			{ "Technology", 1318 },
+			{ "TV & Film", 1309 },
+		};
 
         private static PodcastCharts _instance;
         private static object _instanceLock = new object();
@@ -58,7 +57,7 @@ namespace RSS
             }
         }
 
-        public List<Subscription> Podcasts { get; } = new List<Subscription>();
+		public List<Subscription> Podcasts; 
 
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
@@ -67,9 +66,9 @@ namespace RSS
 
         private const string EntityPodcast = "podcast";
 
-        public static int Limit { get; set; } = DefaultLimit;
+        public static int Limit { get; set; }
 
-        public static string Genre { get; set; } = "Comedy";
+        public static string Genre { get; set; }
 
         public const int DefaultLimit = 10;
 
@@ -77,7 +76,12 @@ namespace RSS
 
         public event ErrorEventHandler ErrorEncountered;
 
-        private PodcastCharts() { }
+        private PodcastCharts() 
+		{
+			Limit = DefaultLimit;
+			Genre = "Comedy";
+			Podcasts = new List<Subscription>();
+		}
 
 
         private static string GetPodcastInfoJson(string podcastId)
@@ -176,30 +180,43 @@ namespace RSS
                 
                 int count = 0;
                 foreach (var podcast in podcastsChart.Items)
-                {
-                    /*var bw = new BackgroundWorker();
-                    bw.DoWork += Bw_DoWork;
-                    bw.RunWorkerCompleted += Bw_RunWorkerCompleted;
-                    bw.RunWorkerAsync(podcast);*/
-                    
+                {                    
                     GetPodcastFromItem(podcast);
 
                     double percent = (double)(++count) / (double)podcastsChart.Items.Count;
-                    PodcastSourceUpdated?.Invoke(percent);
+                    OnPodcastSourceUpdated(percent);
                 }
             }
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex);
-                ErrorEncountered?.Invoke(ex.Message);
+                OnErrorEncountered(ex.Message);
             }
         }
 
         private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             double percent = (double)(Podcasts.Count+1) / (double)Limit;
-            PodcastSourceUpdated?.Invoke(percent);
+            OnPodcastSourceUpdated(percent);
         }
+
+		private void OnErrorEncountered(string message)
+		{
+			var copy = ErrorEncountered;
+			if (copy != null) 
+			{
+				copy.Invoke(message);
+			}
+		}
+
+		private void OnPodcastSourceUpdated(double percentUpdated)
+		{
+			var copy = PodcastSourceUpdated;
+			if (copy != null) 
+			{
+				copy.Invoke(percentUpdated);
+			}
+		}
 
         private void Bw_DoWork(object sender, DoWorkEventArgs e)
         {

@@ -11,16 +11,21 @@ namespace RssApp.Android.Views
 {
     public delegate void PlayItemEventHandler(Item it);
 
-    class ItemsView : TableView
+    class ItemsView : StackLayout
     {
         public event PlayItemEventHandler PlayItem;
+        public event EventHandler BackSelected;
 
         private static int RowSize = 175;
+
+        private TableView tableView = new TableView();
 
         private List<Xamarin.Forms.ProgressBar> progressBars = new List<Xamarin.Forms.ProgressBar>();
         private Button LoadMoreButton = new Button();
         private Button RefreshButton = new Button();
+        private Button SubscribeButton = new Button();
         private Subscription _subscription;
+        private Button BackButton = new Button();
 
         public ItemsView()
         {
@@ -29,11 +34,11 @@ namespace RssApp.Android.Views
 
         private void Initialize()
         {
+            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
+
             LoadMoreButton.Clicked += LoadMoreButton_Clicked;
             LoadMoreButton.Text = "Load More";
             LoadMoreButton.IsVisible = false;
-
-            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
         }
 
         private void Parser_SubscriptionParsedComplete(Subscription subscription)
@@ -60,9 +65,11 @@ namespace RssApp.Android.Views
                 LoadMoreButton.IsVisible = true;
             }
 
+
             //this.HasUnevenRows = true;
-            this.RowHeight = RowSize;
-            Root = new TableRoot();
+            tableView.RowHeight = RowSize;
+
+            tableView.Root = new TableRoot();
             LoadSubscriptionTitle(subscription);
             LoadSubscriptionItems(subscription);
         }
@@ -72,8 +79,7 @@ namespace RssApp.Android.Views
             var subscriptionTitle = new TextCell();
             subscriptionTitle.TextColor = Color.Black;
             subscriptionTitle.Text = subscription.Title;
-            
-            
+                        
             var image = new Image();
             image.HeightRequest = RowSize;
             image.WidthRequest = RowSize;
@@ -83,44 +89,47 @@ namespace RssApp.Android.Views
             description.TextColor = Color.Black;
             description.Text = subscription.Description;
 
-            var subscribeCell = new TextCell();
-            subscribeCell.BindingContext = subscription;
-            subscribeCell.TextColor = Color.Black;
-            if (!Feeds.Instance.ContainsSubscription(subscription.Title))
-            {
-                subscribeCell.Text = "Subscribe";
-            }
-            else
-            {
-                subscribeCell.Text = "Unsubscribe";
-            }
+            BackButton.Text = "Back";
+            BackButton.TextColor = Color.Black;
+            BackButton.Clicked += BackButton_Clicked;
 
-            subscribeCell.Tapped += SubscribeButton_Tapped;
+            SubscribeButton.Text = "Subscribe";
+            SubscribeButton.TextColor = Color.Black;
+            SubscribeButton.Clicked += SubscribeButton_Clicked;
+
+            var topLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
+            topLayout.Children.Add(BackButton);
+            topLayout.Children.Add(RefreshButton);
+            topLayout.Children.Add(SubscribeButton);
 
             RefreshButton.Text = "Refresh";
             RefreshButton.Clicked += RefreshButton_Clicked;
 
             var layout = new StackLayout();
             layout.Children.Add(image);
-            layout.Children.Add(RefreshButton);
+            layout.Children.Add(topLayout);
 
-            layout.HeightRequest = RowSize;
             var viewLayout = new ViewCell()
             {
                 View = layout,
                 Height = RowSize,
             };
-            
+
 
             var titleSection = new TableSection()
             {
                 viewLayout,
                 subscriptionTitle,
                 description,
-                subscribeCell,
             };
+            
+            
+            tableView.Root.Add(titleSection);
+        }
 
-            Root.Add(titleSection);
+        private void BackButton_Clicked(object sender, EventArgs e)
+        {
+            OnBackSelected();
         }
 
         private void RefreshButton_Clicked(object sender, EventArgs e)
@@ -128,9 +137,9 @@ namespace RssApp.Android.Views
             Parser.LoadSubscriptionAsync(_subscription, _subscription.MaxItems);
         }
 
-        private void SubscribeButton_Tapped(object sender, EventArgs e)
+        private void SubscribeButton_Clicked(object sender, EventArgs e)
         {
-            var subscription = ((Cell)sender).BindingContext as Subscription;
+            var subscription = ((View)sender).BindingContext as Subscription;
             if (subscription != null)
             {
                 Feeds.Instance.AddChannel(subscription);
@@ -139,6 +148,13 @@ namespace RssApp.Android.Views
 
         private void LoadSubscriptionItems(Subscription subscription)
         {
+            SubscribeButton.TextColor = Color.Black;
+            SubscribeButton.BindingContext = subscription;
+            SubscribeButton.Text = "Subscribe";
+            if(Feeds.Instance.ContainsSubscription(subscription.Title))
+            {
+                SubscribeButton.Text = "Unsubscribe";
+            }
 
             foreach (var item in subscription.Items)
             {
@@ -162,8 +178,13 @@ namespace RssApp.Android.Views
                 layout.HeightRequest = height;
                 layout.Children.Add(title);
                 layout.Children.Add(description);
-                layout.Children.Add(playButton);
-                layout.Children.Add(downloadButton);
+
+                var hLayout = new StackLayout();
+                hLayout.Orientation = StackOrientation.Horizontal;
+                hLayout.Children.Add(playButton);
+                hLayout.Children.Add(downloadButton);
+
+                layout.Children.Add(hLayout);
                 layout.Children.Add(progressBar);
 
                 progressBars.Add(progressBar);
@@ -179,21 +200,27 @@ namespace RssApp.Android.Views
                     viewCell,
                 };
 
-                
-                Root.Add(tableSection);
-            }
 
-            var loadMoreSection = new TableSection()
-            {
-                new ViewCell { View = LoadMoreButton, Height = 50, }
-            };
-            Root.Add(loadMoreSection);
+                tableView.Root.Add(tableSection);
+                //Children.Add(layout);
+                
+            }
+            Children.Add(tableView);
+            Children.Add(LoadMoreButton);
         }
         
+        private void OnBackSelected()
+        {
+            var copy = BackSelected;
+            if(copy != null)
+            {
+                copy.Invoke(null, null);
+            }
+        }
 
         private void DownloadButton_Clicked(object sender, EventArgs e)
         {
-            var item = ((Xamarin.Forms.Button)sender).BindingContext as Item;
+            var item = ((Button)sender).BindingContext as Item;
             if(item != null)
             {
                 if (!item.CheckIsDownloaded())
@@ -244,7 +271,7 @@ namespace RssApp.Android.Views
 
         private void PlayButton_Clicked(object sender, EventArgs e)
         {
-            var item = ((Xamarin.Forms.View)sender).BindingContext as Item;
+            var item = ((View)sender).BindingContext as Item;
             if (item != null)
             {
                 OnPlayItem(item);

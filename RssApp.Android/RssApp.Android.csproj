@@ -82,7 +82,9 @@
     <Compile Include="HomePage.cs" />
     <Compile Include="Views\ItemsView.cs" />
     <Compile Include="Views\MediaPlayerView.cs" />
+    <Compile Include="Views\SearchView.cs" />
     <Compile Include="Views\SubscriptionsView.cs" />
+    <Compile Include="Views\TopChartsView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -67,13 +67,13 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.comboBoxSource = new System.Windows.Forms.ComboBox();
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
+            this.buttonSearch = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.textBoxSearch = new System.Windows.Forms.TextBox();
-            this.buttonSearch = new System.Windows.Forms.Button();
-            this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -494,6 +494,33 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 159);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
+            // buttonLoadMoreCharts
+            // 
+            this.buttonLoadMoreCharts.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.buttonLoadMoreCharts.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.buttonLoadMoreCharts.Location = new System.Drawing.Point(3, 139);
+            this.buttonLoadMoreCharts.Name = "buttonLoadMoreCharts";
+            this.buttonLoadMoreCharts.Size = new System.Drawing.Size(231, 20);
+            this.buttonLoadMoreCharts.TabIndex = 7;
+            this.buttonLoadMoreCharts.Text = "Load More";
+            this.buttonLoadMoreCharts.UseVisualStyleBackColor = true;
+            this.buttonLoadMoreCharts.Visible = false;
+            this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
+            // 
+            // textBoxSearch
+            // 
+            this.textBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxSearch.Location = new System.Drawing.Point(3, 81);
+            this.textBoxSearch.Name = "textBoxSearch";
+            this.textBoxSearch.Size = new System.Drawing.Size(231, 23);
+            this.textBoxSearch.TabIndex = 5;
+            this.textBoxSearch.Text = "Search...";
+            this.textBoxSearch.Visible = false;
+            this.textBoxSearch.Enter += new System.EventHandler(this.textBoxSearch_Enter);
+            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
+            this.textBoxSearch.Leave += new System.EventHandler(this.textBoxSearch_Leave);
+            // 
             // comboBoxSource
             // 
             this.comboBoxSource.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -527,6 +554,18 @@
             this.comboBoxGenre.Visible = false;
             this.comboBoxGenre.SelectedIndexChanged += new System.EventHandler(this.comboBoxGenre_SelectedIndexChanged);
             // 
+            // buttonSearch
+            // 
+            this.buttonSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonSearch.Location = new System.Drawing.Point(3, 110);
+            this.buttonSearch.Name = "buttonSearch";
+            this.buttonSearch.Size = new System.Drawing.Size(231, 23);
+            this.buttonSearch.TabIndex = 6;
+            this.buttonSearch.Text = "Search";
+            this.buttonSearch.UseVisualStyleBackColor = true;
+            this.buttonSearch.Visible = false;
+            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -542,45 +581,6 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
-            // 
-            // textBoxSearch
-            // 
-            this.textBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSearch.Location = new System.Drawing.Point(3, 81);
-            this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(231, 23);
-            this.textBoxSearch.TabIndex = 5;
-            this.textBoxSearch.Text = "Search...";
-            this.textBoxSearch.Visible = false;
-            this.textBoxSearch.Enter += new System.EventHandler(this.textBoxSearch_Enter);
-            this.textBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxSearch_KeyDown);
-            this.textBoxSearch.Leave += new System.EventHandler(this.textBoxSearch_Leave);
-            // 
-            // buttonSearch
-            // 
-            this.buttonSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonSearch.Location = new System.Drawing.Point(3, 110);
-            this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(231, 23);
-            this.buttonSearch.TabIndex = 6;
-            this.buttonSearch.Text = "Search";
-            this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Visible = false;
-            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
-            // 
-            // buttonLoadMoreCharts
-            // 
-            this.buttonLoadMoreCharts.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonLoadMoreCharts.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonLoadMoreCharts.Location = new System.Drawing.Point(3, 139);
-            this.buttonLoadMoreCharts.Name = "buttonLoadMoreCharts";
-            this.buttonLoadMoreCharts.Size = new System.Drawing.Size(231, 20);
-            this.buttonLoadMoreCharts.TabIndex = 7;
-            this.buttonLoadMoreCharts.Text = "Load More";
-            this.buttonLoadMoreCharts.UseVisualStyleBackColor = true;
-            this.buttonLoadMoreCharts.Visible = false;
-            this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
             // 
             // RSSMainForm
             // 

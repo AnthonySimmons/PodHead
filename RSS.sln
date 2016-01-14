@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSS", "RSS\RSS.csproj", "{8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSSForm", "RSSForm\RSSForm.csproj", "{BA9DD17F-8B79-443B-97B0-FE3660C22B72}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RssApp.Android", "RssApp.Android\RssApp.Android.csproj", "{86B793C1-40D3-428D-8C7E-B12CA05ADB87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,18 @@ Global
 		{BA9DD17F-8B79-443B-97B0-FE3660C22B72}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA9DD17F-8B79-443B-97B0-FE3660C22B72}.Release|x86.ActiveCfg = Release|Any CPU
 		{BA9DD17F-8B79-443B-97B0-FE3660C22B72}.Release|x86.Build.0 = Release|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Debug|x86.Build.0 = Debug|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Release|x86.ActiveCfg = Release|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Release|x86.Build.0 = Release|Any CPU
+		{86B793C1-40D3-428D-8C7E-B12CA05ADB87}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

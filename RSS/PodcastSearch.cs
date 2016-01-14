@@ -60,10 +60,18 @@ namespace RSS
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex);
-                ErrorEncountered?.Invoke(ex.Message);
+                OnErrorEncountered(ex.Message);
             }
         }
         
+		private void OnErrorEncountered(string message)
+		{
+			var copy = ErrorEncountered;
+			if(copy != null)
+			{
+				copy (message);					
+			}
+		}
 
         private void Client_OpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
         {
@@ -77,8 +85,17 @@ namespace RSS
             Results.Clear();
             Results.AddRange(subscriptions);
      
-            SearchResultReceived?.Invoke(subscriptions);
+			OnSearchResultsReceived(subscriptions);
         }
+
+		private void OnSearchResultsReceived(List<Subscription> subscriptions)
+		{
+			var copy = SearchResultReceived;
+			if (copy != null) 
+			{
+				copy (subscriptions);
+			}
+		}
 
         private static string GetSearchUrl(string searchTerm)
         {

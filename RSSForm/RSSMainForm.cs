@@ -36,7 +36,7 @@ namespace RSSForm
 
             treeView1.ImageList = new ImageList();
             treeView1.ImageList.Images.Add(new Bitmap(1, 1));
-            treeView1.ImageList.Images.Add(nameof(Properties.Resources.bookmark_ribbon), Properties.Resources.bookmark_ribbon);
+            treeView1.ImageList.Images.Add("bookmark_ribbon", Properties.Resources.bookmark_ribbon);
 
             comboBoxSource.SelectedIndex = 0;
 
@@ -292,7 +292,8 @@ namespace RSSForm
         private void showUnreadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showUnread = !showUnread;
-            LoadDataGrid(treeView1?.SelectedNode?.Text);
+
+            LoadDataGrid(treeView1.SelectedNode.Text);
             LoadSubscriptions();
 
         }
@@ -392,7 +393,7 @@ namespace RSSForm
         {
             if (Feeds.Instance.ContainsSubscription(subscriptionTitle))
             {
-                node.SelectedImageKey = nameof(Properties.Resources.bookmark_ribbon);
+                node.SelectedImageKey = "bookmark_ribbon";
                 node.ImageKey = node.SelectedImageKey;
                 node.SelectedImageIndex = 1;
                 node.ImageIndex = node.SelectedImageIndex;
@@ -938,7 +939,7 @@ namespace RSSForm
 
         private void comboBoxDisplay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateDisplay(comboBoxSource?.SelectedItem?.ToString());
+            UpdateDisplay(comboBoxSource.SelectedItem.ToString());
         }
 
         private void comboBoxGenre_SelectedIndexChanged(object sender, EventArgs e)

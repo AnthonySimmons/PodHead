@@ -24,7 +24,7 @@ namespace RSSForm
             catch (Exception ex)
             {
                 ErrorLogger.Log(ex);
-                MessageBox.Show(ex.Message + ex.InnerException?.Message + ex.StackTrace);
+                MessageBox.Show(ex.Message + ex.StackTrace);
             }
         }
     }    

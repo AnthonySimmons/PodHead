@@ -8,11 +8,25 @@ namespace RSS
 {
     public static class ErrorLogger
     {
-        public static string ErrorLogPath => Path.Combine(RSSConfig.AppDataFolder, "ErrorLog.txt");
+        public static string ErrorLogPath = Path.Combine(RSSConfig.AppDataFolder, "ErrorLog.txt");
 
         public static void Log(Exception ex)
         {
-            Log($"{ex?.Message}: \n {ex?.InnerException?.Message} \n {ex?.StackTrace}");
+            string msg = string.Empty;
+            try
+            {
+                if (ex != null)
+                {
+                    msg = ex.Message;
+                    if (ex.InnerException != null)
+                    {
+                        msg += "\n " + ex.InnerException.Message;
+                    }
+                    msg += "\n " + ex.StackTrace;
+                    Log(msg);
+                }
+            }
+            catch { }
         }
 
         public static void Log(string message)
