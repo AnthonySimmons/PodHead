@@ -82,7 +82,7 @@ namespace RSS
             thread.Start();
         }
 
-        private void ParseAllFeeds()
+        public void ParseAllFeeds()
         {
             subsParsed = 0;
             foreach (Subscription sub in Subscriptions)

@@ -55,18 +55,23 @@ namespace RssApp.Android.Views
 
             titleLabel.TextColor = Color.Black;
             titleLabel.IsVisible = false;
+            titleLabel.FontSize = 24;
+            titleLabel.HorizontalTextAlignment = Xamarin.Forms.TextAlignment.Center;
 
             playPauseButton.TextColor = Color.Black;
             playPauseButton.IsVisible = false;
 
             progressLabel.TextColor = Color.Black;
             progressLabel.IsVisible = false;
+            progressLabel.FontSize = 18;
 
             durationLabel.TextColor = Color.Black;
             durationLabel.IsVisible = false;
+            durationLabel.FontSize = 18;
 
             descriptionLabel.TextColor = Color.Black;
             descriptionLabel.IsVisible = false;
+            descriptionLabel.FontSize = 20;
 
             fastFowardButton.TextColor = Color.Black;
             fastFowardButton.IsVisible = false;
@@ -82,8 +87,9 @@ namespace RssApp.Android.Views
             {
                 Orientation = Xamarin.Forms.StackOrientation.Horizontal,
             };
-
+            var spaceBox = new Xamarin.Forms.BoxView() { WidthRequest = Width / 2, };
             hLayout.Children.Add(progressLabel);
+            hLayout.Children.Add(spaceBox);
             hLayout.Children.Add(durationLabel);
             
             dateLabel.TextColor = Color.Black;
@@ -93,9 +99,11 @@ namespace RssApp.Android.Views
             {
                 Orientation = Xamarin.Forms.StackOrientation.Horizontal
             };
+            
             playLayout.Children.Add(rewindButton);
             playLayout.Children.Add(playPauseButton);
             playLayout.Children.Add(fastFowardButton);
+            
 
             image.HeightRequest = Height / 2;
             image.WidthRequest = Width / 2;
@@ -116,7 +124,7 @@ namespace RssApp.Android.Views
         private void RewindButton_Clicked(object sender, EventArgs e)
         {
             currentProgressMs -= progressStepMs;
-            mediaPlayer.SeekTo(currentProgressMs);
+            //mediaPlayer.SeekTo(currentProgressMs);
             UpdateProgressTime();
             SetMediaProgress();
         }
@@ -124,7 +132,7 @@ namespace RssApp.Android.Views
         private void FastFowardButton_Clicked(object sender, EventArgs e)
         {
             currentProgressMs += progressStepMs;
-            mediaPlayer.SeekTo(currentProgressMs);
+            //mediaPlayer.SeekTo(currentProgressMs);
             UpdateProgressTime();
             SetMediaProgress();
         }

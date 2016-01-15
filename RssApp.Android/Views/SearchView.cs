@@ -28,7 +28,7 @@ namespace RssApp.Android.Views
 
             RefreshButton.IsVisible = false;
 
-            Children.Insert(0, searchEntry);
+            stackLayout.Children.Insert(0, searchEntry);
         }
 
         private void Instance_SearchResultReceived(List<Subscription> subscriptions)

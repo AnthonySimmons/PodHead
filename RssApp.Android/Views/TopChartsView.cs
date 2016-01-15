@@ -26,20 +26,19 @@ namespace RssApp.Android.Views
             PodcastCharts.Instance.PodcastSourceUpdated += Instance_PodcastSourceUpdated;
 
             GenrePicker.SelectedIndexChanged += SourceGenre_SelectedIndexChanged;
-            
+
+            GenreLabel.Text = "Genre:";
+            GenreLabel.TextColor = Color.Black;
+            GenreLabel.FontSize = 18;
+            GenreLabel.HorizontalTextAlignment = TextAlignment.Center;
+
             GenrePicker.HeightRequest = FieldHeight;
             GenrePicker.BackgroundColor = Color.Gray;
-
-            GenreLabel.Text = "Genre";
-            GenreLabel.TextColor = Color.Black;
-
-            var layout = new StackLayout { Orientation = StackOrientation.Horizontal, };
-            layout.Children.Add(GenreLabel);
-            layout.Children.Add(GenrePicker);
-            
+                        
             RefreshButton.IsVisible = false;
 
-            Children.Insert(0, layout);
+            stackLayout.Children.Insert(0, GenreLabel);
+            stackLayout.Children.Insert(1, GenrePicker);
 
             LoadTopChartsGenres();
         }

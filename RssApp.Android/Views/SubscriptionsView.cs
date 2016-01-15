@@ -12,13 +12,15 @@ using Button = Xamarin.Forms.Button;
 
 namespace RssApp.Android.Views
 {
-    public delegate void SubscriptionSelectedEventHandler(Subscription subscription);
+    public delegate void ItemSelectedEventHandler(Item item);
     
-    class SubscriptionsView : StackLayout
+    class SubscriptionsView : ScrollView
     {
-        protected TableView tableView = new TableView();
+        protected StackLayout stackLayout = new StackLayout();
+        private ItemsView itemsView = new ItemsView();
+        
 
-        public event SubscriptionSelectedEventHandler SubscriptionSelected;
+        public event ItemSelectedEventHandler ItemSelected;
         private Button LoadMoreButton = new Button();
         protected Button RefreshButton = new Button();
         
@@ -33,8 +35,9 @@ namespace RssApp.Android.Views
 
         private void Initialize()
         {
-            tableView.Root = new TableRoot();
-            
+            itemsView.PlayItem += ItemsView_PlayItem;
+            itemsView.BackSelected += ItemsView_BackSelected;
+
             Feeds.Instance.FeedUpdated += Instance_FeedUpdated;
 
             LoadMoreButton.Clicked += LoadMoreButton_Clicked;
@@ -47,9 +50,10 @@ namespace RssApp.Android.Views
             progressBar.IsVisible = false;
             progressBar.BackgroundColor = Color.Gray;
             
-            Children.Add(RefreshButton);
-            Children.Add(tableView);
-            Children.Add(progressBar);
+            stackLayout.Children.Add(RefreshButton);
+            stackLayout.Children.Add(progressBar);
+
+            Content = stackLayout;
         }
 
         private void Instance_FeedUpdated(double updatePercentage)
@@ -73,38 +77,46 @@ namespace RssApp.Android.Views
 
         public void LoadSubscriptions(List<Subscription> subscriptions)
         {
-            tableView.Root.Clear();
+            stackLayout.Children.Clear();
             _subscriptions = subscriptions;
             if(subscriptions.Count == 0)
             {
-                var cell = new TextCell();
-                cell.Text = "No Results";
-                tableView.Root.Add(new TableSection() { cell });
+                var noResultsLabel = new Label();
+                noResultsLabel.Text = "No Results";
+                stackLayout.Children.Add(noResultsLabel);
             }
 
             foreach (var sub in subscriptions)
             {
-                var titleCell = new TextCell { Text = sub.Title, TextColor = Color.Black, };
-                var descCell = new TextCell { Text = sub.Description, TextColor = Color.Black, };
-                
-                titleCell.Tapped += SubscriptionChartTapped;
-                titleCell.BindingContext = sub;
-                descCell.Tapped += SubscriptionChartTapped;
-                                
-                var tableSection = new TableSection()
+                //Parser.LoadSubscription(sub, sub.MaxItems);
+                int boxHeight = 2;
+                var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
+                var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
+                var titleButton = new Button
                 {
-                    titleCell,
-                    descCell,
+                    Text = sub.Title,
+                    TextColor = Color.Black,
+                };
+                var descLabel = new Label { Text = sub.Description, TextColor = Color.Black, };
+                
+                titleButton.Clicked += SubscriptionChartTapped;
+                titleButton.BindingContext = sub;
+
+                var image = new Image()
+                {
+                    Source = sub.ImageUrl,
+                    WidthRequest = 25,
+                    HeightRequest = 25,
                 };
 
-                tableView.Root.Add(tableSection);
+                stackLayout.Children.Add(topBoxView);
+                stackLayout.Children.Add(titleButton);
+                stackLayout.Children.Add(image);
+                stackLayout.Children.Add(descLabel);
+                //stackLayout.Children.Add(botBoxView);
             }
                         
-            var loadMoreSection = new TableSection()
-            {
-                new ViewCell { View = LoadMoreButton }
-            };
-            tableView.Root.Add(loadMoreSection);
+            Content = stackLayout;
         }
 
         private void LoadMoreButton_Clicked(object sender, EventArgs e)
@@ -115,20 +127,36 @@ namespace RssApp.Android.Views
 
         private void SubscriptionChartTapped(object sender, EventArgs e)
         {
-            var sub = ((Cell)sender).BindingContext as Subscription;
+            var sub = ((Button)sender).BindingContext as Subscription;
             if (sub != null)
             {
-                OnSubscriptionSelected(sub);
+                itemsView.IsVisible = true;
+                progressBar.IsVisible = true;
+                Content = itemsView;
+                itemsView.LoadSubscription(sub);
+            }
+        }
+        
+        private void OnItemSelected(Item item)
+        {
+            var copy = ItemSelected;
+            if(copy != null)
+            {
+                copy.Invoke(item);
             }
         }
 
-        private void OnSubscriptionSelected(Subscription subscription)
+        private void ItemsView_BackSelected(object sender, EventArgs e)
         {
-            var copy = SubscriptionSelected;
-            if(copy != null)
-            {
-                copy.Invoke(subscription);
-            }
+            Content = stackLayout;
         }
+
+        private void ItemsView_PlayItem(Item item)
+        {
+            OnItemSelected(item);
+        }
+
+        
+
     }
 }

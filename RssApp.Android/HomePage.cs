@@ -21,7 +21,6 @@ namespace RssApp.Android
         private SearchView searchView = new SearchView();
         private TopChartsView topChartsView = new TopChartsView();
 
-        private ItemsView itemsView = new ItemsView();              
         
         private ContentPage mediaPlayerPage, subscriptionsPage, searchPage, topChartsPage;
 
@@ -41,14 +40,11 @@ namespace RssApp.Android
         private void Initialize()
         {
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
+            Feeds.Instance.ParseAllFeeds();
+            subscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
+            searchView.ItemSelected += SubscriptionsView_ItemSelected;
+            topChartsView.ItemSelected += SubscriptionsView_ItemSelected;
             
-            subscriptionsView.SubscriptionSelected += SubscriptionsView_SubscriptionSelected;
-            searchView.SubscriptionSelected += SubscriptionsView_SubscriptionSelected;
-            topChartsView.SubscriptionSelected += SubscriptionsView_SubscriptionSelected;
-
-            itemsView.PlayItem += ItemsView_PlayItem;
-            itemsView.BackSelected += ItemsView_BackSelected;
-
             BackgroundColor = Color.Silver;
                         
             title.Text = "RSS";
@@ -68,29 +64,14 @@ namespace RssApp.Android
             this.CurrentPage = subscriptionsPage;            
         }
 
-        private void ItemsView_BackSelected(object sender, EventArgs e)
-        {
-            var page = (ContentPage)CurrentPage;
-            page.Content = PreviousView;
-        }
-
-        private void ItemsView_PlayItem(Item item)
+        private void SubscriptionsView_ItemSelected(Item item)
         {
             mediaPlayerView.LoadPlayer(item);
             mediaPlayerView.Play();
 
             CurrentPage = mediaPlayerPage;
-        }               
-
-        private void SubscriptionsView_SubscriptionSelected(Subscription subscription)
-        {
-            itemsView.IsVisible = true;
-            var page = (ContentPage)CurrentPage;
-            PreviousView = page.Content;
-            page.Content = itemsView;
-            itemsView.LoadSubscription(subscription);
         }
-        
+
         private void LoadSubscriptions()
         {
             subscriptionsView.LoadSubscriptions(Feeds.Instance.Subscriptions);
