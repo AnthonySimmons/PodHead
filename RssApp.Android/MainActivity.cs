@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using RssApp;
+using RSS;
 
 namespace RssApp.Android
 {
@@ -21,12 +22,16 @@ namespace RssApp.Android
             ActivityContext = this;
 
 			global::Xamarin.Forms.Forms.Init (this, bundle);
-
-            // Set our view from the "main" layout resource
-            //SetContentView(Resource.Layout.Main);
-			LoadApplication (new App());
             
+			LoadApplication (new App());
         }
+        
+
+		protected override void OnStop ()
+		{
+			base.OnStop ();
+			Feeds.Instance.Save(RSSConfig.ConfigFileName);
+		}
     }
 }
 

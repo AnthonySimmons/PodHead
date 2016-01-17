@@ -72,14 +72,14 @@ namespace RSS
         }
         
 
-        public static bool LoadSubscriptionAsync(Subscription sub, int maxItems)
+        public static bool LoadSubscriptionAsync(Subscription sub)
         {
             sub.Items.Clear();
             string url = sub.RssLink;
             bool success = true;
             try
             {
-                using (var client = new RssWebClient(sub, maxItems))
+                using (var client = new RssWebClient(sub))
                 {
                     client.OpenReadCompleted += LoadSubscriptionOpenReadCompleted;
                     client.OpenReadAsync(new Uri(url));
@@ -101,7 +101,7 @@ namespace RSS
             try
             {
                 Stream rssStream;
-                using (var client = new RssWebClient(sub, maxItems))
+                using (var client = new RssWebClient(sub))
                 {
                     client.OpenReadCompleted += LoadSubscriptionOpenReadCompleted;
                     rssStream = client.OpenRead(url);
@@ -122,32 +122,34 @@ namespace RSS
 
         private static bool LoadSubscription(Subscription sub, string rss, int maxItems)
         {
+            bool success = false;
             WebClient wc = new WebClient();
             try
             {
-                FeedType feedType = GetFeedType(rss);
-                bool success = false;
-                switch (feedType)
+                if (!string.IsNullOrEmpty(rss))
                 {
-                    case FeedType.Atom:
-                        success = LoadXMLAtom(sub, rss, maxItems);
-                        break;
-                    case FeedType.Rss1:
-                        success = LoadXMLRSS1_0(sub, rss, maxItems);
-                        break;
-                    case FeedType.Rss2:
-                        success = LoadXMLRSS2_0(sub, rss, maxItems);
-                        break;
+                    FeedType feedType = GetFeedType(rss);
+                    switch (feedType)
+                    {
+                        case FeedType.Atom:
+                            success = LoadXMLAtom(sub, rss, maxItems);
+                            break;
+                        case FeedType.Rss1:
+                            success = LoadXMLRSS1_0(sub, rss, maxItems);
+                            break;
+                        case FeedType.Rss2:
+                            success = LoadXMLRSS2_0(sub, rss, maxItems);
+                            break;
+                    }
                 }
                 sub.IsLoaded = success;
-                return success;
             }
-            catch (WebException e)
+            catch (Exception e)
             {
                 sub.HasErrors = true;
                 ErrorLogger.Log(e);
             }
-            return false;
+            return success;
         }
 
         private static void LoadSubscriptionOpenReadCompleted(object sender, OpenReadCompletedEventArgs e)

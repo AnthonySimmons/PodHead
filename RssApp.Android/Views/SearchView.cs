@@ -10,26 +10,26 @@ namespace RssApp.Android.Views
 {
     class SearchView : SubscriptionsView
     {
-
         private SearchBar searchEntry = new SearchBar();
 
-        public SearchView() : base()
+        public SearchView()
         {
             Initialize();
         }
         
-        private void Initialize()
+		protected override void Initialize()
         {
+			base.Initialize ();
+
             PodcastSearch.Instance.SearchResultReceived += Instance_SearchResultReceived;
             
             searchEntry.SearchButtonPressed += SearchEntry_SearchButtonPressed;
             searchEntry.BackgroundColor = Color.Gray;
             searchEntry.TextColor = Color.White;
-
-            RefreshButton.IsVisible = false;
-
-            stackLayout.Children.Insert(0, searchEntry);
+            
+            Children.Insert(0, searchEntry);
         }
+        
 
         private void Instance_SearchResultReceived(List<Subscription> subscriptions)
         {
@@ -51,6 +51,12 @@ namespace RssApp.Android.Views
         {
             PodcastSearch.Instance.Results.Clear();
             PodcastSearch.Instance.SearchAsync(searchEntry.Text);
+        }
+
+        protected override void LoadMore()
+        {
+            PodcastSearch.Limit += 10;
+            PerformSearch();
         }
 
     }

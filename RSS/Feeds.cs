@@ -10,6 +10,10 @@ using System.Xml;
 
 namespace RSS
 {
+    public delegate void FeedUpdatedEventHandler(double updatePercentage);
+
+    public delegate void SubscriptionModifiedEventHandler(Subscription subscription);
+
     public class Feeds
     {
         private static object _instanceLock = new object();
@@ -32,7 +36,23 @@ namespace RSS
             }
         }
         
-        private Feeds() { }
+        private Feeds()
+        {
+            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
+        }
+        
+
+        private void Parser_SubscriptionParsedComplete(Subscription subscription)
+        {
+            if (ContainsSubscription(subscription.Title))
+            {
+                OnFeedUpdated(subsParsed / Subscriptions.Count);
+                if (++subsParsed >= Subscriptions.Count - 1)
+                {
+                    OnAllFeedsParsed();
+                }
+            }
+        }
 
         public int MaxItems = 25;
 
@@ -56,23 +76,25 @@ namespace RSS
         {
             if (!String.IsNullOrEmpty(name))
             {
-                foreach (Subscription ch in Subscriptions)
+                foreach (Subscription sub in Subscriptions)
                 {
-                    if (ch.Title == name)
+                    if (sub.Title == name)
                     {
-                        Subscriptions.Remove(ch);
+                        Subscriptions.Remove(sub);
+                        OnSubscriptionRemoved(sub);
                         break;
                     }
                 }
             }
         }
 
-        public void AddChannel(Subscription ch)
+        public void AddChannel(Subscription sub)
         {
-            if (!String.IsNullOrEmpty(ch.RssLink) && !Subscriptions.Any(m => m.RssLink == ch.RssLink))
+            if (!String.IsNullOrEmpty(sub.RssLink) && !Subscriptions.Any(m => m.RssLink == sub.RssLink))
             {
-                Parser.LoadSubscriptionAsync(ch, MaxItems);
-                Subscriptions.Add(ch);
+                //Parser.LoadSubscriptionAsync(ch, MaxItems);
+                Subscriptions.Add(sub);
+                OnSubscriptionAdded(sub);
             }
         }
 
@@ -87,39 +109,65 @@ namespace RSS
             subsParsed = 0;
             foreach (Subscription sub in Subscriptions)
             {
-                Parser.LoadSubscriptionAsync(sub, MaxItems);
+                Parser.LoadSubscriptionAsync(sub);
             }
+
         }
         int subsParsed = 0;
-
-        private void Bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        
+        private void OnSubscriptionRemoved(Subscription subscription)
         {
-            OnFeedUpdated((double)++subsParsed / (double)Subscriptions.Count);
+            var copy = SubscriptionRemoved;
+            if(copy != null)
+            {
+                copy.Invoke(subscription);
+            }
         }
 
-		private void OnFeedUpdated(double percentUpdate)
-		{
-			var copy = FeedUpdated;
-			if (copy != null) 
-			{
-				copy (percentUpdate);
-			}
-		}
+        private void OnSubscriptionAdded(Subscription subscription)
+        {
+            var copy = SubscriptionAdded;
+            if(copy != null)
+            {
+                copy.Invoke(subscription);
+            }
+        }
+
+        private void OnFeedUpdated(double percentUpdate)
+        {
+            var copy = FeedUpdated;
+            if(copy != null)
+            {
+                copy.Invoke(percentUpdate);
+            }
+        }
+        
+        private void OnAllFeedsParsed()
+        {
+            var copy = AllFeedsParsed;
+            if(copy != null)
+            {
+                copy.Invoke(this, null);
+            }
+        }
 
         private void Bw_DoWork(object sender, DoWorkEventArgs e)
         {
             var sub = e.Argument as Subscription;
             if (sub != null)
             {
-                Parser.LoadSubscriptionAsync(sub, MaxItems);
+                Parser.LoadSubscriptionAsync(sub);
             }
         }
         
 
-        public delegate void FeedUpdatedEventHandler(double updatePercentage);
+        
         public event FeedUpdatedEventHandler FeedUpdated;
 
-        
+        public event SubscriptionModifiedEventHandler SubscriptionAdded;
+
+        public event SubscriptionModifiedEventHandler SubscriptionRemoved;
+
         public void setChannelFeed(string title, string feed)
         {
             foreach (Subscription ch in Subscriptions)
@@ -131,7 +179,17 @@ namespace RSS
             }
         }
 
-
+        public void ToggleSubscription(Subscription subscription)
+        {
+            if (Feeds.Instance.ContainsSubscription(subscription.Title))
+            {
+                Feeds.Instance.RemoveChannel(subscription.Title);
+            }
+            else
+            {
+                Feeds.Instance.AddChannel(subscription);
+            }
+        }
 
         public Item GetItem(string title)
         {
@@ -148,6 +206,16 @@ namespace RSS
         public bool ContainsSubscription(string subscriptionTitle)
         {
             return Subscriptions.FirstOrDefault(s => s.Title == subscriptionTitle) != null;
+        }
+
+        public string GetSubscribeText(string subscriptionTitle)
+        {
+            var text = "Subscribe";
+            if (ContainsSubscription(subscriptionTitle))
+            {
+                text = "Unsubscribe";
+            }
+            return text;
         }
 
         #region Save and Load

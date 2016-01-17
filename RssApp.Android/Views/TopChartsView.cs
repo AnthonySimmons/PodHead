@@ -16,13 +16,15 @@ namespace RssApp.Android.Views
 
         private static int FieldHeight = 50;
 
-        public TopChartsView() : base()
+        public TopChartsView()
         {
             Initialize();
         }
 
-        private void Initialize()
+		protected override void Initialize()
         {
+			base.Initialize ();
+
             PodcastCharts.Instance.PodcastSourceUpdated += Instance_PodcastSourceUpdated;
 
             GenrePicker.SelectedIndexChanged += SourceGenre_SelectedIndexChanged;
@@ -35,14 +37,19 @@ namespace RssApp.Android.Views
             GenrePicker.HeightRequest = FieldHeight;
             GenrePicker.BackgroundColor = Color.Gray;
                         
-            RefreshButton.IsVisible = false;
-
-            stackLayout.Children.Insert(0, GenreLabel);
-            stackLayout.Children.Insert(1, GenrePicker);
+            Children.Insert(0, GenreLabel);
+            Children.Insert(1, GenrePicker);
 
             LoadTopChartsGenres();
+
+            GenrePicker.SelectedIndex = GenrePicker.Items.IndexOf(PodcastCharts.PodcastGenreCodes.Keys.First());
         }
 
+        protected override void LoadMore()
+        {
+            PodcastCharts.Limit += 10;
+            LoadTopChartsAsync();
+        }
 
         private void Instance_PodcastSourceUpdated(double updatePercentage)
         {
@@ -84,9 +91,17 @@ namespace RssApp.Android.Views
 
         private void SourceGenre_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PodcastCharts.Genre = GenrePicker.Items[GenrePicker.SelectedIndex];
-            PodcastCharts.Instance.Podcasts.Clear();
-            PodcastCharts.Instance.GetPodcastsAsync();
+            LoadTopChartsAsync();
+        }
+
+        private void LoadTopChartsAsync()
+        {
+            if (GenrePicker.SelectedIndex >= 0)
+            {
+                PodcastCharts.Genre = GenrePicker.Items[GenrePicker.SelectedIndex];
+                PodcastCharts.Instance.Podcasts.Clear();
+                PodcastCharts.Instance.GetPodcastsAsync();
+            }
         }
 
     }

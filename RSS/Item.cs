@@ -10,6 +10,11 @@ using System.Xml.Serialization;
 
 namespace RSS
 {
+
+    public delegate void DownloadProgressEvent(Item item, double percent);
+
+    public delegate void DownloadCompleteEvent(Item item);
+
     public class Item
     {
         public string Title { get; set; }
@@ -44,9 +49,6 @@ namespace RSS
 
         public int RowNum;
 
-        public delegate void DownloadProgressEvent(string MbString, float percent, int row);
-
-        public delegate void DownloadCompleteEvent(int row, int size);
 
         public event DownloadCompleteEvent DownloadComplete;
 
@@ -88,28 +90,33 @@ namespace RSS
             ((WebClient)sender).DownloadProgressChanged -= client_DownloadProgressChanged;
             ((WebClient)sender).DownloadFileCompleted -= client_DownloadFileCompleted;
 
-            DownloadProgressEvent progressCopy = DownloadProgress;
-            DownloadCompleteEvent completeCopy = DownloadComplete;
-            if (completeCopy != null)
+            OnDownloadComplete();
+        }
+
+        private void OnDownloadComplete()
+        {
+            var copy = DownloadComplete;
+            if(copy != null)
             {
-                completeCopy(RowNum, MbSize);
-
-                DownloadComplete -= completeCopy;
-                DownloadProgress -= progressCopy;
+                copy.Invoke(this);
             }
+        }
 
+        private void OnDownloadProgress(double percent)
+        {
+            var copy = DownloadProgress;
+            if(copy != null)
+            {
+                copy.Invoke(this, percent);
+            }
         }
 
         void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             MbSize = (int)(e.TotalBytesToReceive / (1024 * 1024));
             string MbString = (e.BytesReceived / (1024 * 1024)).ToString() + "/" + (e.TotalBytesToReceive / (1024 * 1024)).ToString() + "Mb";
-            
-            DownloadProgressEvent copy = DownloadProgress;
-            if (copy != null)
-            {
-                copy(MbString, e.ProgressPercentage, RowNum);
-            }
+
+            OnDownloadProgress(e.ProgressPercentage);
         }
 
         private string GetFileType()

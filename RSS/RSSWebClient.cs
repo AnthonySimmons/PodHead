@@ -12,10 +12,10 @@ namespace RSS
 
         public int MaxItems { get; set; }
 
-        public RssWebClient(Subscription subscription, int maxItems)
+        public RssWebClient(Subscription subscription)
         {
             Subscription = subscription;
-            MaxItems = maxItems;
+            MaxItems = subscription.MaxItems;
         }
     }
 }

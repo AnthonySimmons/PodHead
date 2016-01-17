@@ -14,61 +14,47 @@ namespace RssApp.Android.Views
 {
     public delegate void ItemSelectedEventHandler(Item item);
     
-    class SubscriptionsView : ScrollView
+    abstract class SubscriptionsView : StackLayout
     {
-        protected StackLayout stackLayout = new StackLayout();
-        private ItemsView itemsView = new ItemsView();
-        
+        protected ScrollView scrollView = new ScrollView();
 
+        protected StackLayout stackLayout = new StackLayout();
+        protected ItemsView itemsView = new ItemsView();
+        
+        
         public event ItemSelectedEventHandler ItemSelected;
         private Button LoadMoreButton = new Button();
-        protected Button RefreshButton = new Button();
         
         protected ProgressBar progressBar = new ProgressBar();
 
-        List<Subscription> _subscriptions;
-        
-        public SubscriptionsView()
-        {
-            Initialize();
-        }
+        protected List<Subscription> _subscriptions;
 
-        private void Initialize()
-        {
+        protected Button RefreshButton = new Button();
+
+        protected Dictionary<Subscription, List<View>> SubscriptionControls = new Dictionary<Subscription, List<View>>();
+
+        protected virtual void Initialize()
+        {            
             itemsView.PlayItem += ItemsView_PlayItem;
             itemsView.BackSelected += ItemsView_BackSelected;
-
-            Feeds.Instance.FeedUpdated += Instance_FeedUpdated;
-
+                 
             LoadMoreButton.Clicked += LoadMoreButton_Clicked;
             LoadMoreButton.Text = "Load More";
             LoadMoreButton.IsVisible = false;
-
-            RefreshButton.Text = "Refresh";
-            RefreshButton.Clicked += RefreshButton_Clicked;
-            
+                        
             progressBar.IsVisible = false;
             progressBar.BackgroundColor = Color.Gray;
             
-            stackLayout.Children.Add(RefreshButton);
-            stackLayout.Children.Add(progressBar);
-
-            Content = stackLayout;
+            scrollView.Content = stackLayout;
+            
+            Children.Insert(0, progressBar);
+            Children.Add(scrollView);
         }
-
-        private void Instance_FeedUpdated(double updatePercentage)
-        {
-            LoadSubscriptions(Feeds.Instance.Subscriptions);
-        }
-
-        private void RefreshButton_Clicked(object sender, EventArgs e)
-        {
-            Feeds.Instance.ParseAllFeedsAsync();
-        }
+        
 
         public void LoadSubscriptionResults(List<Subscription> subscriptions)
         {
-            if(subscriptions.Count == Feeds.Instance.MaxItems)
+            //if(subscriptions.Count >= Feeds.Instance.MaxItems - 1)
             {
                 LoadMoreButton.IsVisible = true;
             }
@@ -77,7 +63,12 @@ namespace RssApp.Android.Views
 
         public void LoadSubscriptions(List<Subscription> subscriptions)
         {
-            stackLayout.Children.Clear();
+            //Initialize ();
+            scrollView.Content = stackLayout;
+            stackLayout.Children.Clear ();
+            SubscriptionControls.Clear();
+            progressBar.IsVisible = false;
+            
             _subscriptions = subscriptions;
             if(subscriptions.Count == 0)
             {
@@ -88,55 +79,91 @@ namespace RssApp.Android.Views
 
             foreach (var sub in subscriptions)
             {
-                //Parser.LoadSubscription(sub, sub.MaxItems);
+                AddSubscription(sub);
+            }
+            stackLayout.Children.Add(LoadMoreButton);
+        }
+
+        protected void AddSubscription(Subscription sub)
+        {
+            if (!SubscriptionControls.ContainsKey(sub))
+            {
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
                 var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
-                var titleButton = new Button
+                var titleLabel = new Label
                 {
                     Text = sub.Title,
                     TextColor = Color.Black,
+                    FontAttributes = FontAttributes.Bold,
+                    FontSize = 24,
+                    HorizontalTextAlignment = TextAlignment.Center,
                 };
                 var descLabel = new Label { Text = sub.Description, TextColor = Color.Black, };
-                
-                titleButton.Clicked += SubscriptionChartTapped;
-                titleButton.BindingContext = sub;
-
+                                
                 var image = new Image()
                 {
                     Source = sub.ImageUrl,
-                    WidthRequest = 25,
-                    HeightRequest = 25,
+                    WidthRequest = 100,
+                    HeightRequest = 100,
                 };
+                if (string.IsNullOrEmpty(sub.ImageUrl))
+                {
+                    image.Source = "@drawable/icon";
+                }
+                var viewButton = new Button { Text = "View", TextColor = Color.Black, };
+                viewButton.BindingContext = sub;
+                viewButton.Clicked += ViewButton_Clicked;
+                var subscribeButton = new Button { Text = Feeds.Instance.GetSubscribeText(sub.Title), TextColor = Color.Black, };
+                subscribeButton.BindingContext = sub;
+                subscribeButton.Clicked += SubscribeButton_Clicked;
 
-                stackLayout.Children.Add(topBoxView);
-                stackLayout.Children.Add(titleButton);
-                stackLayout.Children.Add(image);
-                stackLayout.Children.Add(descLabel);
-                //stackLayout.Children.Add(botBoxView);
+                var imageLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
+                var buttonLayout = new StackLayout();
+                buttonLayout.Children.Add(viewButton);
+                buttonLayout.Children.Add(subscribeButton);
+                imageLayout.Children.Add(image);
+                imageLayout.Children.Add(buttonLayout);
+
+                var subControls = new List<View> { topBoxView, titleLabel, imageLayout, descLabel };
+                SubscriptionControls.Add(sub, subControls);
+
+                foreach (var subControl in subControls)
+                {
+                    stackLayout.Children.Add(subControl);
+                }
             }
-                        
-            Content = stackLayout;
         }
 
-        private void LoadMoreButton_Clicked(object sender, EventArgs e)
+        private void ViewButton_Clicked(object sender, EventArgs e)
         {
-            Feeds.Instance.MaxItems += 10;
-            Feeds.Instance.ParseAllFeedsAsync();
-        }
-
-        private void SubscriptionChartTapped(object sender, EventArgs e)
-        {
-            var sub = ((Button)sender).BindingContext as Subscription;
+            var sub = ((View)sender).BindingContext as Subscription;
             if (sub != null)
             {
+                RefreshButton.IsVisible = false;
                 itemsView.IsVisible = true;
-                progressBar.IsVisible = true;
-                Content = itemsView;
+                //progressBar.IsVisible = true;
+                scrollView.Content = itemsView;
                 itemsView.LoadSubscription(sub);
             }
         }
+
+        private void SubscribeButton_Clicked(object sender, EventArgs e)
+        {
+            var senderButton = (Button)sender;
+            var subscription = (Subscription)senderButton.BindingContext;
+            Feeds.Instance.ToggleSubscription(subscription);
+            senderButton.Text = Feeds.Instance.GetSubscribeText(subscription.Title);
+        }
         
+
+        protected abstract void LoadMore();
+
+        private void LoadMoreButton_Clicked(object sender, EventArgs e)
+        {
+            LoadMore();
+        }
+
         private void OnItemSelected(Item item)
         {
             var copy = ItemSelected;
@@ -148,15 +175,16 @@ namespace RssApp.Android.Views
 
         private void ItemsView_BackSelected(object sender, EventArgs e)
         {
-            Content = stackLayout;
+            RefreshButton.IsVisible = true;
+            scrollView.Content = stackLayout;
+			LoadSubscriptions(_subscriptions);
         }
 
         private void ItemsView_PlayItem(Item item)
         {
             OnItemSelected(item);
         }
-
-        
+               
 
     }
 }

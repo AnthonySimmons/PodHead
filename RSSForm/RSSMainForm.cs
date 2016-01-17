@@ -179,10 +179,10 @@ namespace RSSForm
 
         private void RefreshChannel(string channelTitle)
         {
-            Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(c => c.Title == channelTitle);
-            if (ch != null)
+            Subscription sub = Feeds.Instance.Subscriptions.FirstOrDefault(c => c.Title == channelTitle);
+            if (sub != null)
             {
-                Parser.LoadSubscriptionAsync(ch, Feeds.Instance.MaxItems);
+                Parser.LoadSubscriptionAsync(sub);
                 LoadSubscriptions();
             }
         }
@@ -519,23 +519,23 @@ namespace RSSForm
         }
 
 
-        public void DownloadCompleteCallBack(int row, int size)
+        public void DownloadCompleteCallBack(Item item)
         {
-            dataGridView1.Rows[row].Cells["DownloadProgress"].Value = GetFileSizeBitmap(size);
-            dataGridView1.Rows[row].Cells["Download"].Value = GetDeleteBitmap();
+            dataGridView1.Rows[item.RowNum].Cells["DownloadProgress"].Value = GetFileSizeBitmap(item.MbSize);
+            dataGridView1.Rows[item.RowNum].Cells["Download"].Value = GetDeleteBitmap();
         }
 
-        public void DownloadProgressChangeCallBack(string MbString, float percent, int row)
+        public void DownloadProgressChangeCallBack(Item item, double percent)
         {
             Bitmap bmp = new Bitmap(dataGridView1.Columns[0].Width, dataGridView1.Rows[0].Height);
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.FillRectangle(Brushes.Green, 0, 0, (int)(bmp.Width * ((float)percent / 100.0)), bmp.Height);
 
-                g.DrawString(MbString, new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 4, bmp.Height / 4));
+                g.DrawString(item.MbSize.ToString(), new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 4, bmp.Height / 4));
             }
 
-            dataGridView1.Rows[row].Cells["DownloadProgress"].Value = bmp;
+            dataGridView1.Rows[item.RowNum].Cells["DownloadProgress"].Value = bmp;
 
         }
 

@@ -46,7 +46,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.axWindowsMediaPlayer1 = new WMPLib.WindowsMediaPlayer();
             this.tabPageSubscription = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelSubInfo = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxSubDescription = new System.Windows.Forms.TextBox();
@@ -234,7 +234,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.axWindowsMediaPlayer1);
+            //this.tabPage1.Controls.Add(this.axWindowsMediaPlayer1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -245,13 +245,13 @@
             // 
             // axWindowsMediaPlayer1
             // 
-            this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            /*this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.axWindowsMediaPlayer1.Enabled = true;
             this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
             this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
             this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
-            this.axWindowsMediaPlayer1.TabIndex = 3;
+            this.axWindowsMediaPlayer1.TabIndex = 3;*/
             // 
             // tabPageSubscription
             // 
@@ -665,7 +665,7 @@
         private System.Windows.Forms.TextBox textBoxSubDescription;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelSubInfo;
         private System.Windows.Forms.TabPage tabPageSubscription;
-        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+        private WMPLib.WindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.TabPage tabPage1;
         public System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.TextBox textBox1;

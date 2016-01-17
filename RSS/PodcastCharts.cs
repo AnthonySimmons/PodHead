@@ -21,6 +21,7 @@ namespace RSS
         
 
         public static Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int> {
+            { "All", 0 },
 			{ "Arts", 1301 },
 			{ "Business", 1321 },
 			{ "Comedy", 1303 },
@@ -62,7 +63,9 @@ namespace RSS
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
 
-        public const string iTunesPodcastFormat = "https://itunes.apple.com/us/rss/toppodcasts/limit={0}/genre={1}/xml";
+        public const string iTunesPodcastFormatGenre = "https://itunes.apple.com/us/rss/toppodcasts/limit={0}/genre={1}/xml";
+
+        public const string iTunesPodcastFormatAll = "https://itunes.apple.com/us/rss/toppodcasts/limit={0}/xml";
 
         private const string EntityPodcast = "podcast";
 
@@ -116,6 +119,8 @@ namespace RSS
                 sub.RssLink = (string)subToken["feedUrl"];
                 sub.Category = "Podcasts";
                 sub.Title = (string)subToken["collectionName"];
+                sub.ImageUrl = (string)subToken["artworkUrl100"];
+				Parser.LoadSubscriptionAsync (sub);
                 subscriptions.Add(sub);
             }
 
@@ -137,7 +142,16 @@ namespace RSS
 
         private static string GetiTunesSourceUrl()
         {
-            return string.Format(iTunesPodcastFormat, Limit, PodcastGenreCodes[Genre]);
+            var url = string.Empty;
+            if (PodcastGenreCodes[Genre] != 0)
+            {
+                url = string.Format(iTunesPodcastFormatGenre, Limit, PodcastGenreCodes[Genre]);
+            }
+            else
+            {
+                url = string.Format(iTunesPodcastFormatAll, Limit, PodcastGenreCodes[Genre]);
+            }
+            return url;
         }
 
         private static string GetiTunesSourceRss()
@@ -159,7 +173,7 @@ namespace RSS
         private static Subscription GetiTunesPodcasts()
         {
             var url = GetiTunesSourceUrl();
-                        
+            
             var channel = new Subscription()
             {
                 RssLink = url,

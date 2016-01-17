@@ -5,11 +5,13 @@ namespace RSS
 {
     public static class RSSConfig
     {
+        private static string AndroidFolder = "/storage/extSdCard/AppData/RSS";
         public static string DownloadFolder
         {
             get
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "/RSS/";
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/RSS/";
+                
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -23,6 +25,7 @@ namespace RSS
             get
             {
                 var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/RSS/";
+                //var path = AndroidFolder;
                 if(!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);

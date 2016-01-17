@@ -35,6 +35,8 @@ namespace RssApp.Android.Views
         Xamarin.Forms.Label errorLabel = new Xamarin.Forms.Label();
         Xamarin.Forms.Image image = new Xamarin.Forms.Image();
 
+        MediaController mediaController;
+
         int currentProgressMs;
         int progressStepMs = 30000;
 
@@ -44,7 +46,7 @@ namespace RssApp.Android.Views
         }
 
         private void Initialize()
-        {
+        {            
             playPauseButton.Text = "Play";
             playPauseButton.Clicked += PlayPauseButton_Clicked;
             playPauseButton.IsVisible = false;
@@ -83,15 +85,20 @@ namespace RssApp.Android.Views
             rewindButton.Text = "Rewind";
             rewindButton.Clicked += RewindButton_Clicked;
 
+            /*
             var hLayout = new Xamarin.Forms.StackLayout()
             {
                 Orientation = Xamarin.Forms.StackOrientation.Horizontal,
             };
-            var spaceBox = new Xamarin.Forms.BoxView() { WidthRequest = Width / 2, };
+            var spaceBox = new Xamarin.Forms.BoxView()
+            {
+                WidthRequest = Width / 2,
+                HeightRequest = Width / 2,
+            };
             hLayout.Children.Add(progressLabel);
             hLayout.Children.Add(spaceBox);
             hLayout.Children.Add(durationLabel);
-            
+            */
             dateLabel.TextColor = Color.Black;
             dateLabel.IsVisible = false;
 
@@ -105,7 +112,7 @@ namespace RssApp.Android.Views
             playLayout.Children.Add(fastFowardButton);
             
 
-            image.HeightRequest = Height / 2;
+            image.HeightRequest = Width / 2;
             image.WidthRequest = Width / 2;
 
             errorLabel.TextColor = Color.Black;
@@ -117,14 +124,19 @@ namespace RssApp.Android.Views
             Children.Add(image);
             Children.Add(progressSlider);
             Children.Add(playLayout);
-            Children.Add(hLayout);
+
+            Children.Add(progressLabel);
+            Children.Add(durationLabel);
             Children.Add(errorLabel);
+
+            //mediaController = new MediaController(MainActivity.ActivityContext);
+            
         }
 
         private void RewindButton_Clicked(object sender, EventArgs e)
         {
             currentProgressMs -= progressStepMs;
-            //mediaPlayer.SeekTo(currentProgressMs);
+            mediaPlayer.SeekTo(currentProgressMs);
             UpdateProgressTime();
             SetMediaProgress();
         }
@@ -132,7 +144,8 @@ namespace RssApp.Android.Views
         private void FastFowardButton_Clicked(object sender, EventArgs e)
         {
             currentProgressMs += progressStepMs;
-            //mediaPlayer.SeekTo(currentProgressMs);
+            mediaPlayer.SeekTo(currentProgressMs);
+
             UpdateProgressTime();
             SetMediaProgress();
         }
@@ -166,7 +179,7 @@ namespace RssApp.Android.Views
             int min = (durationSeconds / 60);
             int sec = (durationSeconds % 60);
             int hour = min / 60;
-
+            min = min % 60;
             string minStr = min.ToString();
             string secStr = sec.ToString();
             string hourStr = hour.ToString();
@@ -221,14 +234,10 @@ namespace RssApp.Android.Views
                 }
 
                 mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, Uri.Parse(uri));
-                if (mediaPlayer == null)
-                {
-                    mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, Uri.Parse(item.Link));
-                }
-
+                
                 titleLabel.Text = item.Title;
                 mediaPlayer.SetAudioStreamType(Stream.Music);
-
+                //mediaPlayer.Prepare();
                 image.MinimumHeightRequest = Height / 2;
                 image.MinimumWidthRequest = Width / 2;
                 image.HeightRequest = Height / 2;
@@ -285,7 +294,9 @@ namespace RssApp.Android.Views
 
         private void SetMediaProgress()
         {
-            progressSlider.Value = mediaPlayer.CurrentPosition / mediaPlayer.Duration;
+            progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
+            progressSlider.Value = (double)mediaPlayer.CurrentPosition / (double)mediaPlayer.Duration;
+            progressSlider.ValueChanged += ProgressSlider_ValueChanged;
         }
 
         public void Pause()

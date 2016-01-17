@@ -17,15 +17,13 @@ namespace RssApp.Android
         private Label title = new Label();       
         
         private MediaPlayerView mediaPlayerView = new MediaPlayerView();
-        private SubscriptionsView subscriptionsView = new SubscriptionsView();
+        private SubscriptionsView subscriptionsView = new SavedSubscriptionsView();
         private SearchView searchView = new SearchView();
         private TopChartsView topChartsView = new TopChartsView();
 
         
         private ContentPage mediaPlayerPage, subscriptionsPage, searchPage, topChartsPage;
 
-        private View PreviousView;
-        
         private const string Subscriptions = "Subscriptions";
         private const string TopCharts = "Top Charts";
         private const string Search = "Search";
