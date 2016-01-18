@@ -32,6 +32,12 @@ namespace RssApp.Android
 			base.OnStop ();
 			Feeds.Instance.Save(RSSConfig.ConfigFileName);
 		}
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            base.OnSaveInstanceState(outState);
+            Feeds.Instance.Save(RSSConfig.ConfigFileName);
+        }
     }
 }
 

@@ -16,24 +16,34 @@ using Color = Xamarin.Forms.Color;
 using RSS;
 using System.Timers;
 
+using Button = Xamarin.Forms.Button;
+using StackLayout = Xamarin.Forms.StackLayout;
+using Image = Xamarin.Forms.Image;
+using Label = Xamarin.Forms.Label;
+using Slider = Xamarin.Forms.Slider;
+
+using Device = Xamarin.Forms.Device;
+
 namespace RssApp.Android.Views
 {
-    class MediaPlayerView : Xamarin.Forms.StackLayout
+    class MediaPlayerView : Xamarin.Forms.ScrollView
     {
+        private StackLayout stackLayout = new StackLayout();
+
         MediaPlayer mediaPlayer;
         Timer timer = new Timer();
 
-        Xamarin.Forms.Button playPauseButton = new Xamarin.Forms.Button();
-        Xamarin.Forms.Button fastFowardButton = new Xamarin.Forms.Button();
-        Xamarin.Forms.Button rewindButton = new Xamarin.Forms.Button();
-        Xamarin.Forms.Slider progressSlider = new Xamarin.Forms.Slider();
-        Xamarin.Forms.Label progressLabel = new Xamarin.Forms.Label();
-        Xamarin.Forms.Label durationLabel = new Xamarin.Forms.Label();
-        Xamarin.Forms.Label titleLabel = new Xamarin.Forms.Label();
-        Xamarin.Forms.Label descriptionLabel = new Xamarin.Forms.Label();
-        Xamarin.Forms.Label dateLabel = new Xamarin.Forms.Label();
-        Xamarin.Forms.Label errorLabel = new Xamarin.Forms.Label();
-        Xamarin.Forms.Image image = new Xamarin.Forms.Image();
+        Button playPauseButton = new Button();
+        Button fastFowardButton = new Button();
+        Button rewindButton = new Button();
+        Slider progressSlider = new Slider();
+        Label progressLabel = new Label();
+        Label durationLabel = new Label();
+        Label titleLabel = new Label();
+        Label descriptionLabel = new Label();
+        Label dateLabel = new Label();
+        Label errorLabel = new Label();
+        Image image = new Image();
 
         MediaController mediaController;
 
@@ -102,7 +112,7 @@ namespace RssApp.Android.Views
             dateLabel.TextColor = Color.Black;
             dateLabel.IsVisible = false;
 
-            var playLayout = new Xamarin.Forms.StackLayout()
+            var playLayout = new StackLayout()
             {
                 Orientation = Xamarin.Forms.StackOrientation.Horizontal
             };
@@ -118,16 +128,18 @@ namespace RssApp.Android.Views
             errorLabel.TextColor = Color.Black;
             errorLabel.IsVisible = false;
 
-            Children.Add(titleLabel);
-            Children.Add(descriptionLabel);
-            Children.Add(dateLabel);
-            Children.Add(image);
-            Children.Add(progressSlider);
-            Children.Add(playLayout);
+            stackLayout.Children.Add(titleLabel);
+            stackLayout.Children.Add(descriptionLabel);
+            stackLayout.Children.Add(dateLabel);
+            stackLayout.Children.Add(image);
+            stackLayout.Children.Add(progressSlider);
+            stackLayout.Children.Add(playLayout);
 
-            Children.Add(progressLabel);
-            Children.Add(durationLabel);
-            Children.Add(errorLabel);
+            stackLayout.Children.Add(progressLabel);
+            stackLayout.Children.Add(durationLabel);
+            stackLayout.Children.Add(errorLabel);
+
+            Content = stackLayout;
 
             //mediaController = new MediaController(MainActivity.ActivityContext);
             
@@ -137,6 +149,7 @@ namespace RssApp.Android.Views
         {
             currentProgressMs -= progressStepMs;
             mediaPlayer.SeekTo(currentProgressMs);
+            
             UpdateProgressTime();
             SetMediaProgress();
         }
@@ -170,8 +183,12 @@ namespace RssApp.Android.Views
 
         private void UpdateProgressTime()
         {
-            int progressSec = currentProgressMs / 1000;
-            progressLabel.Text = GetTimeFormat(progressSec);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                int progressSec = currentProgressMs / 1000;
+                progressLabel.Text = GetTimeFormat(progressSec);
+            }
+            );
         }
 
         private string GetTimeFormat(int durationSeconds)
@@ -228,7 +245,7 @@ namespace RssApp.Android.Views
                 currentProgressMs = 0;
 
                 string uri = item.Link;
-                if (item.CheckIsDownloaded())
+                if (item.IsDownloaded)
                 {
                     uri = item.FilePath;
                 }
@@ -295,7 +312,11 @@ namespace RssApp.Android.Views
         private void SetMediaProgress()
         {
             progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
-            progressSlider.Value = (double)mediaPlayer.CurrentPosition / (double)mediaPlayer.Duration;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                progressSlider.Value = (double)mediaPlayer.CurrentPosition / (double)mediaPlayer.Duration;
+            }
+            );
             progressSlider.ValueChanged += ProgressSlider_ValueChanged;
         }
 

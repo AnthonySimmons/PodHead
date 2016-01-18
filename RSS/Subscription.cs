@@ -41,6 +41,8 @@ namespace RSS
 
         public int MaxItems { get; set; }
 
+        public const int DefaultMaxItems = 10;
+
         public Subscription()
         {
             Feed = string.Empty;
@@ -56,7 +58,14 @@ namespace RSS
             SiteLink = string.Empty;
             ImageUrl = string.Empty;
             Category = string.Empty;
-            MaxItems = Feeds.Instance.MaxItems;
+            MaxItems = DefaultMaxItems;
         }
+
+        public IEnumerable<Item> GetDownloads()
+        {
+            return Items.Where(it => it.IsDownloaded);
+        }
+
+        
     }
 }

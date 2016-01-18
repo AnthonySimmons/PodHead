@@ -15,6 +15,8 @@ namespace RSS
 
     public delegate void DownloadCompleteEvent(Item item);
 
+    public delegate void DownloadRemovedEvent(Item item);
+
     public class Item
     {
         public string Title { get; set; }
@@ -26,14 +28,30 @@ namespace RSS
         public string Guid { get; set; }
 
         public string PubDate { get; set; }
+
+        public DateTime DownloadDate { get; set; }
      
         public List<author> Authors = new List<author>();
         
         public bool Read { get; set; }
 
         public Subscription ParentSubscription { get; set; }
+        
+        public int RowNum;
 
-        public bool IsDownloaded { get; set; }
+        public static event DownloadCompleteEvent AnyDownloadComplete;
+
+        public event DownloadProgressEvent DownloadProgress;
+
+        public static event DownloadRemovedEvent AnyDownloadRemoved;
+
+        public bool IsDownloaded
+        {
+            get
+            {
+                return File.Exists(FilePath);
+            }
+        }
         
         public bool CanBeDownloaded 
 		{
@@ -45,14 +63,34 @@ namespace RSS
         
         public int MbSize;
 
-        public string FilePath { get; set; }
+        public string FilePath
+        {
+            get
+            {
+                return RSSConfig.DownloadFolder + GetCleanFileName() + GetFileType();
+            }
+        }
 
-        public int RowNum;
+        private bool _isLoaded;
+        public bool IsLoaded
+        {
+            get
+            {
+                return _isLoaded;
+            }
+            set
+            {
+                _isLoaded = value;
+                if(_isLoaded)
+                {
+                    if (IsDownloaded)
+                    {
+                        OnAnyDownloadComplete();
+                    }
+                }
+            }
+        }
 
-
-        public event DownloadCompleteEvent DownloadComplete;
-
-        public event DownloadProgressEvent DownloadProgress;
 
 		public Item()
 		{
@@ -61,7 +99,6 @@ namespace RSS
 			Link = string.Empty;
 			Guid = string.Empty;
 			PubDate = string.Empty;
-			FilePath = string.Empty;
 		}
 
         public void DownloadFile()
@@ -85,17 +122,25 @@ namespace RSS
 
         void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            IsDownloaded = true;
-         
             ((WebClient)sender).DownloadProgressChanged -= client_DownloadProgressChanged;
             ((WebClient)sender).DownloadFileCompleted -= client_DownloadFileCompleted;
-
-            OnDownloadComplete();
+            
+            OnAnyDownloadComplete();
         }
 
-        private void OnDownloadComplete()
+        private void OnAnyDownloadComplete()
         {
-            var copy = DownloadComplete;
+            var copy = AnyDownloadComplete;
+            if(copy != null)
+            {
+                copy.Invoke(this);
+            }
+        }
+        
+
+        private void OnAnyDownloadRemoved()
+        {
+            var copy = AnyDownloadRemoved;
             if(copy != null)
             {
                 copy.Invoke(this);
@@ -140,27 +185,7 @@ namespace RSS
             }
             return cleanFileName;
         }
-
-
-
-        public bool CheckIsDownloaded()
-        {
-            bool isDownloaded = false;
-
-            string[] files = Directory.GetFiles(RSSConfig.DownloadFolder);
-            foreach (string str in files)
-            {
-                string cleanFileName = GetCleanFileName();
-                if (str.Contains(cleanFileName))
-                {
-                    FilePath = str;
-                    isDownloaded = true;
-                    break;
-                }
-            }
-            IsDownloaded = isDownloaded;
-            return IsDownloaded;
-        }
+        
 
         public int GetFileSizeMb()
         {
@@ -179,12 +204,13 @@ namespace RSS
         {
             bool success = false;
             string url = Link;
-            if (CanBeDownloaded)
+            if (IsDownloaded)
             {
                 if (File.Exists(FilePath))
                 {
                     File.SetAttributes(FilePath, FileAttributes.Normal);
                     File.Delete(FilePath);
+                    OnAnyDownloadRemoved();
                 }
 
                 success = !File.Exists(FilePath);
@@ -195,12 +221,7 @@ namespace RSS
             }
             return success;
         }
-
-        public void CalculateFilePath()
-        {
-            FilePath = RSSConfig.DownloadFolder + GetCleanFileName() + GetFileType();
-        }
-
+        
     }
 
     public class author

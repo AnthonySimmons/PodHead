@@ -508,12 +508,12 @@ namespace RSSForm
                     Item it = GetItem(selectedSub, title);
 
                     it.DownloadProgress += DownloadProgressChangeCallBack;
-                    it.DownloadComplete += DownloadCompleteCallBack;
+                    Item.AnyDownloadComplete += DownloadCompleteCallBack;
 
                     it.DownloadFile();
 
                     it.DownloadProgress -= DownloadProgressChangeCallBack;
-                    it.DownloadComplete -= DownloadCompleteCallBack;
+                    Item.AnyDownloadComplete -= DownloadCompleteCallBack;
                 }
             }
         }
@@ -589,9 +589,7 @@ namespace RSSForm
         private void UpdateDataGridRow(Item it, int count)
         {
             it.RowNum = count;
-
-            it.CalculateFilePath();
-
+            
             dataGridView1.Rows[count].Cells["Date"].Value = GetDateTime(it.PubDate);
             dataGridView1.Rows[count].Cells["Description"].Value = it.Description.ToString();
             dataGridView1.Rows[count].Cells["Title"].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Italic);
@@ -601,8 +599,7 @@ namespace RSSForm
 
             //if (it.CanBeDownloaded)
             {
-                it.IsDownloaded = it.CheckIsDownloaded();
-
+                
                 if (it.IsDownloaded)
                 {
                     it.MbSize = it.GetFileSizeMb();
@@ -873,7 +870,7 @@ namespace RSSForm
                     }
                     else
                     {
-                        it.DownloadComplete += DownloadCompleteCallBack;
+                        Item.AnyDownloadComplete += DownloadCompleteCallBack;
                         it.DownloadProgress += DownloadProgressChangeCallBack;
 
                         it.DownloadFile();

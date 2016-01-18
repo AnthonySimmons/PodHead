@@ -80,6 +80,7 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HomePage.cs" />
+    <Compile Include="Views\DownloadsView.cs" />
     <Compile Include="Views\ItemsView.cs" />
     <Compile Include="Views\MediaPlayerView.cs" />
     <Compile Include="Views\SavedSubscriptionsView.cs" />

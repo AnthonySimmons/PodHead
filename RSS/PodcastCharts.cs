@@ -181,7 +181,7 @@ namespace RSS
                 Category = "iTunes"
             };
 
-            Parser.LoadSubscription(channel, Feeds.Instance.MaxItems);
+            Parser.LoadSubscription(channel, Limit);
 
             return channel;
         }

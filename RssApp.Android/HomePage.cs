@@ -14,20 +14,22 @@ namespace RssApp.Android
     public class HomePage : TabbedPage
     {
         private StackLayout layout = new StackLayout();
-        private Label title = new Label();       
-        
+        private Label title = new Label();
+
         private MediaPlayerView mediaPlayerView = new MediaPlayerView();
-        private SubscriptionsView subscriptionsView = new SavedSubscriptionsView();
+        private SubscriptionsView savedSubscriptionsView = new SavedSubscriptionsView();
         private SearchView searchView = new SearchView();
         private TopChartsView topChartsView = new TopChartsView();
+        private DownloadsView downloadsView = new DownloadsView();
 
         
-        private ContentPage mediaPlayerPage, subscriptionsPage, searchPage, topChartsPage;
+        private ContentPage mediaPlayerPage, subscriptionsPage, searchPage, topChartsPage, downloadsPage;
 
         private const string Subscriptions = "Subscriptions";
         private const string TopCharts = "Top Charts";
         private const string Search = "Search";
         private const string NowPlaying = "Now Playing";
+        private const string Downloads = "Downloads";
 
         public HomePage()
         {
@@ -38,26 +40,30 @@ namespace RssApp.Android
         private void Initialize()
         {
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
-            Feeds.Instance.ParseAllFeeds();
-            subscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
+            Feeds.Instance.ParseAllFeedsAsync();
+            
+            savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
             searchView.ItemSelected += SubscriptionsView_ItemSelected;
             topChartsView.ItemSelected += SubscriptionsView_ItemSelected;
+            downloadsView.PlayItem += SubscriptionsView_ItemSelected;
             
             BackgroundColor = Color.Silver;
                         
             title.Text = "RSS";
             
-            subscriptionsPage = new ContentPage { Content = subscriptionsView, Title = Subscriptions };
+            subscriptionsPage = new ContentPage { Content = savedSubscriptionsView, Title = Subscriptions };
             searchPage = new ContentPage { Content = searchView, Title = Search };
             topChartsPage = new ContentPage { Content = topChartsView, Title = TopCharts };
             mediaPlayerPage = new ContentPage { Content = mediaPlayerView, Title = NowPlaying };
+            downloadsPage = new ContentPage { Content = downloadsView, Title = Downloads, Icon = "@drawable/icon" };
 
             LoadSubscriptions();
 
             Children.Add(subscriptionsPage);
-            Children.Add(searchPage);
-            Children.Add(topChartsPage);
+            Children.Add(downloadsPage);
             Children.Add(mediaPlayerPage);
+            Children.Add(topChartsPage);
+            Children.Add(searchPage);
 
             this.CurrentPage = subscriptionsPage;            
         }
@@ -72,7 +78,7 @@ namespace RssApp.Android
 
         private void LoadSubscriptions()
         {
-            subscriptionsView.LoadSubscriptions(Feeds.Instance.Subscriptions);
+            savedSubscriptionsView.LoadSubscriptions(Feeds.Instance.Subscriptions);
             Feeds.Instance.Save(RSSConfig.ConfigFileName);
         }
                 

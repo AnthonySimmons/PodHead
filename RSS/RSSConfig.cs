@@ -10,7 +10,7 @@ namespace RSS
         {
             get
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + "/RSS/";
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "/RSS/";
                 
                 if (!Directory.Exists(path))
                 {

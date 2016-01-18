@@ -95,7 +95,18 @@ namespace RSS
                 //Parser.LoadSubscriptionAsync(ch, MaxItems);
                 Subscriptions.Add(sub);
                 OnSubscriptionAdded(sub);
+                Save(RSSConfig.ConfigFileName);
             }
+        }
+
+        public IEnumerable<Item> GetDownloads()
+        {
+            var downloads = new List<Item>();
+            foreach(var sub in Subscriptions)
+            {
+                downloads.AddRange(sub.GetDownloads());
+            }
+            return downloads;
         }
 
         public void ParseAllFeedsAsync()
@@ -272,21 +283,23 @@ namespace RSS
         {
             try
             {
-                Subscriptions.Clear();
-                using (DataSet data = new DataSet())
+                if (File.Exists(fileName))
                 {
-
-                    data.ReadXml(fileName);
-                    foreach (DataRow dataRow in data.Tables["Subscription"].Rows)
+                    var contents = File.ReadAllText(fileName);
+                    Subscriptions.Clear();
+                    using (DataSet data = new DataSet())
                     {
-                        Subscription ch = new Subscription();
-                        ch.Category = Convert.ToString(dataRow["Category_Name"]);
-                        ch.Title = Convert.ToString(dataRow["Subscription_Name"]);
-                        ch.RssLink = Convert.ToString(dataRow["Subscription_URL"]);
-                        ch.Update = Convert.ToInt32(dataRow["Subscription_Update"]);
-                        Subscriptions.Add(ch);
+                        data.ReadXml(fileName);
+                        foreach (DataRow dataRow in data.Tables["Subscription"].Rows)
+                        {
+                            Subscription ch = new Subscription();
+                            ch.Category = Convert.ToString(dataRow["Category_Name"]);
+                            ch.Title = Convert.ToString(dataRow["Subscription_Name"]);
+                            ch.RssLink = Convert.ToString(dataRow["Subscription_URL"]);
+                            ch.Update = Convert.ToInt32(dataRow["Subscription_Update"]);
+                            Subscriptions.Add(ch);
+                        }
                     }
-
                 }
             }
             catch (Exception e)
@@ -308,5 +321,6 @@ namespace RSS
             }
             return null;
         }
+
     }
 }
