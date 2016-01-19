@@ -102,21 +102,22 @@ namespace RssApp.Android.Views
                     HorizontalTextAlignment = TextAlignment.Center,
                 };
                 var descLabel = new Label { Text = sub.Description, TextColor = Color.Black, };
-                                
+
+                var viewSubscriptionTap = new TapGestureRecognizer(sender => { ViewButton_Clicked(sender, null); });
+                
                 var image = new Image()
                 {
-                    Source = "icon.png",
+                    Source = sub.ImageUrl,
                     WidthRequest = 100,
                     HeightRequest = 100,
+                    BindingContext = sub,
                 };
-                if (!string.IsNullOrEmpty(sub.ImageUrl))
-                {
-                    image.Source = sub.ImageUrl;
-                }
+                image.GestureRecognizers.Add(viewSubscriptionTap);
+                
                 var nextImage = new Image { Source = "Next.png", };
                 nextImage.BindingContext = sub;
                 nextImage.HeightRequest = nextImage.WidthRequest = imageSize;
-                nextImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { ViewButton_Clicked(sender, null); }));
+                nextImage.GestureRecognizers.Add(viewSubscriptionTap);
 
                 var subscribeImage = new Image();
                 SetSubscribedImage(sub, subscribeImage);
