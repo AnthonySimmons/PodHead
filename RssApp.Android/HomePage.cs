@@ -39,6 +39,8 @@ namespace RssApp.Android
         
         private void Initialize()
         {
+            ErrorLogger.ErrorFound += ErrorLogger_ErrorFound;
+
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
             Feeds.Instance.ParseAllFeedsAsync();
             
@@ -66,6 +68,11 @@ namespace RssApp.Android
             Children.Add(searchPage);
 
             this.CurrentPage = subscriptionsPage;            
+        }
+
+        private void ErrorLogger_ErrorFound(string message)
+        {
+            DisplayAlert("Error", message, "Cancel");
         }
 
         private void SubscriptionsView_ItemSelected(Item item)

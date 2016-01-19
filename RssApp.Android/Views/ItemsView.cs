@@ -28,10 +28,12 @@ namespace RssApp.Android.Views
 
         private List<ProgressBar> progressBars = new List<ProgressBar>();
         private Button LoadMoreButton = new Button();
-        private Button RefreshButton = new Button();
-        private Button SubscribeButton = new Button();
+        private Image RefreshImage = new Image();
+        private Image SubscribeImage = new Image();
         private Subscription _subscription;
-        private Button BackButton = new Button();
+        private Image BackImage = new Image();
+
+        int buttonSize = 50;
 
         public ItemsView()
         {
@@ -46,17 +48,18 @@ namespace RssApp.Android.Views
             LoadMoreButton.Text = "Load More";
             LoadMoreButton.IsVisible = false;
             
-            BackButton.Text = "Back";
-            BackButton.TextColor = Color.Black;
-            BackButton.Clicked += BackButton_Clicked;
+            BackImage.Source = "Back.png";
+            BackImage.WidthRequest = BackImage.HeightRequest = buttonSize;
+            BackImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { BackButton_Clicked(sender, null); }));
 
-            SubscribeButton.Text = "Subscribe";
-            SubscribeButton.TextColor = Color.Black;
-            SubscribeButton.Clicked += SubscribeButton_Clicked;
 
-            RefreshButton.Text = "Refresh";
-            RefreshButton.Clicked += RefreshButton_Clicked;
-
+            SubscribeImage.Source = "Subscribe.png";
+            SubscribeImage.WidthRequest = SubscribeImage.HeightRequest = buttonSize;
+            SubscribeImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { SubscribeButton_Clicked(sender, null); }));
+            
+            RefreshImage.Source = "Refresh.png";
+            RefreshImage.WidthRequest = RefreshImage.HeightRequest = buttonSize;
+            RefreshImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { RefreshButton_Clicked(sender, null); }));
         }
 
         private void Parser_SubscriptionParsedComplete(Subscription subscription)
@@ -93,9 +96,9 @@ namespace RssApp.Android.Views
             ItemControls.Clear();
 
             var topLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
-            topLayout.Children.Add(BackButton);
-            topLayout.Children.Add(RefreshButton);
-            topLayout.Children.Add(SubscribeButton);
+            topLayout.Children.Add(BackImage);
+            topLayout.Children.Add(RefreshImage);
+            topLayout.Children.Add(SubscribeImage);
 
             Children.Insert(0, topLayout);
 
@@ -161,26 +164,26 @@ namespace RssApp.Android.Views
                     HorizontalTextAlignment = TextAlignment.Center
                 };
                 var description = new Label() { Text = item.Description, TextColor = Color.Black };
-                var playButton = new Button() { Text = "Play", TextColor = Color.Black, };
-                var downloadButton = new Button() { Text = "Download", TextColor = Color.Black, };
+                
+                var playImage = new Image() { Source = "Play.png", HeightRequest = buttonSize, WidthRequest = buttonSize, };
+                var downloadImage = new Image() { Source = "Download.png", HeightRequest = buttonSize, WidthRequest = buttonSize };
+                downloadImage.BindingContext = item;
+                playImage.BindingContext = item;
+                playImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { PlayButton_Clicked(sender, null); }));
+                downloadImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { DownloadButton_Clicked(sender, null); }));
+
                 var progressBar = new ProgressBar() { IsVisible = false, };
+
                 if (item.IsDownloaded)
                 {
-                    downloadButton.Text = "Remove";
+                    downloadImage.Source = "Remove.png";
                 }
-                downloadButton.BindingContext = item;
-
-                playButton.BindingContext = item;
-                playButton.Clicked += PlayButton_Clicked;
-                downloadButton.Clicked += DownloadButton_Clicked;
-
-                int height = (int)(title.Height + description.Height + playButton.Height + downloadButton.Height + progressBar.Height + 45);
-
+                
                 var hLayout = new StackLayout();
                 hLayout.Orientation = StackOrientation.Horizontal;
-                hLayout.Children.Add(playButton);
-                hLayout.Children.Add(downloadButton);
-
+                hLayout.Children.Add(playImage);
+                hLayout.Children.Add(downloadImage);
+            
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
                 var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
@@ -189,6 +192,7 @@ namespace RssApp.Android.Views
                 itemLayout.Children.Add(topBoxView);
                 itemLayout.Children.Add(title);
                 itemLayout.Children.Add(description);
+                //itemLayout.Children.Add(tableView);
                 itemLayout.Children.Add(hLayout);
                 itemLayout.Children.Add(progressBar);
 
@@ -198,7 +202,7 @@ namespace RssApp.Android.Views
                 {
                     { "ItemLayout", itemLayout },
                     { "ProgressBar", progressBar},
-                    { "DownloadButton", downloadButton},
+                    { "DownloadButton", downloadImage},
                 }
                 );
             }
@@ -228,9 +232,16 @@ namespace RssApp.Android.Views
 
         private void SetSubscriptionText(Subscription subscription)
         {
-            SubscribeButton.TextColor = Color.Black;
-            SubscribeButton.BindingContext = subscription;
-            SubscribeButton.Text = Feeds.Instance.GetSubscribeText(subscription.Title);
+            SubscribeImage.BindingContext = subscription;
+            var subscribeText = Feeds.Instance.GetSubscribeText(subscription.Title);
+            if(subscribeText == "Subscribe")
+            {
+                SubscribeImage.Source = "Subscribe.png";
+            }
+            else if(subscribeText == "Unsubscribe")
+            {
+                SubscribeImage.Source = "Unsubscribe.png";
+            }
         }
 
         private void OnBackSelected()
@@ -244,7 +255,7 @@ namespace RssApp.Android.Views
 
         private void DownloadButton_Clicked(object sender, EventArgs e)
         {
-            var item = ((Button)sender).BindingContext as Item;
+            var item = ((View)sender).BindingContext as Item;
             if (item != null)
             {
                 if (!item.IsDownloaded)
@@ -270,8 +281,16 @@ namespace RssApp.Android.Views
         {
             Device.BeginInvokeOnMainThread(() => 
             {
-                var downloadButton = (Button)ItemControls[item]["DownloadButton"];
-                downloadButton.Text = "Download";
+                if (ItemControls.ContainsKey(item))
+                {
+                    var itemControls = ItemControls[item];
+                    if (itemControls.ContainsKey("DownloadButton"))
+                    {
+                        var downloadButton = (Image)itemControls["DownloadButton"];
+                        //downloadButton.Text = "Download";
+                        downloadButton.Source = "Download.png";
+                    }
+                }
             }
             );
         }
@@ -280,8 +299,9 @@ namespace RssApp.Android.Views
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                var downloadButton = (Button)ItemControls[item]["DownloadButton"];
-                downloadButton.Text = "Remove";
+                var downloadButton = (Image)ItemControls[item]["DownloadButton"];
+                //downloadButton.Text = "Remove";
+                downloadButton.Source = "Remove.png";
                 
                 var progressBar = (ProgressBar)ItemControls[item]["ProgressBar"];
                 progressBar.IsVisible = false;

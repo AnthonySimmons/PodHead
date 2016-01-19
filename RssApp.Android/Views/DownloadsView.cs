@@ -33,7 +33,10 @@ namespace RssApp.Android.Views
             {
                 var itemLayout = ItemControls[item]["ItemLayout"];
                 ItemControls.Remove(item);
-                stackLayout.Children.Remove(itemLayout);
+                if (stackLayout.Children.Contains(itemLayout))
+                {
+                    stackLayout.Children.Remove(itemLayout);
+                }
             }
         }
 

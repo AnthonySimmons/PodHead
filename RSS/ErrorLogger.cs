@@ -6,8 +6,12 @@ using System.Text;
 
 namespace RSS
 {
+    public delegate void ErrorFoundEventHandler(string message);
+    
     public static class ErrorLogger
     {
+        public static event ErrorFoundEventHandler ErrorFound;
+
         public static string ErrorLogPath = Path.Combine(RSSConfig.AppDataFolder, "ErrorLog.txt");
 
         public static void Log(Exception ex)
@@ -37,6 +41,16 @@ namespace RSS
                 var messageBytes = Encoding.UTF8.GetBytes(message);
                 writer.Write(dateBytes, 0, dateBytes.Length);
                 writer.Write(messageBytes, 0, messageBytes.Length);
+                OnErrorFound(message);
+            }
+        }
+
+        private static void OnErrorFound(string message)
+        {
+            var copy = ErrorFound;
+            if(copy != null)
+            {
+                copy.Invoke(message);
             }
         }
     }

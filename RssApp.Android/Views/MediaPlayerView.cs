@@ -15,12 +15,13 @@ using Uri = Android.Net.Uri;
 using Color = Xamarin.Forms.Color;
 using RSS;
 using System.Timers;
-
+using OS = Android.OS;
 using Button = Xamarin.Forms.Button;
 using StackLayout = Xamarin.Forms.StackLayout;
 using Image = Xamarin.Forms.Image;
 using Label = Xamarin.Forms.Label;
 using Slider = Xamarin.Forms.Slider;
+using TapGestureRecognizer = Xamarin.Forms.TapGestureRecognizer;
 
 using Device = Xamarin.Forms.Device;
 
@@ -33,9 +34,9 @@ namespace RssApp.Android.Views
         MediaPlayer mediaPlayer;
         Timer timer = new Timer();
 
-        Button playPauseButton = new Button();
-        Button fastFowardButton = new Button();
-        Button rewindButton = new Button();
+        Image playPauseButton = new Image();
+        Image fastFowardButton = new Image();
+        Image rewindButton = new Image();
         Slider progressSlider = new Slider();
         Label progressLabel = new Label();
         Label durationLabel = new Label();
@@ -45,7 +46,7 @@ namespace RssApp.Android.Views
         Label errorLabel = new Label();
         Image image = new Image();
 
-        MediaController mediaController;
+        int imageSize = 50;
 
         int currentProgressMs;
         int progressStepMs = 30000;
@@ -56,21 +57,21 @@ namespace RssApp.Android.Views
         }
 
         private void Initialize()
-        {            
-            playPauseButton.Text = "Play";
-            playPauseButton.Clicked += PlayPauseButton_Clicked;
+        {
+            playPauseButton.Source = "Play.png";
             playPauseButton.IsVisible = false;
+            playPauseButton.HeightRequest = playPauseButton.WidthRequest = imageSize;
+            playPauseButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => PlayPauseButton_Clicked(sender, null)));
 
             progressSlider.ValueChanged += ProgressSlider_ValueChanged;
             progressSlider.BackgroundColor = Color.Navy;
             progressSlider.IsVisible = false;
-
+            
             titleLabel.TextColor = Color.Black;
             titleLabel.IsVisible = false;
             titleLabel.FontSize = 24;
             titleLabel.HorizontalTextAlignment = Xamarin.Forms.TextAlignment.Center;
-
-            playPauseButton.TextColor = Color.Black;
+            
             playPauseButton.IsVisible = false;
 
             progressLabel.TextColor = Color.Black;
@@ -83,32 +84,18 @@ namespace RssApp.Android.Views
 
             descriptionLabel.TextColor = Color.Black;
             descriptionLabel.IsVisible = false;
-            descriptionLabel.FontSize = 20;
-
-            fastFowardButton.TextColor = Color.Black;
+            descriptionLabel.FontSize = 16;
+            
             fastFowardButton.IsVisible = false;
-            fastFowardButton.Text = "Fast Forward";
-            fastFowardButton.Clicked += FastFowardButton_Clicked;
+            fastFowardButton.Source = "FastForward.png";
+            fastFowardButton.HeightRequest = fastFowardButton.WidthRequest = imageSize;
+            fastFowardButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => FastFowardButton_Clicked(sender, null)));
 
-            rewindButton.TextColor = Color.Black;
             rewindButton.IsVisible = false;
-            rewindButton.Text = "Rewind";
-            rewindButton.Clicked += RewindButton_Clicked;
-
-            /*
-            var hLayout = new Xamarin.Forms.StackLayout()
-            {
-                Orientation = Xamarin.Forms.StackOrientation.Horizontal,
-            };
-            var spaceBox = new Xamarin.Forms.BoxView()
-            {
-                WidthRequest = Width / 2,
-                HeightRequest = Width / 2,
-            };
-            hLayout.Children.Add(progressLabel);
-            hLayout.Children.Add(spaceBox);
-            hLayout.Children.Add(durationLabel);
-            */
+            rewindButton.Source = "Rewind.png";
+            rewindButton.HeightRequest = rewindButton.WidthRequest = imageSize;
+            rewindButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => RewindButton_Clicked(sender, null)));
+       
             dateLabel.TextColor = Color.Black;
             dateLabel.IsVisible = false;
 
@@ -120,29 +107,32 @@ namespace RssApp.Android.Views
             playLayout.Children.Add(rewindButton);
             playLayout.Children.Add(playPauseButton);
             playLayout.Children.Add(fastFowardButton);
-            
+            playLayout.WidthRequest = this.Width;
 
-            image.HeightRequest = Width / 2;
-            image.WidthRequest = Width / 2;
+            image.HeightRequest = Width / 4;
+            image.WidthRequest = Width / 4;
 
             errorLabel.TextColor = Color.Black;
             errorLabel.IsVisible = false;
+                        
+            var spaceBox = new Xamarin.Forms.BoxView() { WidthRequest = HeightRequest = 125, };
+            var durationLabelLayout = new StackLayout { Orientation = Xamarin.Forms.StackOrientation.Horizontal, };
+            durationLabelLayout.Children.Add(progressLabel);
+            durationLabelLayout.Children.Add(spaceBox);
+            durationLabelLayout.Children.Add(durationLabel);
 
             stackLayout.Children.Add(titleLabel);
             stackLayout.Children.Add(descriptionLabel);
             stackLayout.Children.Add(dateLabel);
             stackLayout.Children.Add(image);
             stackLayout.Children.Add(progressSlider);
+            stackLayout.Children.Add(durationLabelLayout);
+
             stackLayout.Children.Add(playLayout);
 
-            stackLayout.Children.Add(progressLabel);
-            stackLayout.Children.Add(durationLabel);
             stackLayout.Children.Add(errorLabel);
 
-            Content = stackLayout;
-
-            //mediaController = new MediaController(MainActivity.ActivityContext);
-            
+            Content = stackLayout;   
         }
 
         private void RewindButton_Clicked(object sender, EventArgs e)
@@ -305,7 +295,7 @@ namespace RssApp.Android.Views
                 mediaPlayer.Start();
                 mediaPlayer.SeekTo(currentProgressMs);
                 SetMediaProgress();
-                playPauseButton.Text = "Pause";
+                playPauseButton.Source = "Pause.png";
             }
         }
 
@@ -326,7 +316,7 @@ namespace RssApp.Android.Views
             {
                 timer.Stop();
                 mediaPlayer.Pause();
-                playPauseButton.Text = "Play";
+                playPauseButton.Source = "Play.png";
             }
         }
 
@@ -335,7 +325,7 @@ namespace RssApp.Android.Views
             if (mediaPlayer != null)
             {
                 mediaPlayer.Stop();
-                playPauseButton.Text = "Play";
+                playPauseButton.Source = "Play.png";
             }
         }
 

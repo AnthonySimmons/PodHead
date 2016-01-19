@@ -27,10 +27,11 @@ namespace RssApp.Android.Views
             //Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
 			base.Initialize();
 
-            RefreshButton.Text = "Refresh";
-            RefreshButton.Clicked += RefreshButton_Clicked;
+            RefreshImage.Source = "Refresh.png";
+            RefreshImage.WidthRequest = RefreshImage.HeightRequest = imageSize;
+            RefreshImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { RefreshButton_Clicked(sender, null); }));
 
-            Children.Insert(0, RefreshButton);
+            Children.Insert(0, RefreshImage);
         }
 
         private void Instance_SubscriptionRemoved(Subscription subscription)

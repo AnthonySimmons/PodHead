@@ -29,9 +29,11 @@ namespace RssApp.Android.Views
 
         protected List<Subscription> _subscriptions;
 
-        protected Button RefreshButton = new Button();
+        protected Image RefreshImage = new Image();
 
         protected Dictionary<Subscription, List<View>> SubscriptionControls = new Dictionary<Subscription, List<View>>();
+
+        protected int imageSize = 50;
 
         protected virtual void Initialize()
         {            
@@ -103,25 +105,30 @@ namespace RssApp.Android.Views
                                 
                 var image = new Image()
                 {
-                    Source = sub.ImageUrl,
+                    Source = "icon.png",
                     WidthRequest = 100,
                     HeightRequest = 100,
                 };
-                if (string.IsNullOrEmpty(sub.ImageUrl))
+                if (!string.IsNullOrEmpty(sub.ImageUrl))
                 {
-                    image.Source = "@drawable/icon";
+                    image.Source = sub.ImageUrl;
                 }
-                var viewButton = new Button { Text = "View", TextColor = Color.Black, };
-                viewButton.BindingContext = sub;
-                viewButton.Clicked += ViewButton_Clicked;
-                var subscribeButton = new Button { Text = Feeds.Instance.GetSubscribeText(sub.Title), TextColor = Color.Black, };
-                subscribeButton.BindingContext = sub;
-                subscribeButton.Clicked += SubscribeButton_Clicked;
+                var nextImage = new Image { Source = "Next.png", };
+                nextImage.BindingContext = sub;
+                nextImage.HeightRequest = nextImage.WidthRequest = imageSize;
+                nextImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { ViewButton_Clicked(sender, null); }));
+
+                var subscribeImage = new Image();
+                SetSubscribedImage(sub, subscribeImage);
+                subscribeImage.BindingContext = sub;
+                subscribeImage.HeightRequest = subscribeImage.WidthRequest = imageSize;
+                subscribeImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { SubscribeButton_Clicked(sender, null); }));
+
 
                 var imageLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
                 var buttonLayout = new StackLayout();
-                buttonLayout.Children.Add(viewButton);
-                buttonLayout.Children.Add(subscribeButton);
+                buttonLayout.Children.Add(nextImage);
+                buttonLayout.Children.Add(subscribeImage);
                 imageLayout.Children.Add(image);
                 imageLayout.Children.Add(buttonLayout);
 
@@ -140,7 +147,7 @@ namespace RssApp.Android.Views
             var sub = ((View)sender).BindingContext as Subscription;
             if (sub != null)
             {
-                RefreshButton.IsVisible = false;
+                RefreshImage.IsVisible = false;
                 itemsView.IsVisible = true;
                 //progressBar.IsVisible = true;
                 scrollView.Content = itemsView;
@@ -148,14 +155,26 @@ namespace RssApp.Android.Views
             }
         }
 
-        private void SubscribeButton_Clicked(object sender, EventArgs e)
+        protected void SubscribeButton_Clicked(object sender, EventArgs e)
         {
-            var senderButton = (Button)sender;
-            var subscription = (Subscription)senderButton.BindingContext;
+            var senderImage = (Image)sender;
+            var subscription = (Subscription)senderImage.BindingContext;
             Feeds.Instance.ToggleSubscription(subscription);
-            senderButton.Text = Feeds.Instance.GetSubscribeText(subscription.Title);
+            SetSubscribedImage(subscription, senderImage);
         }
         
+        private void SetSubscribedImage(Subscription subscription, Image image)
+        {
+            var subscribeText = Feeds.Instance.GetSubscribeText(subscription.Title);
+            if (subscribeText == "Subscribe")
+            {
+                image.Source = "Subscribe.png";
+            }
+            else if (subscribeText == "Unsubscribe")
+            {
+                image.Source = "Unsubscribe.png";
+            }
+        }
 
         protected abstract void LoadMore();
 
@@ -175,7 +194,7 @@ namespace RssApp.Android.Views
 
         private void ItemsView_BackSelected(object sender, EventArgs e)
         {
-            RefreshButton.IsVisible = true;
+            RefreshImage.IsVisible = true;
             scrollView.Content = stackLayout;
 			LoadSubscriptions(_subscriptions);
         }
