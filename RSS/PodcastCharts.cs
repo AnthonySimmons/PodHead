@@ -86,6 +86,10 @@ namespace RSS
 			Podcasts = new List<Subscription>();
 		}
 
+        public void ClearPodcasts()
+        {
+            Podcasts.Clear();
+        }
 
         private static string GetPodcastInfoJson(string podcastId)
         {
@@ -120,13 +124,15 @@ namespace RSS
                 sub.Category = "Podcasts";
                 sub.Title = (string)subToken["collectionName"];
                 sub.ImageUrl = (string)subToken["artworkUrl100"];
+                sub.MaxItems = 0;
 				Parser.LoadSubscriptionAsync (sub);
+                
                 subscriptions.Add(sub);
             }
 
             return subscriptions;
         }
-
+        
         private static string GetPodcastId(string itunesPodcastUrl)
         {
             //Ex.
@@ -149,7 +155,7 @@ namespace RSS
             }
             else
             {
-                url = string.Format(iTunesPodcastFormatAll, Limit, PodcastGenreCodes[Genre]);
+                url = string.Format(iTunesPodcastFormatAll, Limit);
             }
             return url;
         }
@@ -173,17 +179,17 @@ namespace RSS
         private static Subscription GetiTunesPodcasts()
         {
             var url = GetiTunesSourceUrl();
-            
-            var channel = new Subscription()
+
+            var sourceSub = new Subscription()
             {
                 RssLink = url,
                 Title = Genre.ToString(),
-                Category = "iTunes"
+                Category = "iTunes",
+                MaxItems = Limit,
             };
+            Parser.LoadSubscription(sourceSub, Limit);
 
-            Parser.LoadSubscription(channel, Limit);
-
-            return channel;
+            return sourceSub;
         }
 
         private void GetPodcasts()

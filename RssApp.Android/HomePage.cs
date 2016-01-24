@@ -43,13 +43,13 @@ namespace RssApp.Android
 
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
             Feeds.Instance.ParseAllFeedsAsync();
-            
+            this.PagesChanged += HomePage_PagesChanged;
             savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
             searchView.ItemSelected += SubscriptionsView_ItemSelected;
             topChartsView.ItemSelected += SubscriptionsView_ItemSelected;
             downloadsView.PlayItem += SubscriptionsView_ItemSelected;
             
-            BackgroundColor = Color.Silver;
+            BackgroundColor = Color.White;
                         
             title.Text = "RSS";
             
@@ -68,6 +68,15 @@ namespace RssApp.Android
             Children.Add(searchPage);
 
             this.CurrentPage = subscriptionsPage;            
+        }
+
+        private void HomePage_PagesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if(SelectedItem == topChartsPage)
+            {
+                var topChartsView = topChartsPage.Content as TopChartsView;
+                topChartsView.InitializeTopCharts();
+            }
         }
 
         private void ErrorLogger_ErrorFound(string message)

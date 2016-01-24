@@ -26,9 +26,7 @@ namespace RssApp.Android.Views
 			base.Initialize ();
 
             PodcastCharts.Instance.PodcastSourceUpdated += Instance_PodcastSourceUpdated;
-
-            GenrePicker.SelectedIndexChanged += SourceGenre_SelectedIndexChanged;
-
+            
             GenreLabel.Text = "Genre:";
             GenreLabel.TextColor = Color.Black;
             GenreLabel.FontSize = 18;
@@ -39,9 +37,15 @@ namespace RssApp.Android.Views
                         
             Children.Insert(0, GenreLabel);
             Children.Insert(1, GenrePicker);
-
+            
             LoadTopChartsGenres();
 
+            //GenrePicker.SelectedIndex = GenrePicker.Items.IndexOf(PodcastCharts.PodcastGenreCodes.Keys.First());
+            GenrePicker.SelectedIndexChanged += SourceGenre_SelectedIndexChanged;
+        }
+
+        public void InitializeTopCharts()
+        {
             GenrePicker.SelectedIndex = GenrePicker.Items.IndexOf(PodcastCharts.PodcastGenreCodes.Keys.First());
         }
 
@@ -99,7 +103,7 @@ namespace RssApp.Android.Views
             if (GenrePicker.SelectedIndex >= 0)
             {
                 PodcastCharts.Genre = GenrePicker.Items[GenrePicker.SelectedIndex];
-                PodcastCharts.Instance.Podcasts.Clear();
+                PodcastCharts.Instance.ClearPodcasts();
                 PodcastCharts.Instance.GetPodcastsAsync();
             }
         }

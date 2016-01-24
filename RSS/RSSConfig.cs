@@ -34,6 +34,18 @@ namespace RSS
             }        
         }
             
+        public static string AppDataImageFolder
+        {
+            get
+            {
+                var path = Path.Combine(AppDataFolder, "Images");
+                if(!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                return path;
+            }
+        }
 
 
         public static string ConfigFileName = AppDataFolder + "Config.xml";

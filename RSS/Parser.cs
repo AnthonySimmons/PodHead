@@ -123,7 +123,6 @@ namespace RSS
         private static bool LoadSubscription(Subscription sub, string rss, int maxItems)
         {
             bool success = false;
-            WebClient wc = new WebClient();
             try
             {
                 if (!string.IsNullOrEmpty(rss))
@@ -142,6 +141,7 @@ namespace RSS
                             break;
                     }
                 }
+                DownloadImage(sub);
                 sub.IsLoaded = success;
             }
             catch (Exception e)
@@ -150,6 +150,24 @@ namespace RSS
                 ErrorLogger.Log(e);
             }
             return success;
+        }
+
+        private static void DownloadImage(Subscription sub)
+        {
+            if (!sub.ImageLoaded)
+            {
+                DownloadImage(sub.ImageUrl, sub.ImageFilePath);
+                sub.ImageLoaded = true;
+            }
+        }
+
+        private static void DownloadImage(string imageUrl, string imageFilePath)
+        {
+            
+            using (var client = new WebClient())
+            {
+                client.DownloadFile(new Uri(imageUrl), imageFilePath);
+            }
         }
 
         private static void LoadSubscriptionOpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
@@ -210,7 +228,7 @@ namespace RSS
             return attribute;
         }
 
-        private static bool LoadXMLRSS2_0(Subscription ch, string rss, int maxItems)
+        private static bool LoadXMLRSS2_0(Subscription sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -225,23 +243,27 @@ namespace RSS
                 foreach (XmlElement channel in channels)
                 {
                     int counter = 0;
-                    ch.Title = GetXmlElementValue(channel, "title");
-                    ch.SiteLink = GetXmlElementValue(channel, "link");
-                    ch.Description = GetXmlElementValue(channel, "description");
-                    ch.PubDate = GetXmlElementValue(channel, "pubDate");
-                    ch.Ttl = GetXmlElementValue(channel, "ttl");
-                    ch.LastBuildDate = GetXmlElementValue(channel, "lastBuildDate");
+                    sub.Title = GetXmlElementValue(channel, "title");
+                    sub.SiteLink = GetXmlElementValue(channel, "link");
+                    sub.Description = GetXmlElementValue(channel, "description");
+                    sub.PubDate = GetXmlElementValue(channel, "pubDate");
+                    sub.Ttl = GetXmlElementValue(channel, "ttl");
+                    sub.LastBuildDate = GetXmlElementValue(channel, "lastBuildDate");
 
-                    var imageNodes = channel.GetElementsByTagName("image");
-                    if(imageNodes.Count > 0)
+                    if (string.IsNullOrEmpty(sub.ImageUrl))
                     {
-                        var imageNode = imageNodes[0];
-                        ch.ImageUrl = GetXmlElementValue(imageNode, "url");
+                        var imageNodes = channel.GetElementsByTagName("image");
+                        if (imageNodes.Count > 0)
+                        {
+                            var imageNode = imageNodes[0];
+                            sub.ImageUrl = GetXmlElementValue(imageNode, "url");
+                        }
                     }
 
                     var items = channel.GetElementsByTagName("item");
                     foreach(XmlNode item in items)
                     {
+                        if (counter++ >= maxItems) { break; }
                         var it = new Item();
                         it.Title = GetXmlElementValue(item, "title");
                         it.Link = GetXmlElementValue(item, "link");
@@ -255,11 +277,10 @@ namespace RSS
                         it.Guid = GetXmlElementValue(item, "guid");
                         it.PubDate = GetXmlElementValue(item, "pubDate");
                         it.RowNum = counter;
-                        it.ParentSubscription = ch;
+                        it.ParentSubscription = sub;
                         it.IsLoaded = true;
-                        ch.Items.Add(it);
-                        counter++;
-                        if(counter > ch.MaxItems) { break; }
+                        sub.ItemsLoaded = true;
+                        sub.Items.Add(it);
                     }
                 }
             }
@@ -268,11 +289,11 @@ namespace RSS
                 ErrorLogger.Log(ex);
                 success = false;
             }
-            ch.HasErrors = !success;
+            sub.HasErrors = !success;
             return success;
         }
 
-        private static bool LoadXMLRSS1_0(Subscription ch, string rss, int maxItems)
+        private static bool LoadXMLRSS1_0(Subscription sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -287,14 +308,15 @@ namespace RSS
                 foreach (XmlElement channel in channels)
                 {
                     int count = 0;
-                    ch.Title = GetXmlElementValue(channel, "title");
-                    ch.Description = GetXmlElementValue(channel, "description");
-                    ch.SiteLink = GetXmlElementValue(channel, "link");
+                    sub.Title = GetXmlElementValue(channel, "title");
+                    sub.Description = GetXmlElementValue(channel, "description");
+                    sub.SiteLink = GetXmlElementValue(channel, "link");
 
                     var items = channel.GetElementsByTagName("item");
                         
                     foreach(XmlNode item in items)
                     {
+                        if (count++ >= maxItems) { break; }
                         var it = new Item();
                         it.Title = GetXmlElementValue(item, "title");
                         it.Description = GetXmlElementValue(item, "description");
@@ -302,11 +324,10 @@ namespace RSS
                         it.Guid = GetXmlElementValue(item, "guid");
                         it.PubDate = GetXmlElementValue(item, "pubDate");
                         it.RowNum = count;
-                        it.ParentSubscription = ch;
+                        it.ParentSubscription = sub;
+                        sub.ItemsLoaded = true;
                         it.IsLoaded = true;
-                        ch.Items.Add(it);
-                        count++;
-                        if(count > ch.MaxItems) { break; }
+                        sub.Items.Add(it);
                     }
 
                 }
@@ -316,13 +337,13 @@ namespace RSS
                 ErrorLogger.Log(ex);
                 success = false;                
             }
-            ch.HasErrors = !success;
+            sub.HasErrors = !success;
             return success;
         }
         
 
 
-        private static bool LoadXMLAtom(Subscription ch, string rss, int maxItems)
+        private static bool LoadXMLAtom(Subscription sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -330,13 +351,18 @@ namespace RSS
                 var doc = new XmlDocument();
                 doc.LoadXml(rss);
                 var feedNode = doc["feed"];
-                ch.Title = GetXmlElementValue(feedNode, "title");
-                ch.ImageUrl = GetXmlElementValue(feedNode, "icon");
+                sub.Title = GetXmlElementValue(feedNode, "title");
+                if (string.IsNullOrEmpty(sub.ImageUrl))
+                {
+                    sub.ImageUrl = GetXmlElementValue(feedNode, "icon");
+                }
 
                 var entries = feedNode.GetElementsByTagName("entry");
+
+                int count = 0;
                 foreach (XmlNode entry in entries)
                 {
-                    int count = 0;
+                    if (count++ >= maxItems) { break; }
                     var it = new Item();
                     it.Title = GetXmlElementValue(entry, "title");
                     it.Description = GetXmlElementValue(entry, "summary");
@@ -354,11 +380,10 @@ namespace RSS
                         }
                     }
                     it.RowNum = count;
-                    it.ParentSubscription = ch;
+                    it.ParentSubscription = sub;
+                    sub.ItemsLoaded = true;
                     it.IsLoaded = true;
-                    ch.Items.Add(it);
-                    count++;
-                    if(count > ch.MaxItems) { break; }
+                    sub.Items.Add(it);
                 }
             }
             catch (Exception ex)
@@ -366,7 +391,7 @@ namespace RSS
                 ErrorLogger.Log(ex);
                 success = false;
             }
-            ch.HasErrors = !success;
+            sub.HasErrors = !success;
             return success;
         }
     }

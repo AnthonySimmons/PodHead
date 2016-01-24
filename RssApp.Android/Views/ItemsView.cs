@@ -83,8 +83,9 @@ namespace RssApp.Android.Views
         public void LoadSubscription(Subscription subscription)
         {
             _subscription = subscription;
-            if (!subscription.IsLoaded)
+            if (!subscription.IsLoaded || !subscription.ItemsLoaded)
             {
+                subscription.MaxItems = Math.Max(Subscription.DefaultMaxItems, subscription.MaxItems);
                 Parser.LoadSubscription(subscription, subscription.MaxItems);
             }
             //if(subscription.Items.Count == subscription.MaxItems)

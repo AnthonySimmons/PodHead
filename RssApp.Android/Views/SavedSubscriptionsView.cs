@@ -78,6 +78,7 @@ namespace RssApp.Android.Views
                 if (scrollView.Content != itemsView)
                 {
                     progressBar.IsVisible = false;
+                    Parser.SubscriptionParsedComplete -= Parser_SubscriptionParsedComplete;
                     LoadSubscriptions(Feeds.Instance.Subscriptions);
                 }
             }
@@ -100,6 +101,7 @@ namespace RssApp.Android.Views
 
         private void RefreshButton_Clicked(object sender, EventArgs e)
         {
+            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
             progressBar.IsVisible = true;
             progressBar.Progress = 0;
             progressStep = 1.0 / Feeds.Instance.Subscriptions.Count;

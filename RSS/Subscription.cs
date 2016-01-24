@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -37,9 +38,56 @@ namespace RSS
 
         public bool HasErrors { get; set; }
 
-        public bool IsLoaded { get; set; }
+        private bool isLoaded;
+        public bool IsLoaded
+        {
+            get { return isLoaded; }
+            set
+            {
+                isLoaded = value;
+                if(isLoaded)
+                {
+                    CheckImageDownload();
+                }
+            }
+        }
+
+        public bool ItemsLoaded { get; set; }
 
         public int MaxItems { get; set; }
+
+        public bool ImageLoaded { get; set; }
+
+        public string ImageFilePath
+        {
+            get
+            {
+                return Path.Combine(RSSConfig.AppDataImageFolder, string.Format("{0}.{1}", Title, GetImageFileType()));
+            }
+        }
+
+        private string GetImageFileType()
+        {
+            var fileType = string.Empty;
+            if(!string.IsNullOrEmpty(ImageUrl))
+            {
+                var vals = ImageUrl.Split('.');
+                if(vals.Length > 0)
+                {
+                    fileType = vals[vals.Length - 1];
+                }
+            }
+            return fileType;
+        }
+
+        private void CheckImageDownload()
+        {
+            if(File.Exists(ImageFilePath))
+            {
+                ImageLoaded = true;
+                ImageUrl = ImageFilePath;
+            }
+        }
 
         public const int DefaultMaxItems = 10;
 
@@ -59,6 +107,8 @@ namespace RSS
             ImageUrl = string.Empty;
             Category = string.Empty;
             MaxItems = DefaultMaxItems;
+
+            CheckImageDownload();
         }
 
         public IEnumerable<Item> GetDownloads()

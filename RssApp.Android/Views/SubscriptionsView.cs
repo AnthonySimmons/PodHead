@@ -35,6 +35,8 @@ namespace RssApp.Android.Views
 
         protected int imageSize = 50;
 
+		protected List<Image> ImageList = new List<Image> ();
+
         protected virtual void Initialize()
         {            
             itemsView.PlayItem += ItemsView_PlayItem;
@@ -66,9 +68,10 @@ namespace RssApp.Android.Views
         public void LoadSubscriptions(List<Subscription> subscriptions)
         {
             //Initialize ();
-            scrollView.Content = stackLayout;
             stackLayout.Children.Clear ();
             SubscriptionControls.Clear();
+			ClearImages ();
+			GC.Collect ();
             progressBar.IsVisible = false;
             
             _subscriptions = subscriptions;
@@ -83,8 +86,21 @@ namespace RssApp.Android.Views
             {
                 AddSubscription(sub);
             }
+            scrollView.Content = stackLayout;
             stackLayout.Children.Add(LoadMoreButton);
         }
+
+		protected void ClearImages()
+		{
+            for (int i = 0; i < ImageList.Count; i++)
+			{
+                var image = ImageList[i];
+                image.GestureRecognizers.Clear();
+				image.Source = null;
+                image = null;
+			}
+			ImageList.Clear ();
+		}
 
         protected void AddSubscription(Subscription sub)
         {
@@ -92,7 +108,7 @@ namespace RssApp.Android.Views
             {
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
-                var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
+                
                 var titleLabel = new Label
                 {
                     Text = sub.Title,
@@ -103,7 +119,7 @@ namespace RssApp.Android.Views
                 };
                 var descLabel = new Label { Text = sub.Description, TextColor = Color.Black, };
 
-                var viewSubscriptionTap = new TapGestureRecognizer(sender => { ViewButton_Clicked(sender, null); });
+                var viewSubscriptionTap = new TapGestureRecognizer(ViewButton_Clicked);
                 
                 var image = new Image()
                 {
@@ -123,8 +139,8 @@ namespace RssApp.Android.Views
                 SetSubscribedImage(sub, subscribeImage);
                 subscribeImage.BindingContext = sub;
                 subscribeImage.HeightRequest = subscribeImage.WidthRequest = imageSize;
-                subscribeImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { SubscribeButton_Clicked(sender, null); }));
-
+                subscribeImage.GestureRecognizers.Add(new TapGestureRecognizer(SubscribeButton_Clicked));
+                
 
                 var imageLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
                 var buttonLayout = new StackLayout();
@@ -132,6 +148,10 @@ namespace RssApp.Android.Views
                 buttonLayout.Children.Add(subscribeImage);
                 imageLayout.Children.Add(image);
                 imageLayout.Children.Add(buttonLayout);
+
+				ImageList.Add (nextImage);
+				ImageList.Add (subscribeImage);
+				ImageList.Add (image);
 
                 var subControls = new List<View> { topBoxView, titleLabel, imageLayout, descLabel };
                 SubscriptionControls.Add(sub, subControls);
@@ -143,7 +163,7 @@ namespace RssApp.Android.Views
             }
         }
 
-        private void ViewButton_Clicked(object sender, EventArgs e)
+        private void ViewButton_Clicked(object sender)
         {
             var sub = ((View)sender).BindingContext as Subscription;
             if (sub != null)
@@ -156,7 +176,7 @@ namespace RssApp.Android.Views
             }
         }
 
-        protected void SubscribeButton_Clicked(object sender, EventArgs e)
+        protected void SubscribeButton_Clicked(object sender)
         {
             var senderImage = (Image)sender;
             var subscription = (Subscription)senderImage.BindingContext;
