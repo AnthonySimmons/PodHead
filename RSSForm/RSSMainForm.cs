@@ -11,7 +11,7 @@ using System.IO;
 using System.Xml;
 using System.Security.Permissions;
 using RSS;
-using WMPLib;
+//using WMPLib;
 
 namespace RSSForm
 {

@@ -46,7 +46,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.axWindowsMediaPlayer1 = new WMPLib.WindowsMediaPlayer();
             this.tabPageSubscription = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelSubInfo = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxSubDescription = new System.Windows.Forms.TextBox();
@@ -74,6 +73,7 @@
             this.buttonSearch = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -82,7 +82,6 @@
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.tabPageSubscription.SuspendLayout();
             this.tableLayoutPanelSubInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).BeginInit();
@@ -94,6 +93,7 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -234,7 +234,7 @@
             // 
             // tabPage1
             // 
-            //this.tabPage1.Controls.Add(this.axWindowsMediaPlayer1);
+            this.tabPage1.Controls.Add(this.axWindowsMediaPlayer1);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -242,16 +242,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Now Playing";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // axWindowsMediaPlayer1
-            // 
-            /*this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
-            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
-            this.axWindowsMediaPlayer1.TabIndex = 3;*/
             // 
             // tabPageSubscription
             // 
@@ -575,12 +565,23 @@
             this.statusStrip1.Size = new System.Drawing.Size(745, 22);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip1.Visible = false;
             // 
             // toolStripProgressBar1
             // 
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
+            // 
+            // axWindowsMediaPlayer1
+            // 
+            this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.axWindowsMediaPlayer1.Enabled = true;
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
+            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
+            this.axWindowsMediaPlayer1.TabIndex = 0;
             // 
             // RSSMainForm
             // 
@@ -608,7 +609,6 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.tabPageSubscription.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.PerformLayout();
@@ -623,6 +623,7 @@
             this.tableLayoutPanel2.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -665,7 +666,6 @@
         private System.Windows.Forms.TextBox textBoxSubDescription;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelSubInfo;
         private System.Windows.Forms.TabPage tabPageSubscription;
-        private WMPLib.WindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.TabPage tabPage1;
         public System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.TextBox textBox1;
@@ -674,6 +674,7 @@
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.Button buttonLoadMoreCharts;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
     }
 }
 
