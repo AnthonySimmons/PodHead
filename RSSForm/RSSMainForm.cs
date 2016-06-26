@@ -34,9 +34,8 @@ namespace RSSForm
 
             SetupGridViewContextMenu();
 
-            treeView1.ImageList = new ImageList();
-            treeView1.ImageList.Images.Add(new Bitmap(1, 1));
-            treeView1.ImageList.Images.Add("bookmark_ribbon", Properties.Resources.bookmark_ribbon);
+            subscriptionListControl1.SubscriptionSelectedEventHandler += subscriptionSelectedHandler;
+            subscriptionListControl1.SubscriptionsLoadComplete += SubscriptionListControl1_SubscriptionsLoadComplete;
 
             comboBoxSource.SelectedIndex = 0;
 
@@ -51,8 +50,6 @@ namespace RSSForm
             
             LoadSubscriptions();
 
-
-            treeView1.BackColor = Color.CornflowerBlue;
             webBrowser1.ObjectForScripting = this;
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
@@ -60,6 +57,11 @@ namespace RSSForm
             LoadPodcastGenres();
         }
 
+        private void SubscriptionListControl1_SubscriptionsLoadComplete(object sender, EventArgs e)
+        {
+            comboBoxGenre.Enabled = true;
+            buttonLoadMoreCharts.Enabled = true;
+        }
 
         private void LoadPodcastGenres()
         {
@@ -141,21 +143,20 @@ namespace RSSForm
                     AddSubscription();
                     break;
                 case "Remove":
-                    Feeds.Instance.RemoveChannel(GetTitleFromSelectedTreeNode());
+                    Feeds.Instance.RemoveChannel(SelectedSubscriptionTitle);
                     Feeds.Instance.Save(RSSConfig.ConfigFileName);
                     LoadSubscriptions();
                     break;
                 case "Load":
-                    string title = treeView1.SelectedNode.Text;
-                    LoadDataGrid(title);
+                    LoadDataGrid(SelectedSubscriptionTitle);
                     LoadChannelLink();
-                    LoadSubscriptionInfoTab(title);
+                    LoadSubscriptionInfoTab(SelectedSubscriptionTitle);
                     break;
                 case "Info":
-                    LoadSubscriptionInfo(treeView1.SelectedNode.Text);
+                    LoadSubscriptionInfo(SelectedSubscriptionTitle);
                     break;
                 case "Refresh":
-                    RefreshChannel(treeView1.SelectedNode.Text);
+                    RefreshChannel(SelectedSubscriptionTitle);
                     break;
                 case "Subscribe":
                     AddChartSubscription();
@@ -163,16 +164,16 @@ namespace RSSForm
             }
         }
 
+        private string SelectedSubscriptionTitle => subscriptionListControl1.SelectedSubscriptionTitle;
+        
         private void AddChartSubscription()
         {
             Subscription sub;
-            string subTitle = treeView1.SelectedNode.Text;
-            sub = GetSubscription(subTitle);
+            sub = GetSubscription(SelectedSubscriptionTitle);
             if (sub != null)
             {
                 Feeds.Instance.AddChannel(sub);
                 Feeds.Instance.Save(RSSConfig.ConfigFileName);
-                SetSubscriptionNodeImage(treeView1.SelectedNode, sub.Title);
             }
         }
 
@@ -220,9 +221,9 @@ namespace RSSForm
 
         private void LoadChannelLink()
         {
-            if (!String.IsNullOrEmpty(treeView1.SelectedNode.Text))
+            if (!String.IsNullOrEmpty(SelectedSubscriptionTitle))
             {
-                Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(m => m.Title == treeView1.SelectedNode.Text);
+                Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(m => m.Title == SelectedSubscriptionTitle);
                 if (ch != null)
                 {
                     if (!String.IsNullOrEmpty(ch.SiteLink))
@@ -241,18 +242,7 @@ namespace RSSForm
             }
         }
 
-        private string GetTitleFromSelectedTreeNode()
-        {
-            string title = String.Empty;
-
-            if (treeView1.SelectedNode != null)
-            {
-                title = treeView1.SelectedNode.Text;
-            }
-
-            return title;
-        }
-
+        
         private string GetTitleFromSelectedDataGrid()
         {
             string title = String.Empty;
@@ -293,35 +283,30 @@ namespace RSSForm
         {
             showUnread = !showUnread;
 
-            LoadDataGrid(treeView1.SelectedNode.Text);
+            LoadDataGrid(SelectedSubscriptionTitle);
             LoadSubscriptions();
 
         }
 
-        private void LoadSearchResults(List<Subscription> searchResults)
+        private void LoadSubscriptions()
         {
-            treeView1.SuspendLayout();
-            treeView1.Nodes.Clear();
-
-            foreach(var sub in searchResults)
+            if (comboBoxSource.SelectedIndex == 0)
             {
-                TreeNode node = new TreeNode();
-
-                node.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
-                node.Text = sub.Title;
-                node.ContextMenuStrip = GetTopChartContextMenuStrip();
-
-                SetSubscriptionNodeImage(node, sub.Title);
-
-                if (!treeView1.Nodes.ContainsKey(node.Text))
-                {
-                    treeView1.Nodes.Add(node);
-                }
+                subscriptionListControl1.LoadSubscriptions(Feeds.Instance.Subscriptions);
             }
-
-            treeView1.ResumeLayout();
         }
 
+        private void LoadTopCharts()
+        {
+            subscriptionListControl1.LoadSubscriptions(PodcastCharts.Instance.Podcasts);
+        }
+
+        private void LoadSearchResults(List<Subscription> subscriptions)
+        {
+            subscriptionListControl1.LoadSubscriptions(subscriptions);
+        }
+
+        /*
         private void LoadSubscriptions()
         {
             treeView1.BeginUpdate();
@@ -388,21 +373,7 @@ namespace RSSForm
             treeView1.ResumeLayout();
             treeView1.Refresh();
         }
-
-        private void SetSubscriptionNodeImage(TreeNode node, string subscriptionTitle)
-        {
-            if (Feeds.Instance.ContainsSubscription(subscriptionTitle))
-            {
-                node.SelectedImageKey = "bookmark_ribbon";
-                node.ImageKey = node.SelectedImageKey;
-                node.SelectedImageIndex = 1;
-                node.ImageIndex = node.SelectedImageIndex;
-            }
-            else
-            {
-                node.SelectedImageIndex = 0;
-            }
-        }
+        */
 
         private void LoadSubscriptionInfoTab(string subscriptionTitle)
         {
@@ -431,12 +402,11 @@ namespace RSSForm
             tabPageSubscription.ResumeLayout();
         }
 
-        private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void subscriptionSelectedHandler(string subscriptionName)
         {
-            if (treeView1.SelectedNode != null)
+            if (!string.IsNullOrEmpty(subscriptionName))
             {
-                string str = treeView1.SelectedNode.Text;
-                var sub = GetSubscription(str);
+                var sub = GetSubscription(subscriptionName);
                 
                 if (sub != null)
                 {
@@ -455,7 +425,7 @@ namespace RSSForm
                         webBrowser1.Navigate(sub.ImageUrl);
                     }
                     LoadSubscriptionInfoTab(sub);
-                    LoadDataGrid(str);
+                    LoadDataGrid(subscriptionName);
                 }
             }
 
@@ -543,14 +513,12 @@ namespace RSSForm
         private void Form1_Resize(object sender, EventArgs e)
         {
             splitContainer1.Height = this.Height - 55;
-            splitContainer1.Width = this.Width - treeView1.Width - 25;
+            //splitContainer1.Width = this.Width - treeView1.Width - 25;
 
-            dataGridView1.Width = this.Width - treeView1.Width;
+            //dataGridView1.Width = this.Width - treeView1.Width;
             dataGridView1.Height = this.Height - webBrowser1.Height;
             dataGridView1.Dock = DockStyle.Fill;
-
-            treeView1.Height = this.Height;
-            textBox1.Width = webBrowser1.Width;
+            
 
         }
 
@@ -733,30 +701,10 @@ namespace RSSForm
         {
             webBrowser1.ScrollBarsEnabled = true;
             webBrowser1.ScriptErrorsSuppressed = true;
-
-            if (webBrowser1.Url != null)
-            {
-                textBox1.Text = webBrowser1.Url.ToString();
-            }
-            textBox1.ForeColor = Color.Blue;
+            
         }
 
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                try
-                {
-                    //webBrowser1.Url = new Uri(textBox1.Text);
-                    webBrowser1.Navigate(textBox1.Text);
-                }
-                catch
-                {
-
-                }
-            }
-        }
-
+        
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.ShowDialog();
@@ -903,7 +851,6 @@ namespace RSSForm
                 case "Subscriptions":
                     buttonSearch.Visible = false;
                     textBoxSearch.Visible = false;
-                    buttonLoadMoreCharts.Visible = false;
                     comboBoxGenre.Visible = false;
                     buttonLoadMoreCharts.Visible = false;
                     LoadSubscriptions();
@@ -911,14 +858,15 @@ namespace RSSForm
                 case "Top Charts":
                     buttonSearch.Visible = false;
                     textBoxSearch.Visible = false;
-                    buttonLoadMoreCharts.Visible = true;
                     comboBoxGenre.Visible = true;
+                    buttonLoadMoreCharts.Visible = false;
                     LoadTopCharts();
                     break;
                 case "Search":
                     comboBoxGenre.Visible = false;
                     textBoxSearch.Visible = true;
                     buttonSearch.Visible = true;
+                    buttonLoadMoreCharts.Visible = false;
                     break;
             }
         }
@@ -927,12 +875,7 @@ namespace RSSForm
         {
             AddSubscription();
         }
-
-        private void treeView1_MouseDown(object sender, MouseEventArgs e)
-        {
-            TreeNode node = treeView1.GetNodeAt(new Point(e.X, e.Y));
-            treeView1.SelectedNode = node;
-        }
+        
 
         private void comboBoxDisplay_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -941,6 +884,7 @@ namespace RSSForm
 
         private void comboBoxGenre_SelectedIndexChanged(object sender, EventArgs e)
         {
+            comboBoxGenre.Enabled = false;
             PodcastCharts.Limit = PodcastCharts.DefaultLimit;
             PodcastCharts.Instance.Podcasts.Clear();
             PodcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
@@ -950,6 +894,8 @@ namespace RSSForm
 
         private void buttonLoadMoreCharts_Click(object sender, EventArgs e)
         {
+            buttonLoadMoreCharts.Enabled = false;
+            toolStripProgressBar1.Visible = true;
             PodcastCharts.Limit += 10;
             switch(comboBoxSource.SelectedItem.ToString())
             {
@@ -1002,6 +948,7 @@ namespace RSSForm
                 if (updatePercentage >= 1.0)
                 {
                     LoadSubscriptions();
+                    toolStripProgressBar1.Visible = false;
                 }
             }
             ));
@@ -1025,7 +972,7 @@ namespace RSSForm
 
         private void PodcastSearchResultReceived(List<Subscription> subscriptions)
         {
-            LoadSearchResults(subscriptions);
+            LoadSearchResults(subscriptions);            
         }
 
         private void textBoxSearch_Enter(object sender, EventArgs e)
@@ -1048,6 +995,7 @@ namespace RSSForm
         {
             if(e.KeyCode == Keys.Enter)
             {
+                buttonLoadMoreCharts.Visible = true;
                 PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
             }
         }
@@ -1075,6 +1023,7 @@ namespace RSSForm
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
+            buttonLoadMoreCharts.Visible = true;
             PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
         }
     }

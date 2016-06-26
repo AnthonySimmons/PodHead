@@ -73,6 +73,12 @@
     <Compile Include="RSSMainForm.Designer.cs">
       <DependentUpon>RSSMainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubscriptionListControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SubscriptionListControl.Designer.cs">
+      <DependentUpon>SubscriptionListControl.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
@@ -95,6 +101,9 @@
     <EmbeddedResource Include="RSSMainForm.resx">
       <DependentUpon>RSSMainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubscriptionListControl.resx">
+      <DependentUpon>SubscriptionListControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

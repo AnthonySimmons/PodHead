@@ -43,14 +43,12 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPageSubscription = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelSubInfo = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxSubDescription = new System.Windows.Forms.TextBox();
             this.labelSubscriptionTitle = new System.Windows.Forms.Label();
-            this.pictureBoxSubInfo = new System.Windows.Forms.PictureBox();
             this.linkLabelSite = new System.Windows.Forms.LinkLabel();
             this.linkLabelFeed = new System.Windows.Forms.LinkLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -64,7 +62,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
             this.textBoxSearch = new System.Windows.Forms.TextBox();
@@ -73,7 +70,10 @@
             this.buttonSearch = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.pictureBoxSubInfo = new System.Windows.Forms.PictureBox();
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -84,7 +84,6 @@
             this.tabPage1.SuspendLayout();
             this.tabPageSubscription.SuspendLayout();
             this.tableLayoutPanelSubInfo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -93,7 +92,9 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -202,7 +203,6 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.textBox1);
             this.tabPage2.Controls.Add(this.webBrowser1);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -212,24 +212,14 @@
             this.tabPage2.Text = "Web Browser";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // textBox1
-            // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(3, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(469, 20);
-            this.textBox1.TabIndex = 1;
-            // 
             // webBrowser1
             // 
-            this.webBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.webBrowser1.Location = new System.Drawing.Point(0, 22);
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.Location = new System.Drawing.Point(3, 3);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(472, 202);
+            this.webBrowser1.Size = new System.Drawing.Size(469, 221);
             this.webBrowser1.TabIndex = 0;
             // 
             // tabPage1
@@ -300,21 +290,6 @@
             this.labelSubscriptionTitle.Text = "Title";
             this.labelSubscriptionTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.labelSubscriptionTitle.Visible = false;
-            // 
-            // pictureBoxSubInfo
-            // 
-            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
-            this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 28);
-            this.pictureBoxSubInfo.MaximumSize = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.MinimumSize = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.Name = "pictureBoxSubInfo";
-            this.tableLayoutPanelSubInfo.SetRowSpan(this.pictureBoxSubInfo, 3);
-            this.pictureBoxSubInfo.Size = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxSubInfo.TabIndex = 0;
-            this.pictureBoxSubInfo.TabStop = false;
             // 
             // linkLabelSite
             // 
@@ -440,8 +415,8 @@
             this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.treeView1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -450,17 +425,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
             this.tableLayoutPanel1.TabIndex = 0;
-            // 
-            // treeView1
-            // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.treeView1.Location = new System.Drawing.Point(3, 168);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(237, 380);
-            this.treeView1.TabIndex = 0;
-            this.treeView1.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseDoubleClick);
-            this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
             // 
             // tableLayoutPanel2
             // 
@@ -573,6 +537,21 @@
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
             // 
+            // pictureBoxSubInfo
+            // 
+            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
+            this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 28);
+            this.pictureBoxSubInfo.MaximumSize = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.MinimumSize = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.Name = "pictureBoxSubInfo";
+            this.tableLayoutPanelSubInfo.SetRowSpan(this.pictureBoxSubInfo, 3);
+            this.pictureBoxSubInfo.Size = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxSubInfo.TabIndex = 0;
+            this.pictureBoxSubInfo.TabStop = false;
+            // 
             // axWindowsMediaPlayer1
             // 
             this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -582,6 +561,26 @@
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
             this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
             this.axWindowsMediaPlayer1.TabIndex = 0;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.subscriptionListControl1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 168);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(237, 380);
+            this.panel1.TabIndex = 2;
+            // 
+            // subscriptionListControl1
+            // 
+            this.subscriptionListControl1.AutoScroll = true;
+            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
+            this.subscriptionListControl1.Name = "subscriptionListControl1";
+            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
+            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
+            this.subscriptionListControl1.TabIndex = 0;
             // 
             // RSSMainForm
             // 
@@ -607,12 +606,10 @@
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPageSubscription.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -623,7 +620,9 @@
             this.tableLayoutPanel2.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -647,7 +646,6 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.ComboBox comboBoxSource;
         private System.Windows.Forms.ComboBox comboBoxGenre;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -668,13 +666,14 @@
         private System.Windows.Forms.TabPage tabPageSubscription;
         private System.Windows.Forms.TabPage tabPage1;
         public System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.Button buttonLoadMoreCharts;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+        private System.Windows.Forms.Panel panel1;
+        private SubscriptionListControl subscriptionListControl1;
     }
 }
 
