@@ -81,6 +81,7 @@ namespace RSS
                     if (sub.Title == name)
                     {
                         Subscriptions.Remove(sub);
+                        Save();
                         OnSubscriptionRemoved(sub);
                         break;
                     }
@@ -90,12 +91,11 @@ namespace RSS
 
         public void AddChannel(Subscription sub)
         {
-            if (!String.IsNullOrEmpty(sub.RssLink) && !Subscriptions.Any(m => m.RssLink == sub.RssLink))
+            if (!String.IsNullOrEmpty(sub.RssLink) && !ContainsSubscription(sub.Title))
             {
-                //Parser.LoadSubscriptionAsync(ch, MaxItems);
                 Subscriptions.Add(sub);
                 OnSubscriptionAdded(sub);
-                Save(RSSConfig.ConfigFileName);
+                Save();
             }
         }
 
@@ -120,7 +120,7 @@ namespace RSS
             subsParsed = 0;
             foreach (Subscription sub in Subscriptions)
             {
-                Parser.LoadSubscriptionAsync(sub);
+                Parser.LoadSubscription(sub, MaxItems);
             }
 
         }
@@ -192,13 +192,13 @@ namespace RSS
 
         public void ToggleSubscription(Subscription subscription)
         {
-            if (Feeds.Instance.ContainsSubscription(subscription.Title))
+            if (ContainsSubscription(subscription.Title))
             {
-                Feeds.Instance.RemoveChannel(subscription.Title);
+                RemoveChannel(subscription.Title);
             }
             else
             {
-                Feeds.Instance.AddChannel(subscription);
+                AddChannel(subscription);
             }
         }
 
@@ -231,6 +231,11 @@ namespace RSS
 
         #region Save and Load
 
+
+        public void Save()
+        {
+            Save(RSSConfig.ConfigFileName);
+        }
 
         public void Save(string fileName)
         {

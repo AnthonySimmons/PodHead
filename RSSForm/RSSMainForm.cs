@@ -47,7 +47,9 @@ namespace RSSForm
 
             Feeds.Instance.FeedUpdated += FeedLoadUpdate;
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
-            
+            Feeds.Instance.AllFeedsParsed += Instance_AllFeedsParsed;
+
+            Feeds.Instance.ParseAllFeeds();
             LoadSubscriptions();
 
             webBrowser1.ObjectForScripting = this;
@@ -55,6 +57,11 @@ namespace RSSForm
             this.Icon = Icon.FromHandle(ico.GetHicon());
 
             LoadPodcastGenres();
+        }
+
+        private void Instance_AllFeedsParsed(object sender, EventArgs e)
+        {
+            //LoadSubscriptions();
         }
 
         private void SubscriptionListControl1_SubscriptionsLoadComplete(object sender, EventArgs e)
@@ -68,35 +75,7 @@ namespace RSSForm
             comboBoxGenre.Items.Clear();
             comboBoxGenre.Items.AddRange(PodcastCharts.PodcastGenreCodes.Keys.ToArray());
         }
-
-
-        private ContextMenuStrip GetCategoryContextMenuStrip()
-        {
-            var contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.Add("Add", Properties.Resources.AddIcon, TreeContextClick);
-            contextMenuStrip.Items.Add("Refresh", null, TreeContextClick);
-            return contextMenuStrip;
-        }
-
-
-        private ContextMenuStrip GetSubscriptionContextMenuStrip()
-        {
-            var contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.Add("Remove", Properties.Resources.deleteIcon, TreeContextClick);
-            contextMenuStrip.Items.Add("Load", Properties.Resources.LoadIcon, TreeContextClick);
-            contextMenuStrip.Items.Add("Info", Properties.Resources.info, TreeContextClick);
-            contextMenuStrip.Items.Add("Refresh", Properties.Resources.reload, TreeContextClick);
-            return contextMenuStrip;
-        }
-
-        private ContextMenuStrip GetTopChartContextMenuStrip()
-        {
-            var contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.Add("Info", Properties.Resources.info, TreeContextClick);
-            contextMenuStrip.Items.Add("Subscribe", Properties.Resources.bookmark_ribbon, TreeContextClick);
-            return contextMenuStrip;
-        }
-
+                
 
         private void SetupGridViewContextMenu()
         {
@@ -130,36 +109,6 @@ namespace RSSForm
                     break;
                 case "Info":
                     LoadItemInfo();
-                    break;
-            }
-        }
-
-        private void TreeContextClick(object sender, EventArgs e)
-        {
-            ToolStripItem strip = (ToolStripItem)sender;
-            switch (strip.Text)
-            {
-                case "Add":
-                    AddSubscription();
-                    break;
-                case "Remove":
-                    Feeds.Instance.RemoveChannel(SelectedSubscriptionTitle);
-                    Feeds.Instance.Save(RSSConfig.ConfigFileName);
-                    LoadSubscriptions();
-                    break;
-                case "Load":
-                    LoadDataGrid(SelectedSubscriptionTitle);
-                    LoadChannelLink();
-                    LoadSubscriptionInfoTab(SelectedSubscriptionTitle);
-                    break;
-                case "Info":
-                    LoadSubscriptionInfo(SelectedSubscriptionTitle);
-                    break;
-                case "Refresh":
-                    RefreshChannel(SelectedSubscriptionTitle);
-                    break;
-                case "Subscribe":
-                    AddChartSubscription();
                     break;
             }
         }
@@ -292,88 +241,20 @@ namespace RSSForm
         {
             if (comboBoxSource.SelectedIndex == 0)
             {
-                subscriptionListControl1.LoadSubscriptions(Feeds.Instance.Subscriptions);
+                subscriptionListControl1.LoadSubscriptions(Feeds.Instance.Subscriptions, SubscriptionState.Subscription);
             }
         }
 
         private void LoadTopCharts()
         {
-            subscriptionListControl1.LoadSubscriptions(PodcastCharts.Instance.Podcasts);
+            subscriptionListControl1.LoadSubscriptions(PodcastCharts.Instance.Podcasts, SubscriptionState.TopCharts);
         }
 
         private void LoadSearchResults(List<Subscription> subscriptions)
         {
-            subscriptionListControl1.LoadSubscriptions(subscriptions);
+            subscriptionListControl1.LoadSubscriptions(subscriptions, SubscriptionState.SearchResults);
         }
-
-        /*
-        private void LoadSubscriptions()
-        {
-            treeView1.BeginUpdate();
-            treeView1.SuspendLayout();
-            treeView1.Nodes.Clear();
-
-            foreach (string category in Feeds.Instance.Categories)
-            {
-                TreeNode categoryNode = new TreeNode();
-                categoryNode.NodeFont = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Bold);
-                categoryNode.Text = category;
-                categoryNode.ContextMenuStrip = GetCategoryContextMenuStrip();
-
-                foreach (Subscription sub in Feeds.Instance.ChannelsByCategory(category))
-                {
-                    TreeNode subNode = new TreeNode();
-                    subNode.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
-                    subNode.Text = sub.Title;
-                    subNode.ContextMenuStrip = GetSubscriptionContextMenuStrip();
-                    if (sub.HasErrors)
-                    {
-                        subNode.BackColor = sub.HasErrors ? Color.Red : Color.Transparent;
-                    }
-
-                    if (!categoryNode.Nodes.ContainsKey(subNode.Name))
-                    {
-                        categoryNode.Nodes.Add(subNode);
-                    }
-                }
-
-                if (!treeView1.Nodes.ContainsKey(categoryNode.Name))
-                {
-                    treeView1.Nodes.Add(categoryNode);
-                }
-            }
-            treeView1.EndUpdate();
-            treeView1.ResumeLayout();
-            treeView1.Refresh();
-        }
-
-
-        private void LoadTopCharts()
-        {
-            treeView1.BeginUpdate();
-            treeView1.SuspendLayout();
-            treeView1.Nodes.Clear();
-
-            var podcasts = PodcastCharts.Instance.Podcasts.ToList();
-            foreach (Subscription sub in podcasts)
-            {
-                TreeNode subNode = new TreeNode();
-                subNode.NodeFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Italic);
-                subNode.Text = sub.Title;
-                subNode.ContextMenuStrip = GetTopChartContextMenuStrip();
-
-                SetSubscriptionNodeImage(subNode, sub.Title);
-
-                if (!treeView1.Nodes.ContainsKey(subNode.Name))
-                {
-                    treeView1.Nodes.Add(subNode);
-                }
-            }
-            treeView1.EndUpdate();
-            treeView1.ResumeLayout();
-            treeView1.Refresh();
-        }
-        */
+        
 
         private void LoadSubscriptionInfoTab(string subscriptionTitle)
         {
@@ -402,11 +283,11 @@ namespace RSSForm
             tabPageSubscription.ResumeLayout();
         }
 
-        private void subscriptionSelectedHandler(string subscriptionName)
+        private void subscriptionSelectedHandler(Subscription subscription)
         {
-            if (!string.IsNullOrEmpty(subscriptionName))
+            if (!string.IsNullOrEmpty(subscription?.Title))
             {
-                var sub = GetSubscription(subscriptionName);
+                var sub = GetSubscription(subscription.Title);
                 
                 if (sub != null)
                 {
@@ -425,7 +306,7 @@ namespace RSSForm
                         webBrowser1.Navigate(sub.ImageUrl);
                     }
                     LoadSubscriptionInfoTab(sub);
-                    LoadDataGrid(subscriptionName);
+                    LoadDataGrid(subscription.Title);
                 }
             }
 
@@ -832,15 +713,16 @@ namespace RSSForm
 
         private void AddSubscription()
         {
-            ADD_RSS_Subscription form = new ADD_RSS_Subscription();
-            DialogResult result = form.ShowDialog();
-
-            if (result == DialogResult.OK)
+            using (var form = new NewSubscriptionForm())
             {
-                Feeds.Instance.AddChannel(form.NewSubscription);
-                form.Dispose();
-                LoadSubscriptions();
-                Feeds.Instance.Save(RSSConfig.ConfigFileName);
+                DialogResult result = form.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    Parser.LoadSubscription(form.NewSubscription, Feeds.Instance.MaxItems);
+                    Feeds.Instance.AddChannel(form.NewSubscription);
+                    LoadSubscriptions();
+                }
             }
         }
 
@@ -947,7 +829,6 @@ namespace RSSForm
                 UpdateToolStripProgressBar(updatePercentage);
                 if (updatePercentage >= 1.0)
                 {
-                    LoadSubscriptions();
                     toolStripProgressBar1.Visible = false;
                 }
             }
@@ -956,7 +837,8 @@ namespace RSSForm
 
         private void RSSMainForm_Load(object sender, EventArgs e)
         {
-            Feeds.Instance.ParseAllFeedsAsync();
+            //Feeds.Instance.ParseAllFeedsAsync();
+            this.WindowState = FormWindowState.Maximized;
         }
 
         private void RSSMainForm_SizeChanged(object sender, EventArgs e)

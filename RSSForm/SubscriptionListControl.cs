@@ -10,10 +10,16 @@ using RSS;
 
 namespace RSSForm
 {
-    public delegate void SubscriptionSelectedEvent(string subscriptionName);
+    public enum SubscriptionState { Subscription, TopCharts, SearchResults, }
+
+    public delegate void SubscriptionEvent(Subscription subscription);
 
     public partial class SubscriptionListControl : UserControl
     {
+        private Subscription _selectedSubscription;
+
+        private SubscriptionState _subscriptionState;
+
         private const int ButtonSize = 25;
 
         private const int ImageSize = 50;
@@ -26,23 +32,36 @@ namespace RSSForm
 
         private const int TitleColumn = 2;
 
-        public event SubscriptionSelectedEvent SubscriptionSelectedEventHandler;
+        private const string Subscribe = @"Subscribe";
+
+        private const string Unsubscribe = @"Unsubscribe";
+
+        public event SubscriptionEvent SubscriptionSelectedEventHandler;
+
+        public event SubscriptionEvent SubscriptionRemovedEventHandler;
 
         public event EventHandler SubscriptionsLoadComplete;
+
+        private ToolTip _toolTipSubscribe;
+
+        private const int SubscribeMenuItemIndex = 1;
+
+        private List<Subscription> _subscriptions;
 
         public string SelectedSubscriptionTitle { get; set; }
         
         public SubscriptionListControl()
         {
             InitializeComponent();
+            _toolTipSubscribe = new ToolTip();
         }
 
-        private ContextMenuStrip GetContextMenuStrip(object tag)
+        private ContextMenuStrip GetContextMenuStrip(Subscription sub)
         {
             var contextMenuStrip = new ContextMenuStrip();
 
-            var viewToolStripItem = new ToolStripMenuItem("View", null, ViewSubscriptionClicked) { Tag = tag };
-            var subscribeToolStripItem = new ToolStripMenuItem("Subscribe", null, ToggleSubscriptionClicked) { Tag = tag };
+            var viewToolStripItem = new ToolStripMenuItem("View", null, ViewSubscriptionClicked) { Tag = sub };
+            var subscribeToolStripItem = new ToolStripMenuItem(GetSubscriptionState(sub), null, ContextMenuSubscribed) { Tag = sub };
 
             contextMenuStrip.Items.Add(viewToolStripItem);
             contextMenuStrip.Items.Add(subscribeToolStripItem);
@@ -55,31 +74,19 @@ namespace RSSForm
         {
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             Subscription sub = (Subscription)item.Tag;
-            OnSubscriptionSelected(sub.Title);
+            OnSubscriptionSelected(sub);
         }
-
-        private void ToggleSubscriptionClicked(object sender, EventArgs e)
-        {
-            ToolStripMenuItem item = (ToolStripMenuItem)sender;
-            Subscription sub = (Subscription)item.Tag;
-            
-            Feeds.Instance.ToggleSubscription(sub);
-
-            if (!Feeds.Instance.ContainsSubscription(sub.Title))
-            {
-                RemoveRow((Control)sender);
-            }
-        }
-
+        
         private Subscription GetSubscriptionFromSender(object sender)
         {
             Control control = (Control)sender;
             return (Subscription)control.Tag;
         }
 
-        private void OnSubscriptionSelected(string subscriptionName)
+        private void OnSubscriptionSelected(Subscription subscription)
         {
-            SubscriptionSelectedEventHandler?.Invoke(subscriptionName);
+            _selectedSubscription = subscription;
+            SubscriptionSelectedEventHandler?.Invoke(subscription);
         }
 
         private void OnSubscriptionsLoadComplete()
@@ -87,81 +94,167 @@ namespace RSSForm
             SubscriptionsLoadComplete?.Invoke(this, null);
         }
 
-        public void LoadSubscriptions(List<Subscription> subscriptions)
+        public void AddEmptySubscriptionsNote()
         {
+            if (_subscriptionState == SubscriptionState.Subscription)
+            {
+                Label noSubsLabel = new Label()
+                {
+                    Text = "No Subscriptions",
+                    Padding = new Padding(PaddingSize),
+                    Dock = DockStyle.Fill,
+                    Font = new Font(FontFamily.GenericSansSerif, 14f, FontStyle.Bold),
+                };
+                tableLayoutPanel1.Controls.Add(noSubsLabel, TitleColumn, 0);
+            }
+        }
+
+        public void LoadSubscriptions(List<Subscription> subscriptions, SubscriptionState subscriptionState = SubscriptionState.Subscription)
+        {
+            tableLayoutPanel1.RowCount = 0;
+            _subscriptions = subscriptions;
+            _subscriptionState = subscriptionState;
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.Controls.Clear();
-            int i = 0;
-            foreach (var sub in subscriptions)
+
+            if (subscriptions.Any())
             {
-                AddSubscriptionRow(sub, i);
-                i++;
+                int i = 0;
+                foreach (var sub in subscriptions)
+                {
+                    AddSubscriptionRow(sub, i);
+                    i++;
+                }
+                SelectSubscription();
+                AddEmptySubscriptionRow();
             }
-            AddEmptySubscriptionRow();
-            
+            else
+            {
+                AddEmptySubscriptionsNote();
+            }
+
             tableLayoutPanel1.ResumeLayout();
             OnSubscriptionsLoadComplete();
+        }
+
+        private void SelectSubscription()
+        {
+            if (_selectedSubscription == null)
+            {
+                _selectedSubscription = _subscriptions.FirstOrDefault();
+            }
+
+            if (_selectedSubscription != null)
+            {
+                int row = GetSubscriptionRow(_selectedSubscription.Title);
+                if (row >= 0)
+                {
+                    SetDefaultControlColor();
+                    Label subLabel = (Label)tableLayoutPanel1.GetControlFromPosition(TitleColumn, row);
+                    subLabel.BackColor = Color.Green;
+                    OnSubscriptionSelected(_selectedSubscription);
+                }
+            }
         }
 
         private void AddSubscriptionRow(Subscription subscription, int row)
         {
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Controls.Add(GetToggleButton(subscription), ToggleColumn, row);
+            tableLayoutPanel1.Controls.Add(GetCheckbox(subscription), ToggleColumn, row);
             tableLayoutPanel1.Controls.Add(GetSubscriptionImage(subscription), PictureColumn, row);
             tableLayoutPanel1.Controls.Add(GetSubscriptionLabel(subscription), TitleColumn, row);
+            tableLayoutPanel1.RowCount++;
         }
 
         private void AddEmptySubscriptionRow()
         {
             var subscription = new Subscription();
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Controls.Add(GetToggleButton(subscription));
+            tableLayoutPanel1.Controls.Add(GetCheckbox(subscription));
             tableLayoutPanel1.Controls.Add(GetSubscriptionImage(subscription));
             tableLayoutPanel1.Controls.Add(GetSubscriptionLabel(subscription));
         }
         
-        private Button GetToggleButton(Subscription sub)
+        private CheckBox GetCheckbox(Subscription sub)
         {
-            Button btn = null;
+            CheckBox cbx = null;
             if (!string.IsNullOrEmpty(sub.Title))
             {
-                btn = new Button()
+                cbx = new CheckBox()
                 {
                     Tag = sub,
-                    Image = Properties.Resources.deleteIcon,
                     FlatStyle = FlatStyle.Flat,
+                    Padding = new Padding(PaddingSize),
                     Height = ButtonSize,
                     Width = ButtonSize,
-                    BackgroundImageLayout = ImageLayout.Stretch,
-                    Padding = new Padding(PaddingSize),
                     ImageAlign = ContentAlignment.MiddleCenter,
                     Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
+                    Checked = Feeds.Instance.ContainsSubscription(sub.Title),
+                    ContextMenuStrip = GetContextMenuStrip(sub),
                 };
-
-                btn.Click += BtnToggle_Click;
+                _toolTipSubscribe.SetToolTip(cbx, GetSubscriptionState(sub));
+                cbx.CheckedChanged += Cbx_CheckedChanged;
             }
-            return btn;
+            return cbx;
         }
 
-        private void BtnToggle_Click(object sender, EventArgs e)
+        private void Cbx_CheckedChanged(object sender, EventArgs e)
         {
-            Subscription sub = GetSubscriptionFromSender(sender);
-            Feeds.Instance.ToggleSubscription(sub);
+            var control = (Control)sender;
+            var sub = (Subscription)control.Tag;
 
-            if (!Feeds.Instance.ContainsSubscription(sub.Title))
+            string subState = GetSubscriptionState(sub);
+
+            control.ContextMenuStrip.Items[SubscribeMenuItemIndex].Text = subState;
+            _toolTipSubscribe.SetToolTip(control, subState);
+
+            ToggleSubscription(sub);
+        }
+
+        private void ContextMenuSubscribed(object sender, EventArgs e)
+        {
+            var control = (ToolStripMenuItem)sender;
+            var sub = (Subscription)control.Tag;
+            control.Text = GetSubscriptionState(sub);
+
+            int row = GetSubscriptionRow(sub.Title);
+            if (row >= 0)
             {
-                int row = GetSubscriptionRow(sub.Title);
-                RemoveRow(row);
+                CheckBox cbx = (CheckBox)tableLayoutPanel1.GetControlFromPosition(ToggleColumn, row);
+                cbx.Checked = Feeds.Instance.ContainsSubscription(sub.Title);
+                ToggleSubscription(sub);
+            }
+
+        }
+
+        private void ToggleSubscription(Subscription sub)
+        { 
+            Feeds.Instance.ToggleSubscription(sub);
+            
+            if(_subscriptionState == SubscriptionState.Subscription)
+            {
+                LoadSubscriptions(Feeds.Instance.Subscriptions, SubscriptionState.Subscription);
             }
         }
         
+        
+        private string GetSubscriptionState(Subscription sub)
+        {
+            var subState = "Unsubscribe";
+            if(!Feeds.Instance.ContainsSubscription(sub?.Title))
+            {
+                subState = "Subscribe";
+            }
+            return subState;
+        }
+
         private int GetSubscriptionRow(string subscriptionTitle)
         {
             int row = -1;
             for(int i = 0; i < tableLayoutPanel1.RowCount; i++)
             {
                 Label lbl = (Label)tableLayoutPanel1.GetControlFromPosition(TitleColumn, i);
-                if(lbl.Text == subscriptionTitle)
+                if(lbl?.Text == subscriptionTitle)
                 {
                     row = i;
                     break;
@@ -184,6 +277,7 @@ namespace RSSForm
                 ContextMenuStrip = GetContextMenuStrip(sub),
             };
             pbx.Click += Pbx_Click;
+            pbx.MouseDown += Pbx_Click;
             return pbx;
         }
 
@@ -202,7 +296,7 @@ namespace RSSForm
                 }
 
                 var sub = (Subscription)control.Tag;
-                OnSubscriptionSelected(sub.Title);
+                OnSubscriptionSelected(sub);
             }
         }
 
@@ -226,6 +320,7 @@ namespace RSSForm
                 ContextMenuStrip = GetContextMenuStrip(sub),
             };
             lbl.Click += Lbl_Click;
+            lbl.MouseDown += Lbl_Click;
             return lbl;
         }
 
@@ -235,44 +330,7 @@ namespace RSSForm
             SetDefaultControlColor();
             control.BackColor = Color.Green;
             var sub = (Subscription)control.Tag;
-            OnSubscriptionSelected(sub.Title);
-        }
-
-        private void RemoveRow(Control controlInRow)
-        {
-            int row = tableLayoutPanel1.GetCellPosition(controlInRow).Row;
-            RemoveRow(row);
-        }
-
-        private void RemoveRow(int row)
-        {
-            if (row >= 0)
-            {
-                tableLayoutPanel1.SuspendLayout();
-                for (int i = 0; i < 3; i++)
-                {
-                    var control = tableLayoutPanel1.GetControlFromPosition(i, row);
-                    tableLayoutPanel1.Controls.Remove(control);
-                }
-
-                for(int r = row+1; r < tableLayoutPanel1.RowCount; r++)
-                {
-                    for(int c = 0; c < 3; c++)
-                    {
-                        var control = tableLayoutPanel1.GetControlFromPosition(c, r);
-                        if (control != null)
-                        {
-                            tableLayoutPanel1.SetRow(control, r);
-                        }
-                    }
-                }
-
-                tableLayoutPanel1.RowCount--;
-
-                tableLayoutPanel1.ResumeLayout();
-                tableLayoutPanel1.Refresh();
-                Application.DoEvents();
-            }
+            OnSubscriptionSelected(sub);
         }
         
     }

@@ -10,12 +10,12 @@ using RSS;
 
 namespace RSSForm
 {
-    public partial class ADD_RSS_Subscription : Form
+    public partial class NewSubscriptionForm : Form
     {
         public Subscription NewSubscription { get; private set; }
 
 
-        public ADD_RSS_Subscription()
+        public NewSubscriptionForm()
         {
             InitializeComponent();
             var icon_bmp = new Bitmap(Properties.Resources.AddIcon);
@@ -28,15 +28,7 @@ namespace RSSForm
             this.DialogResult = DialogResult.OK;
             NewSubscription = new Subscription();
             NewSubscription.RssLink = url_entry.Text;
-            NewSubscription.Category = textBoxCategory.Text;
-            
-            NewSubscription.Update = (int)numericUpDown1.Value;
-            
-            if (numericUpDown1.Value == 0)
-            {
-                NewSubscription.Update = 24;
-            }
-
+           
             this.Close();
         }
 

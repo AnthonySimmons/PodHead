@@ -34,7 +34,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newSubcriptionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.showUnreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -45,10 +44,12 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.tabPageSubscription = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelSubInfo = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxSubDescription = new System.Windows.Forms.TextBox();
             this.labelSubscriptionTitle = new System.Windows.Forms.Label();
+            this.pictureBoxSubInfo = new System.Windows.Forms.PictureBox();
             this.linkLabelSite = new System.Windows.Forms.LinkLabel();
             this.linkLabelFeed = new System.Windows.Forms.LinkLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -68,11 +69,9 @@
             this.comboBoxSource = new System.Windows.Forms.ComboBox();
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.buttonSearch = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.pictureBoxSubInfo = new System.Windows.Forms.PictureBox();
-            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -82,8 +81,10 @@
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.tabPageSubscription.SuspendLayout();
             this.tableLayoutPanelSubInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -91,10 +92,8 @@
             this.splitContainer2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.panel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -113,7 +112,6 @@
             this.exitToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newSubcriptionToolStripMenuItem,
             this.toolStripSeparator2,
-            this.showUnreadToolStripMenuItem,
             this.refreshToolStripMenuItem,
             this.exitToolStripMenuItem2});
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
@@ -123,36 +121,26 @@
             // newSubcriptionToolStripMenuItem
             // 
             this.newSubcriptionToolStripMenuItem.Name = "newSubcriptionToolStripMenuItem";
-            this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.newSubcriptionToolStripMenuItem.Text = "New Subcription";
+            this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.newSubcriptionToolStripMenuItem.Text = "Add Subcription";
             this.newSubcriptionToolStripMenuItem.Click += new System.EventHandler(this.newSubcriptionToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
-            // 
-            // showUnreadToolStripMenuItem
-            // 
-            this.showUnreadToolStripMenuItem.Checked = true;
-            this.showUnreadToolStripMenuItem.CheckOnClick = true;
-            this.showUnreadToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.showUnreadToolStripMenuItem.Name = "showUnreadToolStripMenuItem";
-            this.showUnreadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.showUnreadToolStripMenuItem.Text = "Show Accessed Items";
-            this.showUnreadToolStripMenuItem.Click += new System.EventHandler(this.showUnreadToolStripMenuItem_Click);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem2
             // 
             this.exitToolStripMenuItem2.Name = "exitToolStripMenuItem2";
-            this.exitToolStripMenuItem2.Size = new System.Drawing.Size(187, 22);
+            this.exitToolStripMenuItem2.Size = new System.Drawing.Size(160, 22);
             this.exitToolStripMenuItem2.Text = "Exit";
             this.exitToolStripMenuItem2.Click += new System.EventHandler(this.exitToolStripMenuItem2_Click);
             // 
@@ -233,6 +221,16 @@
             this.tabPage1.Text = "Now Playing";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // axWindowsMediaPlayer1
+            // 
+            this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.axWindowsMediaPlayer1.Enabled = true;
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
+            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
+            this.axWindowsMediaPlayer1.TabIndex = 0;
+            // 
             // tabPageSubscription
             // 
             this.tabPageSubscription.Controls.Add(this.tableLayoutPanelSubInfo);
@@ -290,6 +288,21 @@
             this.labelSubscriptionTitle.Text = "Title";
             this.labelSubscriptionTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.labelSubscriptionTitle.Visible = false;
+            // 
+            // pictureBoxSubInfo
+            // 
+            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
+            this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 28);
+            this.pictureBoxSubInfo.MaximumSize = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.MinimumSize = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.Name = "pictureBoxSubInfo";
+            this.tableLayoutPanelSubInfo.SetRowSpan(this.pictureBoxSubInfo, 3);
+            this.pictureBoxSubInfo.Size = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxSubInfo.TabIndex = 0;
+            this.pictureBoxSubInfo.TabStop = false;
             // 
             // linkLabelSite
             // 
@@ -520,6 +533,16 @@
             this.buttonSearch.Visible = false;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.subscriptionListControl1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 168);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(237, 380);
+            this.panel1.TabIndex = 2;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -536,41 +559,6 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
-            // 
-            // pictureBoxSubInfo
-            // 
-            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
-            this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 28);
-            this.pictureBoxSubInfo.MaximumSize = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.MinimumSize = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.Name = "pictureBoxSubInfo";
-            this.tableLayoutPanelSubInfo.SetRowSpan(this.pictureBoxSubInfo, 3);
-            this.pictureBoxSubInfo.Size = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxSubInfo.TabIndex = 0;
-            this.pictureBoxSubInfo.TabStop = false;
-            // 
-            // axWindowsMediaPlayer1
-            // 
-            this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
-            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
-            this.axWindowsMediaPlayer1.TabIndex = 0;
-            // 
-            // panel1
-            // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.subscriptionListControl1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 168);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(237, 380);
-            this.panel1.TabIndex = 2;
             // 
             // subscriptionListControl1
             // 
@@ -607,9 +595,11 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.tabPageSubscription.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -618,11 +608,9 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSubInfo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
-            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -637,7 +625,6 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.ToolStripMenuItem showUnreadToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
