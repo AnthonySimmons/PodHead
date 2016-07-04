@@ -36,6 +36,8 @@ namespace RSSForm
 
             subscriptionListControl1.SubscriptionSelectedEventHandler += subscriptionSelectedHandler;
             subscriptionListControl1.SubscriptionsLoadComplete += SubscriptionListControl1_SubscriptionsLoadComplete;
+            subscriptionListControl1.LoadMoreEventHandler += SubscriptionListControl1_LoadMoreEventHandler;
+                
 
             comboBoxSource.SelectedIndex = 0;
 
@@ -59,6 +61,11 @@ namespace RSSForm
             LoadPodcastGenres();
         }
 
+        private void SubscriptionListControl1_LoadMoreEventHandler(object sender, EventArgs e)
+        {
+            LoadMoreCharts();
+        }
+
         private void Instance_AllFeedsParsed(object sender, EventArgs e)
         {
             //LoadSubscriptions();
@@ -67,7 +74,6 @@ namespace RSSForm
         private void SubscriptionListControl1_SubscriptionsLoadComplete(object sender, EventArgs e)
         {
             comboBoxGenre.Enabled = true;
-            buttonLoadMoreCharts.Enabled = true;
         }
 
         private void LoadPodcastGenres()
@@ -734,21 +740,18 @@ namespace RSSForm
                     buttonSearch.Visible = false;
                     textBoxSearch.Visible = false;
                     comboBoxGenre.Visible = false;
-                    buttonLoadMoreCharts.Visible = false;
                     LoadSubscriptions();
                     break;
                 case "Top Charts":
                     buttonSearch.Visible = false;
                     textBoxSearch.Visible = false;
                     comboBoxGenre.Visible = true;
-                    buttonLoadMoreCharts.Visible = false;
                     LoadTopCharts();
                     break;
                 case "Search":
                     comboBoxGenre.Visible = false;
                     textBoxSearch.Visible = true;
                     buttonSearch.Visible = true;
-                    buttonLoadMoreCharts.Visible = false;
                     break;
             }
         }
@@ -771,12 +774,10 @@ namespace RSSForm
             PodcastCharts.Instance.Podcasts.Clear();
             PodcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
             PodcastCharts.Instance.GetPodcastsAsync();
-            buttonLoadMoreCharts.Visible = true;
         }
 
-        private void buttonLoadMoreCharts_Click(object sender, EventArgs e)
+        private void LoadMoreCharts()
         {
-            buttonLoadMoreCharts.Enabled = false;
             toolStripProgressBar1.Visible = true;
             PodcastCharts.Limit += 10;
             switch(comboBoxSource.SelectedItem.ToString())
@@ -877,7 +878,6 @@ namespace RSSForm
         {
             if(e.KeyCode == Keys.Enter)
             {
-                buttonLoadMoreCharts.Visible = true;
                 PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
             }
         }
@@ -905,8 +905,13 @@ namespace RSSForm
 
         private void buttonSearch_Click(object sender, EventArgs e)
         {
-            buttonLoadMoreCharts.Visible = true;
             PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
         }
+                
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            AddSubscription();
+        }
+        
     }
 }

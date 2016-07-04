@@ -64,15 +64,14 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonLoadMoreCharts = new System.Windows.Forms.Button();
             this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.comboBoxSource = new System.Windows.Forms.ComboBox();
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -444,7 +443,6 @@
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.buttonLoadMoreCharts, 0, 4);
             this.tableLayoutPanel2.Controls.Add(this.textBoxSearch, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 1);
@@ -452,27 +450,14 @@
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 5;
+            this.tableLayoutPanel2.RowCount = 4;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 159);
             this.tableLayoutPanel2.TabIndex = 1;
-            // 
-            // buttonLoadMoreCharts
-            // 
-            this.buttonLoadMoreCharts.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.buttonLoadMoreCharts.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonLoadMoreCharts.Location = new System.Drawing.Point(3, 139);
-            this.buttonLoadMoreCharts.Name = "buttonLoadMoreCharts";
-            this.buttonLoadMoreCharts.Size = new System.Drawing.Size(231, 20);
-            this.buttonLoadMoreCharts.TabIndex = 7;
-            this.buttonLoadMoreCharts.Text = "Load More";
-            this.buttonLoadMoreCharts.UseVisualStyleBackColor = true;
-            this.buttonLoadMoreCharts.Visible = false;
-            this.buttonLoadMoreCharts.Click += new System.EventHandler(this.buttonLoadMoreCharts_Click);
             // 
             // textBoxSearch
             // 
@@ -523,10 +508,9 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonSearch.Location = new System.Drawing.Point(3, 110);
             this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(231, 23);
+            this.buttonSearch.Size = new System.Drawing.Size(231, 25);
             this.buttonSearch.TabIndex = 6;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
@@ -542,6 +526,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(237, 380);
             this.panel1.TabIndex = 2;
+            // 
+            // subscriptionListControl1
+            // 
+            this.subscriptionListControl1.AutoScroll = true;
+            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
+            this.subscriptionListControl1.Name = "subscriptionListControl1";
+            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
+            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
+            this.subscriptionListControl1.TabIndex = 0;
             // 
             // statusStrip1
             // 
@@ -559,16 +553,6 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
-            // 
-            // subscriptionListControl1
-            // 
-            this.subscriptionListControl1.AutoScroll = true;
-            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
-            this.subscriptionListControl1.Name = "subscriptionListControl1";
-            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
-            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
-            this.subscriptionListControl1.TabIndex = 0;
             // 
             // RSSMainForm
             // 
@@ -657,7 +641,6 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.TextBox textBoxSearch;
-        private System.Windows.Forms.Button buttonLoadMoreCharts;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.Panel panel1;
         private SubscriptionListControl subscriptionListControl1;

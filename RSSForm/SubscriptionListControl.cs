@@ -36,6 +36,8 @@ namespace RSSForm
 
         private const string Unsubscribe = @"Unsubscribe";
 
+        public event EventHandler LoadMoreEventHandler;
+
         public event SubscriptionEvent SubscriptionSelectedEventHandler;
 
         public event SubscriptionEvent SubscriptionRemovedEventHandler;
@@ -109,6 +111,38 @@ namespace RSSForm
             }
         }
 
+        private void AddLoadMoreButton()
+        {
+            if(_subscriptionState == SubscriptionState.SearchResults 
+            || _subscriptionState == SubscriptionState.TopCharts)
+            {
+                Button loadMoreButton = GetLoadMoreButton();
+                tableLayoutPanel1.Controls.Add(loadMoreButton, TitleColumn, tableLayoutPanel1.RowCount);
+            }
+        }
+
+        private Button GetLoadMoreButton()
+        {
+            var btn = new Button()
+            {
+                Text = @"Load More",
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font(FontFamily.GenericSansSerif, 14f, FontStyle.Bold),
+            };
+            btn.Click += BtnLoadMore_Click;
+            return btn;
+        }
+
+        private void BtnLoadMore_Click(object sender, EventArgs e)
+        {
+            OnLoadMore();
+        }
+
+        private void OnLoadMore()
+        {
+            LoadMoreEventHandler?.Invoke(this, new EventArgs());
+        }
+
         public void LoadSubscriptions(List<Subscription> subscriptions, SubscriptionState subscriptionState = SubscriptionState.Subscription)
         {
             tableLayoutPanel1.RowCount = 0;
@@ -126,7 +160,8 @@ namespace RSSForm
                     i++;
                 }
                 SelectSubscription();
-                AddEmptySubscriptionRow();
+                AddLoadMoreButton();
+                AddEmptySubscriptionRow();                
             }
             else
             {
