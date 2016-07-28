@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml;
 using System.Security.Permissions;
 using RSS;
+using System.Text.RegularExpressions;
 //using WMPLib;
 
 namespace RSSForm
@@ -19,11 +20,26 @@ namespace RSSForm
     [System.Runtime.InteropServices.ComVisibleAttribute(true)]
     public partial class RSSMainForm : Form
     {
-        int DownloadColumnWidth = 20;
-        int DownloadColumnHeight = 20;
+        const int DownloadColumnWidth = 20;
+        const int DownloadColumnHeight = 20;
 
-        int FileSizeColumnWidth = 75;
-        int FileSizeColumnHeight = 25;
+        const int FileSizeColumnWidth = 75;
+        const int FileSizeColumnHeight = 25;
+
+        const string ItemColumnTitle = "Title";
+        const string ItemColumnDate = "Date";
+        const string ItemColumnDescription = "Description";
+        const string ItemColumnDownload = "Download";
+        const string ItemColumnDownloadProgress = "DownloadProgress";
+
+        private const string ItemMenuDownload = "Download";
+        private const string ItemMenuDelete = "Delete";
+        private const string ItemMenuPlay = "Play";
+        private const string ItemMenuInfo = "Info";
+
+
+
+        private ContextMenuStrip ItemsContextMenuStrip;
 
 
         public RSSMainForm()
@@ -81,44 +97,59 @@ namespace RSSForm
             comboBoxGenre.Items.Clear();
             comboBoxGenre.Items.AddRange(PodcastCharts.PodcastGenreCodes.Keys.ToArray());
         }
-                
 
+        
         private void SetupGridViewContextMenu()
         {
-            ContextMenuStrip menu = new ContextMenuStrip();
-            menu.Items.Add("Download", Properties.Resources.downloads_icon, GridContextClick);
-            menu.Items.Add("Delete", Properties.Resources.deleteIcon, GridContextClick);
-            menu.Items.Add("Play", Properties.Resources.PlayIcon, GridContextClick);
-            menu.Items.Add("Info", Properties.Resources.info, GridContextClick);
+            ItemsContextMenuStrip = new ContextMenuStrip();
 
-            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            ItemsContextMenuStrip.Items.Add(ItemMenuDownload, Properties.Resources.downloads_icon, GridContextDownloadClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuDelete, Properties.Resources.deleteIcon, GridContextDeleteClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuPlay, Properties.Resources.PlayIcon, GridContextPlayClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuInfo, Properties.Resources.info, GridContextInfoClick);
+
+            foreach(DataGridViewColumn column in dataGridView1.Columns)
             {
-                column.ContextMenuStrip = menu;
+                column.ContextMenuStrip = ItemsContextMenuStrip;
             }
             
-
+            
         }
 
-        private void GridContextClick(object sender, EventArgs e)
+        private void SelectRowSender(object sender)
         {
-            ToolStripItem strip = (ToolStripItem)sender;
-            switch (strip.Text)
+            var row = sender as DataGridViewRow;
+            if(row != null)
             {
-                case "Download":
-                    DownloadFile();
-                    break;
-                case "Delete":
-                    DeleteFile();
-                    break;
-                case "Play":
-                    PlaySelected();
-                    break;
-                case "Info":
-                    LoadItemInfo();
-                    break;
+                row.Selected = true;
             }
         }
 
+        private void GridContextDownloadClick(object sender, EventArgs e)
+        {
+            SelectRowSender(sender);
+            DownloadFile();
+        }
+
+        private void GridContextDeleteClick(object sender, EventArgs e)
+        {
+            SelectRowSender(sender);
+            DeleteFile();
+        }
+
+        private void GridContextPlayClick(object sender, EventArgs e)
+        {
+            SelectRowSender(sender);
+            PlaySelected();
+        }
+
+        private void GridContextInfoClick(object sender, EventArgs e)
+        {
+            SelectRowSender(sender);
+            LoadItemInfo();
+        }
+
+        
         private string SelectedSubscriptionTitle => subscriptionListControl1.SelectedSubscriptionTitle;
         
         private void AddChartSubscription()
@@ -156,9 +187,9 @@ namespace RSSForm
         private void LoadItemInfo()
         {
             int row = dataGridView1.SelectedCells[0].RowIndex;
-            if (dataGridView1.Rows[row].Cells["Title"].Value != null)
+            if (dataGridView1.Rows[row].Cells[ItemColumnTitle].Value != null)
             {
-                string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
+                string title = dataGridView1.Rows[row].Cells[ItemColumnTitle].Value.ToString();
                 string subscriptionTitle = selectedSub;
 
                 Subscription sub = GetSubscription(subscriptionTitle);
@@ -204,9 +235,9 @@ namespace RSSForm
             if (dataGridView1.SelectedCells.Count > 0)
             {
                 int row = dataGridView1.SelectedCells[0].RowIndex;
-                if (dataGridView1.Rows[row].Cells["Title"].Value != null)
+                if (dataGridView1.Rows[row].Cells[ItemColumnTitle].Value != null)
                 {
-                    title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
+                    title = dataGridView1.Rows[row].Cells[ItemColumnTitle].Value.ToString();
                 }
             }
             return title;
@@ -343,9 +374,9 @@ namespace RSSForm
             if (dataGridView1.SelectedCells.Count > 0)
             {
                 int row = dataGridView1.SelectedCells[0].RowIndex;
-                if (dataGridView1.Rows[row].Cells["Title"].Value != null)
+                if (dataGridView1.Rows[row].Cells[ItemColumnTitle].Value != null)
                 {
-                    string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
+                    string title = dataGridView1.Rows[row].Cells[ItemColumnTitle].Value.ToString();
                     Item it = GetItem(selectedSub, title);
                     success = it.DeleteFile();
                     UpdateDataGridRow(it);
@@ -360,9 +391,9 @@ namespace RSSForm
             if (dataGridView1.SelectedCells.Count > 0)
             {
                 int row = dataGridView1.SelectedCells[0].RowIndex;
-                if (dataGridView1.Rows[row].Cells["Title"].Value != null)
+                if (dataGridView1.Rows[row].Cells[ItemColumnTitle].Value != null)
                 {
-                    string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
+                    string title = dataGridView1.Rows[row].Cells[ItemColumnTitle].Value.ToString();
                     Item it = GetItem(selectedSub, title);
 
                     it.DownloadProgress += DownloadProgressChangeCallBack;
@@ -370,8 +401,8 @@ namespace RSSForm
 
                     it.DownloadFile();
 
-                    it.DownloadProgress -= DownloadProgressChangeCallBack;
-                    Item.AnyDownloadComplete -= DownloadCompleteCallBack;
+                    //it.DownloadProgress -= DownloadProgressChangeCallBack;
+                    //Item.AnyDownloadComplete -= DownloadCompleteCallBack;
                 }
             }
         }
@@ -379,12 +410,31 @@ namespace RSSForm
 
         public void DownloadCompleteCallBack(Item item)
         {
-            dataGridView1.Rows[item.RowNum].Cells["DownloadProgress"].Value = GetFileSizeBitmap(item.MbSize);
-            dataGridView1.Rows[item.RowNum].Cells["Download"].Value = GetDeleteBitmap();
+            int rowIndex = GetItemRow(item.Title);
+            dataGridView1.Rows[rowIndex].Cells[ItemColumnDownloadProgress].Value = GetFileSizeBitmap(item.MbSize);
+            dataGridView1.Rows[rowIndex].Cells[ItemColumnDownload].Value = GetDeleteBitmap();
+        }
+
+        private int GetItemRow(string itemTitle)
+        {
+            int rowIndex = -1;
+            int count = 0;
+            foreach(DataGridViewRow row in dataGridView1.Rows)
+            {
+                if(row.Cells[ItemColumnTitle]?.Value?.ToString()  == itemTitle)
+                {
+                    rowIndex = count;
+                    break;
+                }
+                count++;
+            }
+
+            return rowIndex;
         }
 
         public void DownloadProgressChangeCallBack(Item item, double percent)
         {
+            int rowIndex = GetItemRow(item.Title);
             Bitmap bmp = new Bitmap(dataGridView1.Columns[0].Width, dataGridView1.Rows[0].Height);
             using (Graphics g = Graphics.FromImage(bmp))
             {
@@ -393,7 +443,7 @@ namespace RSSForm
                 //g.DrawString(item.MbSize.ToString(), new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 4, bmp.Height / 4));
             }
 
-            dataGridView1.Rows[item.RowNum].Cells["DownloadProgress"].Value = bmp;
+            dataGridView1.Rows[rowIndex].Cells[ItemColumnDownloadProgress].Value = bmp;
 
         }
 
@@ -410,20 +460,62 @@ namespace RSSForm
 
         }
 
-        private string GetDateTime(string date)
+        private DateTime GetDateTime(string date)
         {
-            var formattedDateTime = string.Empty;
-            DateTime dateTime;
+            DateTime dateTime = DateTime.MinValue, tempDateTime;
 
-            if (DateTime.TryParse(date, out dateTime))
+            if (DateTime.TryParse(date, out tempDateTime))
             {
                 //Use general date time pattern.
-                formattedDateTime = dateTime.ToString("g");
+                dateTime = tempDateTime;
+            }
+            else if(TryParseCustomDateTime(date, out tempDateTime))
+            {
+                dateTime = tempDateTime;
             }
 
-            return formattedDateTime;
+            //return formattedDateTime;
+            return dateTime;
         }
 
+
+        private bool TryParseCustomDateTime(string date, out DateTime dateTime)
+        {
+            bool success = false;
+            dateTime = DateTime.MinValue;
+            try
+            {
+                //Common format starts as:
+                //"Wed, 27 Jul 2016 00:01:00 PDT"
+                //  0   1   2   3     4       5
+                //Needs to be:
+                //"27 Jul 2016 00:01:00"
+                
+                string[] dateVals = date.Split(' ');
+
+                if (dateVals.Length >= 6)
+                {
+                    //Remove the first two values in the time slot.
+                    //00:01:00 -> 01:00
+                    if (dateVals.Length > 3)
+                    {
+                        dateVals[4] = dateVals[4].Substring(3);
+                    }
+
+                    //Copy over the string array values.
+                    string[] subVals = new string[4];
+                    Array.Copy(dateVals, 1, subVals, 0, subVals.Length);
+                    var subDate = string.Join(" ", subVals);
+                    success = DateTime.TryParse(subDate, out dateTime);
+                }
+            }
+            catch (Exception ex)
+            {
+                success = false;
+                ErrorLogger.Log(ex);
+            }
+            return success;
+        }
 
 
         private void UpdateDataGridRow(Item it)
@@ -431,7 +523,7 @@ namespace RSSForm
             int count = 0;
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                if (row.Cells["Title"].Value.ToString() == it.Title)
+                if (row.Cells[ItemColumnTitle].Value.ToString() == it.Title)
                 {
                     break;
                 }
@@ -446,11 +538,11 @@ namespace RSSForm
         {
             it.RowNum = count;
             
-            dataGridView1.Rows[count].Cells["Date"].Value = GetDateTime(it.PubDate);
-            dataGridView1.Rows[count].Cells["Description"].Value = it.Description.ToString();
-            dataGridView1.Rows[count].Cells["Title"].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Italic);
-            dataGridView1.Rows[count].Cells["Title"].Style.ForeColor = Color.Blue;
-            dataGridView1.Rows[count].Cells["Date"].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Bold);
+            dataGridView1.Rows[count].Cells[ItemColumnDate].Value = GetDateTime(it.PubDate);
+            dataGridView1.Rows[count].Cells[ItemColumnDescription].Value = it.Description.ToString();
+            dataGridView1.Rows[count].Cells[ItemColumnTitle].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Italic);
+            dataGridView1.Rows[count].Cells[ItemColumnTitle].Style.ForeColor = Color.Blue;
+            dataGridView1.Rows[count].Cells[ItemColumnDate].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Bold);
 
 
             //if (it.CanBeDownloaded)
@@ -459,19 +551,19 @@ namespace RSSForm
                 if (it.IsDownloaded)
                 {
                     it.MbSize = it.GetFileSizeMb();
-                    dataGridView1.Rows[count].Cells["Download"].Value = GetDeleteBitmap();
+                    dataGridView1.Rows[count].Cells[ItemColumnDownload].Value = GetDeleteBitmap();
                 }
                 else
                 {
-                    dataGridView1.Rows[count].Cells["Download"].Value = GetDownloadBitmap();
+                    dataGridView1.Rows[count].Cells[ItemColumnDownload].Value = GetDownloadBitmap();
                 }
 
-                dataGridView1.Rows[count].Cells["DownloadProgress"].Value = GetFileSizeBitmap(it.MbSize);
+                dataGridView1.Rows[count].Cells[ItemColumnDownloadProgress].Value = GetFileSizeBitmap(it.MbSize);
             }
 
             if (it.Read)
             {
-                dataGridView1.Rows[count].Cells["Title"].Style.BackColor = Color.Red;
+                dataGridView1.Rows[count].Cells[ItemColumnTitle].Style.BackColor = Color.Red;
             }
         }
 
@@ -533,7 +625,8 @@ namespace RSSForm
 
             }
             dataGridView1.ResumeLayout();
-            dataGridView1.Sort(dataGridView1.Columns["Date"], ListSortDirection.Descending);
+            
+            dataGridView1.Sort(dataGridView1.Columns[ItemColumnDate], ListSortDirection.Descending);
             dataGridView1.Rows.Add(null, GetBlankBitmap(), "Load 10 More");
             dataGridView1.AutoResizeColumns();
         }
@@ -613,9 +706,9 @@ namespace RSSForm
         private void PlaySelected()
         {
             int row = dataGridView1.SelectedCells[0].RowIndex;
-            if (dataGridView1.Rows[row].Cells["Title"].Value != null)
+            if (dataGridView1.Rows[row].Cells[ItemColumnTitle].Value != null)
             {
-                string title = dataGridView1.Rows[row].Cells["Title"].Value.ToString();
+                string title = dataGridView1.Rows[row].Cells[ItemColumnTitle].Value.ToString();
 
                 Item it = GetItem(selectedSub, title);
 
@@ -657,7 +750,7 @@ namespace RSSForm
                 }
                 else if (selected[0].Value != null)
                 {
-                    string ttl = dataGridView1.Rows[selected[0].RowIndex].Cells["Title"].Value.ToString();
+                    string ttl = dataGridView1.Rows[selected[0].RowIndex].Cells[ItemColumnTitle].Value.ToString();
 
                     Item it = GetItem(selectedSub, ttl);
                     string str = it.Link;
@@ -913,6 +1006,27 @@ namespace RSSForm
         {
             AddSubscription();
         }
-        
+
+        private void dataGridView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            //Only need to do this for right clicks
+            if (e.Button == MouseButtons.Right)
+            {
+                //Set the right clicked cell as selected
+                DataGridView.HitTestInfo info = dataGridView1.HitTest(e.X, e.Y);
+                dataGridView1.ClearSelection();
+                if (info.RowIndex >= 0 && info.RowIndex < dataGridView1.Rows.Count
+                 && info.ColumnIndex >= 0 && info.ColumnIndex < dataGridView1.Columns.Count)
+                {
+                    dataGridView1.Rows[info.RowIndex].Cells[info.ColumnIndex].Selected = true;
+                    string itemTitle = dataGridView1.Rows[info.RowIndex].Cells[info.ColumnIndex].Value.ToString();
+                    Item it = GetItem(selectedSub, itemTitle);
+                    
+                    ItemsContextMenuStrip.Items[0].Visible = !it.IsDownloaded;
+                    ItemsContextMenuStrip.Items[1].Visible = it.IsDownloaded;
+                }
+                
+            }
+        }
     }
 }

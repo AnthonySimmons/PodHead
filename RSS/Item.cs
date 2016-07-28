@@ -204,20 +204,27 @@ namespace RSS
         {
             bool success = false;
             string url = Link;
-            if (IsDownloaded)
+            try
             {
-                if (File.Exists(FilePath))
+                if (IsDownloaded)
                 {
-                    File.SetAttributes(FilePath, FileAttributes.Normal);
-                    File.Delete(FilePath);
-                    OnAnyDownloadRemoved();
-                }
+                    if (File.Exists(FilePath))
+                    {
+                        File.SetAttributes(FilePath, FileAttributes.Normal);
+                        File.Delete(FilePath);
+                        OnAnyDownloadRemoved();
+                    }
 
-                success = !File.Exists(FilePath);
-                if (success)
-                {
-                    MbSize = 0;
+                    success = !File.Exists(FilePath);
+                    if (success)
+                    {
+                        MbSize = 0;
+                    }
                 }
+            }
+            catch
+            {
+                success = false;
             }
             return success;
         }
