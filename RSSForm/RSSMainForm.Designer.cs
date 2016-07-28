@@ -41,9 +41,9 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPageWebsite = new System.Windows.Forms.TabPage();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPageNowPlaying = new System.Windows.Forms.TabPage();
             this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.tabPageSubscription = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelSubInfo = new System.Windows.Forms.TableLayoutPanel();
@@ -69,17 +69,17 @@
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabPageWebsite.SuspendLayout();
+            this.tabPageNowPlaying.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.tabPageSubscription.SuspendLayout();
             this.tableLayoutPanelSubInfo.SuspendLayout();
@@ -178,26 +178,33 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.tabControl1.Controls.Add(this.tabPageWebsite);
+            this.tabControl1.Controls.Add(this.tabPageNowPlaying);
             this.tabControl1.Controls.Add(this.tabPageSubscription);
+            this.tabControl1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tabControl1.HotTrack = true;
+            this.tabControl1.ItemSize = new System.Drawing.Size(125, 25);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(483, 253);
+            this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 3;
             // 
-            // tabPage2
+            // tabPageWebsite
             // 
-            this.tabPage2.Controls.Add(this.webBrowser1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(475, 227);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Web Browser";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPageWebsite.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageWebsite.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tabPageWebsite.Controls.Add(this.webBrowser1);
+            this.tabPageWebsite.Location = new System.Drawing.Point(4, 29);
+            this.tabPageWebsite.Name = "tabPageWebsite";
+            this.tabPageWebsite.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageWebsite.Size = new System.Drawing.Size(475, 220);
+            this.tabPageWebsite.TabIndex = 1;
+            this.tabPageWebsite.Text = "Website";
             // 
             // webBrowser1
             // 
@@ -206,19 +213,20 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(469, 221);
+            this.webBrowser1.Size = new System.Drawing.Size(467, 212);
             this.webBrowser1.TabIndex = 0;
             // 
-            // tabPage1
+            // tabPageNowPlaying
             // 
-            this.tabPage1.Controls.Add(this.axWindowsMediaPlayer1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(475, 227);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Now Playing";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPageNowPlaying.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageNowPlaying.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tabPageNowPlaying.Controls.Add(this.axWindowsMediaPlayer1);
+            this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 29);
+            this.tabPageNowPlaying.Name = "tabPageNowPlaying";
+            this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageNowPlaying.Size = new System.Drawing.Size(475, 220);
+            this.tabPageNowPlaying.TabIndex = 0;
+            this.tabPageNowPlaying.Text = "Now Playing";
             // 
             // axWindowsMediaPlayer1
             // 
@@ -227,19 +235,20 @@
             this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
             this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(469, 221);
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(467, 212);
             this.axWindowsMediaPlayer1.TabIndex = 0;
             // 
             // tabPageSubscription
             // 
+            this.tabPageSubscription.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageSubscription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tabPageSubscription.Controls.Add(this.tableLayoutPanelSubInfo);
-            this.tabPageSubscription.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSubscription.Location = new System.Drawing.Point(4, 29);
             this.tabPageSubscription.Name = "tabPageSubscription";
             this.tabPageSubscription.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSubscription.Size = new System.Drawing.Size(475, 227);
+            this.tabPageSubscription.Size = new System.Drawing.Size(475, 220);
             this.tabPageSubscription.TabIndex = 2;
             this.tabPageSubscription.Text = "Subscription";
-            this.tabPageSubscription.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanelSubInfo
             // 
@@ -259,19 +268,19 @@
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.20408F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.22449F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 77.77778F));
-            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(469, 221);
+            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(467, 212);
             this.tableLayoutPanelSubInfo.TabIndex = 3;
             // 
             // textBoxSubDescription
             // 
             this.textBoxSubDescription.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxSubDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSubDescription.Location = new System.Drawing.Point(220, 70);
+            this.textBoxSubDescription.Location = new System.Drawing.Point(220, 68);
             this.textBoxSubDescription.Margin = new System.Windows.Forms.Padding(20, 3, 0, 3);
             this.textBoxSubDescription.Multiline = true;
             this.textBoxSubDescription.Name = "textBoxSubDescription";
             this.textBoxSubDescription.ReadOnly = true;
-            this.textBoxSubDescription.Size = new System.Drawing.Size(249, 148);
+            this.textBoxSubDescription.Size = new System.Drawing.Size(249, 141);
             this.textBoxSubDescription.TabIndex = 3;
             // 
             // labelSubscriptionTitle
@@ -309,7 +318,7 @@
             this.linkLabelSite.Dock = System.Windows.Forms.DockStyle.Fill;
             this.linkLabelSite.Location = new System.Drawing.Point(203, 25);
             this.linkLabelSite.Name = "linkLabelSite";
-            this.linkLabelSite.Size = new System.Drawing.Size(263, 20);
+            this.linkLabelSite.Size = new System.Drawing.Size(263, 19);
             this.linkLabelSite.TabIndex = 4;
             this.linkLabelSite.TabStop = true;
             this.linkLabelSite.Text = "Site";
@@ -321,9 +330,9 @@
             // 
             this.linkLabelFeed.AutoSize = true;
             this.linkLabelFeed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.linkLabelFeed.Location = new System.Drawing.Point(203, 45);
+            this.linkLabelFeed.Location = new System.Drawing.Point(203, 44);
             this.linkLabelFeed.Name = "linkLabelFeed";
-            this.linkLabelFeed.Size = new System.Drawing.Size(263, 22);
+            this.linkLabelFeed.Size = new System.Drawing.Size(263, 21);
             this.linkLabelFeed.TabIndex = 5;
             this.linkLabelFeed.TabStop = true;
             this.linkLabelFeed.Text = "Feed";
@@ -434,7 +443,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -527,16 +536,6 @@
             this.panel1.Size = new System.Drawing.Size(237, 380);
             this.panel1.TabIndex = 2;
             // 
-            // subscriptionListControl1
-            // 
-            this.subscriptionListControl1.AutoScroll = true;
-            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
-            this.subscriptionListControl1.Name = "subscriptionListControl1";
-            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
-            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
-            this.subscriptionListControl1.TabIndex = 0;
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -554,6 +553,16 @@
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
             // 
+            // subscriptionListControl1
+            // 
+            this.subscriptionListControl1.AutoScroll = true;
+            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
+            this.subscriptionListControl1.Name = "subscriptionListControl1";
+            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
+            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
+            this.subscriptionListControl1.TabIndex = 0;
+            // 
             // RSSMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -563,6 +572,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer2);
+            this.HelpButton = true;
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(400, 400);
             this.Name = "RSSMainForm";
@@ -577,8 +587,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tabPageWebsite.ResumeLayout(false);
+            this.tabPageNowPlaying.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.tabPageSubscription.ResumeLayout(false);
             this.tableLayoutPanelSubInfo.ResumeLayout(false);
@@ -635,9 +645,9 @@
         private System.Windows.Forms.TextBox textBoxSubDescription;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelSubInfo;
         private System.Windows.Forms.TabPage tabPageSubscription;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPageNowPlaying;
         public System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPageWebsite;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.TextBox textBoxSearch;

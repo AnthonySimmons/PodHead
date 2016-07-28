@@ -222,8 +222,10 @@ namespace RSSForm
         //Menu strip About: click opens the About form which contains information on authors, version, and last updated
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            About about = new About();
-            DialogResult dr = about.ShowDialog();
+            using (var about = new About())
+            {
+                about.ShowDialog();
+            }
         }
 
 
@@ -289,16 +291,15 @@ namespace RSSForm
             tabPageSubscription.ResumeLayout();
         }
 
-        private void subscriptionSelectedHandler(Subscription subscription)
+        private void subscriptionSelectedHandler(Subscription sub)
         {
-            if (!string.IsNullOrEmpty(subscription?.Title))
+            if (!string.IsNullOrEmpty(sub?.Title))
             {
-                var sub = GetSubscription(subscription.Title);
-                
                 if (sub != null)
                 {
-                    if(!sub.IsLoaded)
+                    if (sub.MaxItems == 0)
                     {
+                        sub.MaxItems = 10;
                         Parser.LoadSubscription(sub, Feeds.Instance.MaxItems);
                     }
 
@@ -312,7 +313,7 @@ namespace RSSForm
                         webBrowser1.Navigate(sub.ImageUrl);
                     }
                     LoadSubscriptionInfoTab(sub);
-                    LoadDataGrid(subscription.Title);
+                    LoadDataGrid(sub.Title);
                 }
             }
 
@@ -388,8 +389,8 @@ namespace RSSForm
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.FillRectangle(Brushes.Green, 0, 0, (int)(bmp.Width * ((float)percent / 100.0)), bmp.Height);
-
-                g.DrawString(item.MbSize.ToString(), new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 4, bmp.Height / 4));
+                //Draw string not working reliably. Ignore it for now.
+                //g.DrawString(item.MbSize.ToString(), new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 4, bmp.Height / 4));
             }
 
             dataGridView1.Rows[item.RowNum].Cells["DownloadProgress"].Value = bmp;
@@ -844,7 +845,7 @@ namespace RSSForm
 
         private void RSSMainForm_SizeChanged(object sender, EventArgs e)
         {
-            toolStripProgressBar1.Width = Math.Max(50, statusStrip1.Width = 50);
+            toolStripProgressBar1.Width = Math.Max(50, statusStrip1.Width - 50);
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)

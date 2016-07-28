@@ -125,6 +125,7 @@ namespace RSSForm
         {
             var btn = new Button()
             {
+                AutoSize = true,
                 Text = @"Load More",
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font(FontFamily.GenericSansSerif, 14f, FontStyle.Bold),
