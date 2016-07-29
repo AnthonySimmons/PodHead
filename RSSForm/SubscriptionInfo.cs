@@ -16,7 +16,7 @@ namespace RSSForm
         {
             InitializeComponent();
 
-            Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
+            Bitmap ico = new Bitmap(Properties.Resources.Icon);
             Icon = Icon.FromHandle(ico.GetHicon());
         }
 

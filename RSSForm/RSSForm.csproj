@@ -161,6 +161,16 @@
     <None Include="Images\downloads-icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Subscribe1.png" />
+    <None Include="Resources\Info.png" />
+    <None Include="Resources\Subscribe.png" />
+    <None Include="Resources\Unsubscribe.png" />
+    <None Include="Resources\Remove.png" />
+    <None Include="Resources\Next.png" />
+    <None Include="Resources\Play.png" />
+    <None Include="Resources\Refresh.png" />
+    <None Include="Resources\Icon.png" />
+    <None Include="Resources\Download.png" />
     <None Include="Resources\MainFormIcon.ico" />
     <None Include="Images\bookmark-ribbon.jpg" />
     <None Include="Images\info.jpg" />

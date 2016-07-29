@@ -70,11 +70,13 @@ namespace RSSForm
             //LoadSubscriptions();
 
             webBrowser1.ObjectForScripting = this;
-            Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
+            Bitmap ico = new Bitmap(Properties.Resources.Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
 
             LoadPodcastGenres();
-            
+
+            toolTipButtonAdd.SetToolTip(buttonAdd, "Add New Subscription");
+            toolTipButtonRefresh.SetToolTip(buttonRefresh, "Reload Subscriptions");
         }
 
         private void SubscriptionListControl1_LoadMoreEventHandler(object sender, EventArgs e)
@@ -103,10 +105,10 @@ namespace RSSForm
         {
             ItemsContextMenuStrip = new ContextMenuStrip();
 
-            ItemsContextMenuStrip.Items.Add(ItemMenuDownload, Properties.Resources.downloads_icon, GridContextDownloadClick);
-            ItemsContextMenuStrip.Items.Add(ItemMenuDelete, Properties.Resources.deleteIcon, GridContextDeleteClick);
-            ItemsContextMenuStrip.Items.Add(ItemMenuPlay, Properties.Resources.PlayIcon, GridContextPlayClick);
-            ItemsContextMenuStrip.Items.Add(ItemMenuInfo, Properties.Resources.info, GridContextInfoClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuDownload, Properties.Resources.Download, GridContextDownloadClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuDelete, Properties.Resources.Remove, GridContextDeleteClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuPlay, Properties.Resources.Play, GridContextPlayClick);
+            ItemsContextMenuStrip.Items.Add(ItemMenuInfo, Properties.Resources.Info, GridContextInfoClick);
 
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
@@ -659,7 +661,7 @@ namespace RSSForm
             Bitmap bmp = new Bitmap(DownloadColumnWidth, DownloadColumnHeight);
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                g.DrawImage(Properties.Resources.downloads_icon, 0, 0, bmp.Width, bmp.Height);
+                g.DrawImage(Properties.Resources.Download, 0, 0, bmp.Width, bmp.Height);
             }
             return bmp;
         }
@@ -684,7 +686,7 @@ namespace RSSForm
             Bitmap bmp = new Bitmap(DownloadColumnWidth, DownloadColumnHeight);
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                g.DrawImage(Properties.Resources.deleteIcon, 0, 0, bmp.Width, bmp.Height);
+                g.DrawImage(Properties.Resources.Remove, 0, 0, bmp.Width, bmp.Height);
             }
             return bmp;
         }
@@ -926,7 +928,7 @@ namespace RSSForm
                     PodcastCharts.Instance.GetPodcastsAsync();
                     break;
                 case "Search":
-                    PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+                    Search();
                     break;
             }
         }
@@ -945,15 +947,44 @@ namespace RSSForm
             ));
         }
 
+        private void DisableSourceButtons()
+        {
+            comboBoxGenre.Enabled = false;
+            comboBoxSource.Enabled = false;
+            buttonAdd.Enabled = false;
+            buttonRefresh.Enabled = false;
+            buttonSearch.Enabled = false;
+            textBoxSearch.Enabled = false;
+        }
+
+        private void EnableSourceButtons()
+        {
+            comboBoxGenre.Enabled = true;
+            comboBoxSource.Enabled = true;
+            buttonAdd.Enabled = true;
+            buttonRefresh.Enabled = true;
+            buttonSearch.Enabled = true;
+            textBoxSearch.Enabled = true;
+        }
+
+
+        private void Search()
+        {
+            DisableSourceButtons();
+            PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+        }
+
         private void UpdateToolStripProgressBar(double updatePercentage)
         {
             progressBarSubscriptions.Visible = true;
+            DisableSourceButtons();
             int value = (int)(updatePercentage * 100);
 
             if (value >= progressBarSubscriptions.Maximum)
             {
                 value = progressBarSubscriptions.Minimum;
                 progressBarSubscriptions.Visible = false;
+                EnableSourceButtons();
             }
 
             progressBarSubscriptions.Value = value;
@@ -992,6 +1023,7 @@ namespace RSSForm
 
         private void PodcastSearchResultReceived(List<Subscription> subscriptions)
         {
+            EnableSourceButtons();
             LoadSearchResults(subscriptions);            
         }
 
@@ -1015,7 +1047,7 @@ namespace RSSForm
         {
             if(e.KeyCode == Keys.Enter)
             {
-                PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+                Search();
             }
         }
 
@@ -1040,9 +1072,10 @@ namespace RSSForm
             webBrowser1.Navigate(linkLabelSite.Text);
         }
 
+
         private void buttonSearch_Click(object sender, EventArgs e)
         {
-            PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+            Search();
         }
                 
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -1081,5 +1114,6 @@ namespace RSSForm
         {
             Feeds.Instance.ParseAllFeedsAsync();
         }
+        
     }
 }

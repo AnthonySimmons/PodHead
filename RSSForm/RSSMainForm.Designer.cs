@@ -72,9 +72,11 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonRefresh = new System.Windows.Forms.Button();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.progressBarSubscriptions = new System.Windows.Forms.ProgressBar();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolTipButtonAdd = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTipButtonRefresh = new System.Windows.Forms.ToolTip(this.components);
+            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -122,6 +124,7 @@
             // 
             // newSubcriptionToolStripMenuItem
             // 
+            this.newSubcriptionToolStripMenuItem.Image = global::RSSForm.Properties.Resources.Subscribe;
             this.newSubcriptionToolStripMenuItem.Name = "newSubcriptionToolStripMenuItem";
             this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.newSubcriptionToolStripMenuItem.Text = "Add Subcription";
@@ -129,6 +132,7 @@
             // 
             // refreshToolStripMenuItem
             // 
+            this.refreshToolStripMenuItem.Image = global::RSSForm.Properties.Resources.Refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
@@ -302,7 +306,7 @@
             // 
             // pictureBoxSubInfo
             // 
-            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
+            this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.Icon;
             this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 28);
@@ -448,7 +452,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -456,21 +460,21 @@
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.Controls.Add(this.textBoxSearch, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxSource, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.buttonSearch, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.buttonSearch, 1, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 4;
+            this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 136);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 105);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // textBoxSearch
@@ -479,7 +483,7 @@
             this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxSearch.Location = new System.Drawing.Point(3, 81);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(231, 23);
+            this.textBoxSearch.Size = new System.Drawing.Size(154, 23);
             this.textBoxSearch.TabIndex = 5;
             this.textBoxSearch.Text = "Search...";
             this.textBoxSearch.Visible = false;
@@ -489,6 +493,7 @@
             // 
             // comboBoxSource
             // 
+            this.tableLayoutPanel2.SetColumnSpan(this.comboBoxSource, 2);
             this.comboBoxSource.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSource.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -508,6 +513,7 @@
             // comboBoxGenre
             // 
             this.comboBoxGenre.BackColor = System.Drawing.SystemColors.Window;
+            this.tableLayoutPanel2.SetColumnSpan(this.comboBoxGenre, 2);
             this.comboBoxGenre.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxGenre.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -523,14 +529,13 @@
             // 
             // buttonSearch
             // 
-            this.buttonSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonSearch.Location = new System.Drawing.Point(3, 110);
+            this.buttonSearch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.buttonSearch.Location = new System.Drawing.Point(163, 81);
             this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(231, 24);
-            this.buttonSearch.TabIndex = 6;
+            this.buttonSearch.Size = new System.Drawing.Size(71, 23);
+            this.buttonSearch.TabIndex = 7;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Visible = false;
             this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
             // 
             // panel1
@@ -538,49 +543,71 @@
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.subscriptionListControl1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 205);
+            this.panel1.Location = new System.Drawing.Point(3, 184);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(237, 380);
             this.panel1.TabIndex = 2;
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnCount = 3;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Controls.Add(this.buttonAdd, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.buttonRefresh, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.progressBarSubscriptions, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 145);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 114);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(237, 54);
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(237, 64);
             this.tableLayoutPanel3.TabIndex = 3;
             // 
             // buttonAdd
             // 
-            this.buttonAdd.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonAdd.BackgroundImage = global::RSSForm.Properties.Resources.Subscribe;
+            this.buttonAdd.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.buttonAdd.Dock = System.Windows.Forms.DockStyle.Left;
+            this.buttonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.buttonAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonAdd.Location = new System.Drawing.Point(3, 23);
             this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(112, 29);
+            this.buttonAdd.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.buttonAdd.Size = new System.Drawing.Size(35, 44);
             this.buttonAdd.TabIndex = 0;
-            this.buttonAdd.Text = "Add";
+            this.buttonAdd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.buttonAdd.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.buttonAdd.UseVisualStyleBackColor = true;
             this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click_1);
             // 
             // buttonRefresh
             // 
+            this.buttonRefresh.BackgroundImage = global::RSSForm.Properties.Resources.Refresh;
+            this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonRefresh.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonRefresh.Location = new System.Drawing.Point(121, 23);
+            this.buttonRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.buttonRefresh.Location = new System.Drawing.Point(53, 23);
             this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(113, 29);
+            this.buttonRefresh.Size = new System.Drawing.Size(44, 44);
             this.buttonRefresh.TabIndex = 1;
-            this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
+            // progressBarSubscriptions
+            // 
+            this.tableLayoutPanel3.SetColumnSpan(this.progressBarSubscriptions, 3);
+            this.progressBarSubscriptions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressBarSubscriptions.Location = new System.Drawing.Point(3, 3);
+            this.progressBarSubscriptions.Name = "progressBarSubscriptions";
+            this.progressBarSubscriptions.Size = new System.Drawing.Size(231, 14);
+            this.progressBarSubscriptions.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBarSubscriptions.TabIndex = 2;
             // 
             // statusStrip1
             // 
@@ -600,16 +627,6 @@
             this.subscriptionListControl1.SelectedSubscriptionTitle = null;
             this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
             this.subscriptionListControl1.TabIndex = 0;
-            // 
-            // progressBarSubscriptions
-            // 
-            this.tableLayoutPanel3.SetColumnSpan(this.progressBarSubscriptions, 2);
-            this.progressBarSubscriptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBarSubscriptions.Location = new System.Drawing.Point(3, 3);
-            this.progressBarSubscriptions.Name = "progressBarSubscriptions";
-            this.progressBarSubscriptions.Size = new System.Drawing.Size(231, 14);
-            this.progressBarSubscriptions.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBarSubscriptions.TabIndex = 2;
             // 
             // RSSMainForm
             // 
@@ -694,7 +711,6 @@
         public System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.TabPage tabPageWebsite;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.TextBox textBoxSearch;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.Panel panel1;
@@ -703,6 +719,9 @@
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Button buttonRefresh;
         private System.Windows.Forms.ProgressBar progressBarSubscriptions;
+        private System.Windows.Forms.ToolTip toolTipButtonAdd;
+        private System.Windows.Forms.ToolTip toolTipButtonRefresh;
+        private System.Windows.Forms.Button buttonSearch;
     }
 }
 

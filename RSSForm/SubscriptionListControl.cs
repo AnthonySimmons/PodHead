@@ -62,8 +62,8 @@ namespace RSSForm
         {
             var contextMenuStrip = new ContextMenuStrip();
 
-            var viewToolStripItem = new ToolStripMenuItem("View", null, ViewSubscriptionClicked) { Tag = sub };
-            var subscribeToolStripItem = new ToolStripMenuItem(GetSubscriptionState(sub), null, ContextMenuSubscribed) { Tag = sub };
+            var viewToolStripItem = new ToolStripMenuItem("View", Properties.Resources.Next, ViewSubscriptionClicked) { Tag = sub };
+            var subscribeToolStripItem = new ToolStripMenuItem(GetSubscriptionState(sub), GetSubscriptionMenuImage(sub), ContextMenuSubscribed) { Tag = sub };
 
             contextMenuStrip.Items.Add(viewToolStripItem);
             contextMenuStrip.Items.Add(subscribeToolStripItem);
@@ -288,7 +288,16 @@ namespace RSSForm
             }
         }
         
-        
+        private Image GetSubscriptionMenuImage(Subscription sub)
+        {
+            var image = Properties.Resources.Remove;
+            if (!Feeds.Instance.ContainsSubscription(sub?.Title))
+            {
+                image = Properties.Resources.Subscribe;
+            }
+            return image;
+        }
+
         private string GetSubscriptionState(Subscription sub)
         {
             var subState = "Unsubscribe";

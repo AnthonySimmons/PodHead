@@ -46,7 +46,7 @@ namespace RSS
         {
             if (ContainsSubscription(subscription.Title))
             {
-                OnFeedUpdated(subsParsed / Subscriptions.Count);
+                //OnFeedUpdated(subsParsed / Subscriptions.Count);
                 if (++subsParsed >= Subscriptions.Count - 1)
                 {
                     OnAllFeedsParsed();

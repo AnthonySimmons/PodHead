@@ -66,12 +66,8 @@ namespace RSS
         
 		private void OnErrorEncountered(string message)
 		{
-			var copy = ErrorEncountered;
-			if(copy != null)
-			{
-				copy (message);					
-			}
-		}
+            ErrorEncountered?.Invoke(message);
+        }
 
         private void Client_OpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
         {
@@ -90,12 +86,8 @@ namespace RSS
 
 		private void OnSearchResultsReceived(List<Subscription> subscriptions)
 		{
-			var copy = SearchResultReceived;
-			if (copy != null) 
-			{
-				copy (subscriptions);
-			}
-		}
+            SearchResultReceived?.Invoke(subscriptions);
+        }
 
         private static string GetSearchUrl(string searchTerm)
         {

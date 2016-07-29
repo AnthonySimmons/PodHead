@@ -18,7 +18,7 @@ namespace RSSForm
         public NewSubscriptionForm()
         {
             InitializeComponent();
-            var icon_bmp = new Bitmap(Properties.Resources.AddIcon);
+            var icon_bmp = new Bitmap(Properties.Resources.Subscribe);
             Icon = Icon.FromHandle(icon_bmp.GetHicon());
         }
         

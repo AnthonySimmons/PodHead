@@ -114,7 +114,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackgroundImage = global::RSSForm.Properties.Resources.RSS_Icon;
+            this.pictureBox1.BackgroundImage = global::RSSForm.Properties.Resources.Icon;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(82, 22);
