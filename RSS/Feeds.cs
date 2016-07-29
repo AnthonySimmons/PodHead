@@ -133,10 +133,15 @@ namespace RSS
         public void ParseAllFeeds()
         {
             subsParsed = 0;
+            int count = 0;
             foreach (Subscription sub in Subscriptions)
             {
                 Parser.LoadSubscription(sub, MaxItems);
+
+                //Do the increment before the calculation.
+                OnFeedUpdated((double)++count / (double)Subscriptions.Count);
             }
+            OnAllFeedsParsed();
 
         }
         int subsParsed = 0;

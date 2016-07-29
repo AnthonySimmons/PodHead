@@ -46,9 +46,7 @@ namespace RSSForm
         public RSSMainForm()
         {
             InitializeComponent();
-
-            toolStripProgressBar1.Dock = DockStyle.Fill;
-
+            
             SetupGridViewContextMenu();
 
             subscriptionListControl1.SubscriptionSelectedEventHandler += subscriptionSelectedHandler;
@@ -68,14 +66,15 @@ namespace RSSForm
             Feeds.Instance.Load(RSSConfig.ConfigFileName);
             Feeds.Instance.AllFeedsParsed += Instance_AllFeedsParsed;
 
-            Feeds.Instance.ParseAllFeeds();
-            LoadSubscriptions();
+            //Feeds.Instance.ParseAllFeeds();
+            //LoadSubscriptions();
 
             webBrowser1.ObjectForScripting = this;
             Bitmap ico = new Bitmap(Properties.Resources.RSS_Icon);
             this.Icon = Icon.FromHandle(ico.GetHicon());
 
             LoadPodcastGenres();
+            
         }
 
         private void SubscriptionListControl1_LoadMoreEventHandler(object sender, EventArgs e)
@@ -85,7 +84,7 @@ namespace RSSForm
 
         private void Instance_AllFeedsParsed(object sender, EventArgs e)
         {
-            //LoadSubscriptions();
+            LoadSubscriptions();
         }
 
         private void SubscriptionListControl1_SubscriptionsLoadComplete(object sender, EventArgs e)
@@ -270,9 +269,16 @@ namespace RSSForm
 
         private void LoadSubscriptions()
         {
-            if (comboBoxSource.SelectedIndex == 0)
+            if (IsHandleCreated)
             {
-                subscriptionListControl1.LoadSubscriptions(Feeds.Instance.Subscriptions, SubscriptionState.Subscription);
+                Invoke(new Action(() =>
+                {
+                    if (comboBoxSource.SelectedIndex == 0)
+                    {
+                        subscriptionListControl1.LoadSubscriptions(Feeds.Instance.Subscriptions, SubscriptionState.Subscription);
+                    }
+                }
+                ));
             }
         }
 
@@ -825,11 +831,7 @@ namespace RSSForm
         }
 
 
-        private void SelectSubscriptionFromItem(Item item)
-        {
-
-        }
-
+        
         private void AddSubscription()
         {
             using (var form = new NewSubscriptionForm())
@@ -860,21 +862,37 @@ namespace RSSForm
                     buttonSearch.Visible = false;
                     textBoxSearch.Visible = false;
                     comboBoxGenre.Visible = false;
+                    buttonAdd.Visible = true;
+                    buttonRefresh.Visible = true;
+                    newSubcriptionToolStripMenuItem.Enabled = true;
+                    refreshToolStripMenuItem.Enabled = true;
                     LoadSubscriptions();
                     break;
                 case "Top Charts":
                     buttonSearch.Visible = false;
                     textBoxSearch.Visible = false;
                     comboBoxGenre.Visible = true;
+                    buttonAdd.Visible = false;
+                    buttonRefresh.Visible = false;
+                    newSubcriptionToolStripMenuItem.Enabled = false;
+                    refreshToolStripMenuItem.Enabled = false;
                     LoadTopCharts();
                     break;
                 case "Search":
                     comboBoxGenre.Visible = false;
                     textBoxSearch.Visible = true;
                     buttonSearch.Visible = true;
+                    buttonAdd.Visible = false;
+                    buttonRefresh.Visible = false;
+                    newSubcriptionToolStripMenuItem.Enabled = false;
+                    refreshToolStripMenuItem.Enabled = false;
                     break;
                 case "Downloads":
                     LoadDownloads();
+                    buttonAdd.Visible = false;
+                    buttonRefresh.Visible = false;
+                    newSubcriptionToolStripMenuItem.Enabled = false;
+                    refreshToolStripMenuItem.Enabled = false;
                     break;
             }
         }
@@ -901,7 +919,6 @@ namespace RSSForm
 
         private void LoadMoreCharts()
         {
-            toolStripProgressBar1.Visible = true;
             PodcastCharts.Limit += 10;
             switch(comboBoxSource.SelectedItem.ToString())
             {
@@ -930,15 +947,17 @@ namespace RSSForm
 
         private void UpdateToolStripProgressBar(double updatePercentage)
         {
-            toolStripProgressBar1.Visible = true;
+            progressBarSubscriptions.Visible = true;
             int value = (int)(updatePercentage * 100);
-            if (value >= toolStripProgressBar1.Maximum)
+
+            if (value >= progressBarSubscriptions.Maximum)
             {
-                value = toolStripProgressBar1.Minimum;
-                toolStripProgressBar1.Visible = false;
+                value = progressBarSubscriptions.Minimum;
+                progressBarSubscriptions.Visible = false;
             }
 
-            toolStripProgressBar1.Value = value;
+            progressBarSubscriptions.Value = value;
+            
         }
 
         private void PodcastSourceErrorEncountered(string errorMessage)
@@ -948,27 +967,22 @@ namespace RSSForm
 
         private void FeedLoadUpdate(double updatePercentage)
         {
-            this.Invoke(new Action(() =>
+            if (this.IsHandleCreated)
             {
-                UpdateToolStripProgressBar(updatePercentage);
-                if (updatePercentage >= 1.0)
+                this.Invoke(new Action(() =>
                 {
-                    toolStripProgressBar1.Visible = false;
+                    UpdateToolStripProgressBar(updatePercentage);
                 }
+                ));
             }
-            ));
         }
 
         private void RSSMainForm_Load(object sender, EventArgs e)
         {
-            //Feeds.Instance.ParseAllFeedsAsync();
+            Feeds.Instance.ParseAllFeedsAsync();
             this.WindowState = FormWindowState.Maximized;
         }
-
-        private void RSSMainForm_SizeChanged(object sender, EventArgs e)
-        {
-            toolStripProgressBar1.Width = Math.Max(50, statusStrip1.Width - 50);
-        }
+        
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1056,6 +1070,16 @@ namespace RSSForm
                 }
                 
             }
+        }
+
+        private void buttonAdd_Click_1(object sender, EventArgs e)
+        {
+            AddSubscription();
+        }
+
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            Feeds.Instance.ParseAllFeedsAsync();
         }
     }
 }
