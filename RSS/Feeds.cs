@@ -71,6 +71,21 @@ namespace RSS
             return Subscriptions.Where(ch => ch.Category == category).ToList();
         }
 
+        public List<Item> DownloadedItems
+        {
+            get
+            {
+                var downloads = new List<Item>();
+                
+                foreach(var sub in Subscriptions)
+                {
+                    downloads.AddRange(sub.Items.Where(it => it.IsDownloaded));
+                }
+                                
+                return downloads.ToList();
+            }
+        }
+
 
         public void RemoveChannel(string name)
         {
@@ -200,6 +215,11 @@ namespace RSS
             {
                 AddChannel(subscription);
             }
+        }
+
+        public Subscription GetSubscriptionFromItem(string itemTitle)
+        {
+            return Subscriptions.FirstOrDefault(sub => sub.Items.Any(it => it.Title == itemTitle));
         }
 
         public Item GetItem(string title)

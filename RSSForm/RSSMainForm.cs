@@ -37,6 +37,7 @@ namespace RSSForm
         private const string ItemMenuPlay = "Play";
         private const string ItemMenuInfo = "Info";
 
+        public string selectedSub { get; set; } = string.Empty;
 
 
         private ContextMenuStrip ItemsContextMenuStrip;
@@ -53,7 +54,7 @@ namespace RSSForm
             subscriptionListControl1.SubscriptionSelectedEventHandler += subscriptionSelectedHandler;
             subscriptionListControl1.SubscriptionsLoadComplete += SubscriptionListControl1_SubscriptionsLoadComplete;
             subscriptionListControl1.LoadMoreEventHandler += SubscriptionListControl1_LoadMoreEventHandler;
-                
+
 
             comboBoxSource.SelectedIndex = 0;
 
@@ -98,7 +99,7 @@ namespace RSSForm
             comboBoxGenre.Items.AddRange(PodcastCharts.PodcastGenreCodes.Keys.ToArray());
         }
 
-        
+
         private void SetupGridViewContextMenu()
         {
             ItemsContextMenuStrip = new ContextMenuStrip();
@@ -108,18 +109,18 @@ namespace RSSForm
             ItemsContextMenuStrip.Items.Add(ItemMenuPlay, Properties.Resources.PlayIcon, GridContextPlayClick);
             ItemsContextMenuStrip.Items.Add(ItemMenuInfo, Properties.Resources.info, GridContextInfoClick);
 
-            foreach(DataGridViewColumn column in dataGridView1.Columns)
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
                 column.ContextMenuStrip = ItemsContextMenuStrip;
             }
-            
-            
+
+
         }
 
         private void SelectRowSender(object sender)
         {
             var row = sender as DataGridViewRow;
-            if(row != null)
+            if (row != null)
             {
                 row.Selected = true;
             }
@@ -149,9 +150,9 @@ namespace RSSForm
             LoadItemInfo();
         }
 
-        
+
         private string SelectedSubscriptionTitle => subscriptionListControl1.SelectedSubscriptionTitle;
-        
+
         private void AddChartSubscription()
         {
             Subscription sub;
@@ -173,16 +174,7 @@ namespace RSSForm
                 LoadSubscriptions();
             }
         }
-
-        private void LoadSubscriptionInfo(string subscriptionTitle)
-        {
-            Subscription sub = GetSubscription(subscriptionTitle);
-            if (sub != null)
-            {
-                var info = new SubscriptionInfo(sub);
-                info.ShowDialog();
-            }
-        }
+        
 
         private void LoadItemInfo()
         {
@@ -228,7 +220,7 @@ namespace RSSForm
             }
         }
 
-        
+
         private string GetTitleFromSelectedDataGrid()
         {
             string title = String.Empty;
@@ -293,12 +285,12 @@ namespace RSSForm
         {
             subscriptionListControl1.LoadSubscriptions(subscriptions, SubscriptionState.SearchResults);
         }
-        
+
 
         private void LoadSubscriptionInfoTab(string subscriptionTitle)
         {
             var sub = GetSubscription(subscriptionTitle);
-            if(sub != null)
+            if (sub != null)
             {
                 LoadSubscriptionInfoTab(sub);
             }
@@ -334,20 +326,25 @@ namespace RSSForm
                         Parser.LoadSubscription(sub, Feeds.Instance.MaxItems);
                     }
 
-                    selectedSub = sub.Title;
-                    if (!string.IsNullOrEmpty(sub.SiteLink))
-                    {
-                        webBrowser1.Navigate(sub.SiteLink);
-                    }
-                    else if (!string.IsNullOrEmpty(sub.ImageUrl))
-                    {
-                        webBrowser1.Navigate(sub.ImageUrl);
-                    }
-                    LoadSubscriptionInfoTab(sub);
+                    LoadSubscriptionInfo(sub);
                     LoadDataGrid(sub.Title);
                 }
             }
 
+        }
+
+        private void LoadSubscriptionInfo(Subscription sub)
+        {
+            selectedSub = sub.Title;
+            if (!string.IsNullOrEmpty(sub.SiteLink))
+            {
+                webBrowser1.Navigate(sub.SiteLink);
+            }
+            else if (!string.IsNullOrEmpty(sub.ImageUrl))
+            {
+                webBrowser1.Navigate(sub.ImageUrl);
+            }
+            LoadSubscriptionInfoTab(sub);
         }
 
         private string findDescFromTitle(string title)
@@ -419,9 +416,9 @@ namespace RSSForm
         {
             int rowIndex = -1;
             int count = 0;
-            foreach(DataGridViewRow row in dataGridView1.Rows)
+            foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                if(row.Cells[ItemColumnTitle]?.Value?.ToString()  == itemTitle)
+                if (row.Cells[ItemColumnTitle]?.Value?.ToString() == itemTitle)
                 {
                     rowIndex = count;
                     break;
@@ -456,7 +453,7 @@ namespace RSSForm
             //dataGridView1.Width = this.Width - treeView1.Width;
             dataGridView1.Height = this.Height - webBrowser1.Height;
             dataGridView1.Dock = DockStyle.Fill;
-            
+
 
         }
 
@@ -469,12 +466,11 @@ namespace RSSForm
                 //Use general date time pattern.
                 dateTime = tempDateTime;
             }
-            else if(TryParseCustomDateTime(date, out tempDateTime))
+            else if (TryParseCustomDateTime(date, out tempDateTime))
             {
                 dateTime = tempDateTime;
             }
 
-            //return formattedDateTime;
             return dateTime;
         }
 
@@ -490,7 +486,7 @@ namespace RSSForm
                 //  0   1   2   3     4       5
                 //Needs to be:
                 //"27 Jul 2016 00:01:00"
-                
+
                 string[] dateVals = date.Split(' ');
 
                 if (dateVals.Length >= 6)
@@ -537,7 +533,7 @@ namespace RSSForm
         private void UpdateDataGridRow(Item it, int count)
         {
             it.RowNum = count;
-            
+
             dataGridView1.Rows[count].Cells[ItemColumnDate].Value = GetDateTime(it.PubDate);
             dataGridView1.Rows[count].Cells[ItemColumnDescription].Value = it.Description.ToString();
             dataGridView1.Rows[count].Cells[ItemColumnTitle].Style.Font = new System.Drawing.Font(DefaultFont, FontStyle.Italic);
@@ -547,7 +543,7 @@ namespace RSSForm
 
             //if (it.CanBeDownloaded)
             {
-                
+
                 if (it.IsDownloaded)
                 {
                     it.MbSize = it.GetFileSizeMb();
@@ -574,7 +570,7 @@ namespace RSSForm
             {
                 sub = PodcastCharts.Instance.Podcasts.FirstOrDefault(s => s.Title == subscriptionTitle);
             }
-            if(sub == null)
+            if (sub == null)
             {
                 sub = PodcastSearch.Instance.Results.FirstOrDefault(s => s.Title == subscriptionTitle);
             }
@@ -593,39 +589,49 @@ namespace RSSForm
             return it;
         }
 
-        public string selectedSub = "";
-        private void LoadDataGrid(string channelTitle)
+
+        private void LoadDataGrid(string subscriptionTitle)
+        {
+            Subscription sub = GetSubscription(subscriptionTitle);
+            LoadDataGrid(sub);
+        }
+
+        private void LoadDataGrid(Subscription sub)
+        {
+            if(sub != null)
+            {
+                LoadDataGrid(sub.Items);
+            }
+        }
+
+
+        private void LoadDataGrid(IEnumerable<Item> items)
         {
             dataGridView1.SuspendLayout();
             dataGridView1.Rows.Clear();
 
-            Subscription sub = GetSubscription(channelTitle);
-            if (sub != null)
+            int count = 0;
+
+            foreach (Item it in items)
             {
-                int count = 0;
-
-                foreach (Item it in sub.Items)
+                if ((!showUnread || (showUnread && !it.Read)))
                 {
-                    if ((!showUnread || (showUnread && !it.Read)))
+                    if (it.Read)
                     {
-                        if (it.Read)
-                        {
-                            dataGridView1.Rows.Add(null, null, "+ " + it.Title);
-                        }
-                        else
-                        {
-                            dataGridView1.Rows.Add(null, null, it.Title);
-                        }
-
-                        UpdateDataGridRow(it, count);
-                        count++;
+                        dataGridView1.Rows.Add(null, null, "+ " + it.Title);
                     }
+                    else
+                    {
+                        dataGridView1.Rows.Add(null, null, it.Title);
+                    }
+
+                    UpdateDataGridRow(it, count);
+                    count++;
                 }
-
-
             }
+
             dataGridView1.ResumeLayout();
-            
+
             dataGridView1.Sort(dataGridView1.Columns[ItemColumnDate], ListSortDirection.Descending);
             dataGridView1.Rows.Add(null, GetBlankBitmap(), "Load 10 More");
             dataGridView1.AutoResizeColumns();
@@ -786,9 +792,9 @@ namespace RSSForm
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            string title = GetTitleFromSelectedDataGrid();
             if (e.ColumnIndex == 1)
-            {
-                string title = GetTitleFromSelectedDataGrid();
+            {                
                 Item it = GetItem(selectedSub, title);
 
                 if (it != null && it.CanBeDownloaded)
@@ -808,8 +814,21 @@ namespace RSSForm
                 }
                 UpdateDataGridRow(it);
             }
+            else
+            {
+                Subscription sub = Feeds.Instance.GetSubscriptionFromItem(title);
+                if (sub != null)
+                {
+                    LoadSubscriptionInfo(sub);
+                }
+            }
         }
 
+
+        private void SelectSubscriptionFromItem(Item item)
+        {
+
+        }
 
         private void AddSubscription()
         {
@@ -824,6 +843,13 @@ namespace RSSForm
                     LoadSubscriptions();
                 }
             }
+        }
+
+        private void LoadDownloads()
+        {
+            subscriptionListControl1.Clear();
+            LoadDataGrid(Feeds.Instance.DownloadedItems);
+            
         }
 
         private void UpdateDisplay(string selectedDisplay)
@@ -846,6 +872,9 @@ namespace RSSForm
                     comboBoxGenre.Visible = false;
                     textBoxSearch.Visible = true;
                     buttonSearch.Visible = true;
+                    break;
+                case "Downloads":
+                    LoadDownloads();
                     break;
             }
         }

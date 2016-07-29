@@ -143,6 +143,7 @@ namespace RSSForm
         {
             LoadMoreEventHandler?.Invoke(this, new EventArgs());
         }
+        
 
         public void LoadSubscriptions(List<Subscription> subscriptions, SubscriptionState subscriptionState = SubscriptionState.Subscription)
         {
@@ -171,6 +172,20 @@ namespace RSSForm
 
             tableLayoutPanel1.ResumeLayout();
             OnSubscriptionsLoadComplete();
+        }
+
+        public void Clear()
+        {
+            tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel1.RowCount = 0;
+            tableLayoutPanel1.Controls.Clear();
+            tableLayoutPanel1.ResumeLayout();
+        }
+
+        public void SelectSubscription(Subscription sub)
+        {
+            _selectedSubscription = sub;
+            SelectSubscription();
         }
 
         private void SelectSubscription()

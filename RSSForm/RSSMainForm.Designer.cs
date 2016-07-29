@@ -69,9 +69,9 @@
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -492,6 +492,7 @@
             this.comboBoxSource.FormattingEnabled = true;
             this.comboBoxSource.Items.AddRange(new object[] {
             "Subscriptions",
+            "Downloads",
             "Top Charts",
             "Search"});
             this.comboBoxSource.Location = new System.Drawing.Point(3, 3);
@@ -537,6 +538,16 @@
             this.panel1.Size = new System.Drawing.Size(237, 380);
             this.panel1.TabIndex = 2;
             // 
+            // subscriptionListControl1
+            // 
+            this.subscriptionListControl1.AutoScroll = true;
+            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
+            this.subscriptionListControl1.Name = "subscriptionListControl1";
+            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
+            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
+            this.subscriptionListControl1.TabIndex = 0;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -553,16 +564,6 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(695, 16);
             this.toolStripProgressBar1.Visible = false;
-            // 
-            // subscriptionListControl1
-            // 
-            this.subscriptionListControl1.AutoScroll = true;
-            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
-            this.subscriptionListControl1.Name = "subscriptionListControl1";
-            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
-            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
-            this.subscriptionListControl1.TabIndex = 0;
             // 
             // RSSMainForm
             // 
