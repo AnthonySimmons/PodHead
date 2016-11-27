@@ -69,6 +69,7 @@
             this.comboBoxGenre = new System.Windows.Forms.ComboBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonRefresh = new System.Windows.Forms.Button();
@@ -76,7 +77,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolTipButtonAdd = new System.Windows.Forms.ToolTip(this.components);
             this.toolTipButtonRefresh = new System.Windows.Forms.ToolTip(this.components);
-            this.subscriptionListControl1 = new RSSForm.SubscriptionListControl();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -574,6 +574,16 @@
             this.panel1.Size = new System.Drawing.Size(356, 585);
             this.panel1.TabIndex = 2;
             // 
+            // subscriptionListControl1
+            // 
+            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
+            this.subscriptionListControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.subscriptionListControl1.Name = "subscriptionListControl1";
+            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
+            this.subscriptionListControl1.Size = new System.Drawing.Size(356, 585);
+            this.subscriptionListControl1.TabIndex = 0;
+            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 3;
@@ -638,6 +648,7 @@
             this.progressBarSubscriptions.Size = new System.Drawing.Size(348, 21);
             this.progressBarSubscriptions.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarSubscriptions.TabIndex = 2;
+            this.progressBarSubscriptions.Visible = false;
             // 
             // statusStrip1
             // 
@@ -649,16 +660,6 @@
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.Visible = false;
-            // 
-            // subscriptionListControl1
-            // 
-            this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
-            this.subscriptionListControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.subscriptionListControl1.Name = "subscriptionListControl1";
-            this.subscriptionListControl1.SelectedSubscriptionTitle = null;
-            this.subscriptionListControl1.Size = new System.Drawing.Size(356, 585);
-            this.subscriptionListControl1.TabIndex = 0;
             // 
             // RSSMainForm
             // 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using RSS;
+using System.Diagnostics;
 
 namespace RSSForm
 {
@@ -21,6 +22,10 @@ namespace RSSForm
         {
             this.Close();
         }
-       
+        
+        private void linkLabelProjectHomeUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(linkLabelProjectHomeUrl.Text);
+        }
     }
 }
