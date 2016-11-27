@@ -172,6 +172,7 @@ namespace RSSForm
 
             tableLayoutPanel1.ResumeLayout();
             OnSubscriptionsLoadComplete();
+            Refresh();
         }
 
         public void Clear()

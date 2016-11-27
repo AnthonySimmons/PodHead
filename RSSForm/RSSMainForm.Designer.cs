@@ -102,12 +102,14 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(745, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
+            this.menuStrip1.Size = new System.Drawing.Size(1118, 35);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -119,14 +121,14 @@
             this.toolStripSeparator2,
             this.exitToolStripMenuItem2});
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(88, 29);
             this.exitToolStripMenuItem.Text = "Options";
             // 
             // newSubcriptionToolStripMenuItem
             // 
             this.newSubcriptionToolStripMenuItem.Image = global::RSSForm.Properties.Resources.Subscribe;
             this.newSubcriptionToolStripMenuItem.Name = "newSubcriptionToolStripMenuItem";
-            this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.newSubcriptionToolStripMenuItem.Size = new System.Drawing.Size(227, 30);
             this.newSubcriptionToolStripMenuItem.Text = "Add Subcription";
             this.newSubcriptionToolStripMenuItem.Click += new System.EventHandler(this.newSubcriptionToolStripMenuItem_Click);
             // 
@@ -134,19 +136,19 @@
             // 
             this.refreshToolStripMenuItem.Image = global::RSSForm.Properties.Resources.Refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(227, 30);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(224, 6);
             // 
             // exitToolStripMenuItem2
             // 
             this.exitToolStripMenuItem2.Name = "exitToolStripMenuItem2";
-            this.exitToolStripMenuItem2.Size = new System.Drawing.Size(160, 22);
+            this.exitToolStripMenuItem2.Size = new System.Drawing.Size(227, 30);
             this.exitToolStripMenuItem2.Text = "Exit";
             this.exitToolStripMenuItem2.Click += new System.EventHandler(this.exitToolStripMenuItem2_Click);
             // 
@@ -155,13 +157,13 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(61, 29);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(147, 30);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -169,6 +171,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -179,8 +182,9 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
-            this.splitContainer1.Size = new System.Drawing.Size(483, 551);
-            this.splitContainer1.SplitterDistance = 253;
+            this.splitContainer1.Size = new System.Drawing.Size(725, 848);
+            this.splitContainer1.SplitterDistance = 389;
+            this.splitContainer1.SplitterWidth = 6;
             this.splitContainer1.TabIndex = 3;
             // 
             // tabControl1
@@ -195,9 +199,10 @@
             this.tabControl1.HotTrack = true;
             this.tabControl1.ItemSize = new System.Drawing.Size(125, 25);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(483, 253);
+            this.tabControl1.Size = new System.Drawing.Size(725, 389);
             this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl1.TabIndex = 3;
             // 
@@ -207,20 +212,22 @@
             this.tabPageWebsite.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tabPageWebsite.Controls.Add(this.webBrowser1);
             this.tabPageWebsite.Location = new System.Drawing.Point(4, 29);
+            this.tabPageWebsite.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPageWebsite.Name = "tabPageWebsite";
-            this.tabPageWebsite.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWebsite.Size = new System.Drawing.Size(475, 220);
+            this.tabPageWebsite.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabPageWebsite.Size = new System.Drawing.Size(717, 356);
             this.tabPageWebsite.TabIndex = 1;
             this.tabPageWebsite.Text = "Website";
             // 
             // webBrowser1
             // 
             this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(3, 3);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Location = new System.Drawing.Point(4, 5);
+            this.webBrowser1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(30, 31);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(467, 212);
+            this.webBrowser1.Size = new System.Drawing.Size(707, 344);
             this.webBrowser1.TabIndex = 0;
             // 
             // tabPageNowPlaying
@@ -229,9 +236,10 @@
             this.tabPageNowPlaying.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tabPageNowPlaying.Controls.Add(this.axWindowsMediaPlayer1);
             this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 29);
+            this.tabPageNowPlaying.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPageNowPlaying.Name = "tabPageNowPlaying";
-            this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageNowPlaying.Size = new System.Drawing.Size(475, 220);
+            this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabPageNowPlaying.Size = new System.Drawing.Size(717, 356);
             this.tabPageNowPlaying.TabIndex = 0;
             this.tabPageNowPlaying.Text = "Now Playing";
             // 
@@ -239,10 +247,11 @@
             // 
             this.axWindowsMediaPlayer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(4, 5);
+            this.axWindowsMediaPlayer1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(467, 212);
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(707, 344);
             this.axWindowsMediaPlayer1.TabIndex = 0;
             // 
             // tabPageSubscription
@@ -251,16 +260,17 @@
             this.tabPageSubscription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tabPageSubscription.Controls.Add(this.tableLayoutPanelSubInfo);
             this.tabPageSubscription.Location = new System.Drawing.Point(4, 29);
+            this.tabPageSubscription.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabPageSubscription.Name = "tabPageSubscription";
-            this.tabPageSubscription.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSubscription.Size = new System.Drawing.Size(475, 220);
+            this.tabPageSubscription.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabPageSubscription.Size = new System.Drawing.Size(717, 356);
             this.tabPageSubscription.TabIndex = 2;
             this.tabPageSubscription.Text = "Subscription";
             // 
             // tableLayoutPanelSubInfo
             // 
             this.tableLayoutPanelSubInfo.ColumnCount = 2;
-            this.tableLayoutPanelSubInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 200F));
+            this.tableLayoutPanelSubInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
             this.tableLayoutPanelSubInfo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelSubInfo.Controls.Add(this.textBoxSubDescription, 0, 3);
             this.tableLayoutPanelSubInfo.Controls.Add(this.labelSubscriptionTitle, 0, 0);
@@ -268,26 +278,27 @@
             this.tableLayoutPanelSubInfo.Controls.Add(this.linkLabelSite, 1, 1);
             this.tableLayoutPanelSubInfo.Controls.Add(this.linkLabelFeed, 1, 2);
             this.tableLayoutPanelSubInfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelSubInfo.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanelSubInfo.Location = new System.Drawing.Point(4, 5);
+            this.tableLayoutPanelSubInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tableLayoutPanelSubInfo.Name = "tableLayoutPanelSubInfo";
             this.tableLayoutPanelSubInfo.RowCount = 4;
-            this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.20408F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.22449F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 77.77778F));
-            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(467, 212);
+            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(707, 344);
             this.tableLayoutPanelSubInfo.TabIndex = 3;
             // 
             // textBoxSubDescription
             // 
             this.textBoxSubDescription.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxSubDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSubDescription.Location = new System.Drawing.Point(220, 68);
-            this.textBoxSubDescription.Margin = new System.Windows.Forms.Padding(20, 3, 0, 3);
+            this.textBoxSubDescription.Location = new System.Drawing.Point(330, 108);
+            this.textBoxSubDescription.Margin = new System.Windows.Forms.Padding(30, 5, 0, 5);
             this.textBoxSubDescription.Multiline = true;
             this.textBoxSubDescription.Name = "textBoxSubDescription";
             this.textBoxSubDescription.ReadOnly = true;
-            this.textBoxSubDescription.Size = new System.Drawing.Size(249, 141);
+            this.textBoxSubDescription.Size = new System.Drawing.Size(377, 231);
             this.textBoxSubDescription.TabIndex = 3;
             // 
             // labelSubscriptionTitle
@@ -296,9 +307,10 @@
             this.tableLayoutPanelSubInfo.SetColumnSpan(this.labelSubscriptionTitle, 2);
             this.labelSubscriptionTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelSubscriptionTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSubscriptionTitle.Location = new System.Drawing.Point(3, 0);
+            this.labelSubscriptionTitle.Location = new System.Drawing.Point(4, 0);
+            this.labelSubscriptionTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelSubscriptionTitle.Name = "labelSubscriptionTitle";
-            this.labelSubscriptionTitle.Size = new System.Drawing.Size(463, 25);
+            this.labelSubscriptionTitle.Size = new System.Drawing.Size(699, 38);
             this.labelSubscriptionTitle.TabIndex = 1;
             this.labelSubscriptionTitle.Text = "Title";
             this.labelSubscriptionTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -309,12 +321,13 @@
             this.pictureBoxSubInfo.BackgroundImage = global::RSSForm.Properties.Resources.Icon;
             this.pictureBoxSubInfo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBoxSubInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pictureBoxSubInfo.Location = new System.Drawing.Point(3, 28);
-            this.pictureBoxSubInfo.MaximumSize = new System.Drawing.Size(200, 200);
-            this.pictureBoxSubInfo.MinimumSize = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.Location = new System.Drawing.Point(4, 43);
+            this.pictureBoxSubInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pictureBoxSubInfo.MaximumSize = new System.Drawing.Size(300, 308);
+            this.pictureBoxSubInfo.MinimumSize = new System.Drawing.Size(300, 308);
             this.pictureBoxSubInfo.Name = "pictureBoxSubInfo";
             this.tableLayoutPanelSubInfo.SetRowSpan(this.pictureBoxSubInfo, 3);
-            this.pictureBoxSubInfo.Size = new System.Drawing.Size(200, 200);
+            this.pictureBoxSubInfo.Size = new System.Drawing.Size(300, 308);
             this.pictureBoxSubInfo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxSubInfo.TabIndex = 0;
             this.pictureBoxSubInfo.TabStop = false;
@@ -323,9 +336,10 @@
             // 
             this.linkLabelSite.AutoSize = true;
             this.linkLabelSite.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.linkLabelSite.Location = new System.Drawing.Point(203, 25);
+            this.linkLabelSite.Location = new System.Drawing.Point(304, 38);
+            this.linkLabelSite.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.linkLabelSite.Name = "linkLabelSite";
-            this.linkLabelSite.Size = new System.Drawing.Size(263, 19);
+            this.linkLabelSite.Size = new System.Drawing.Size(399, 31);
             this.linkLabelSite.TabIndex = 4;
             this.linkLabelSite.TabStop = true;
             this.linkLabelSite.Text = "Site";
@@ -337,9 +351,10 @@
             // 
             this.linkLabelFeed.AutoSize = true;
             this.linkLabelFeed.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.linkLabelFeed.Location = new System.Drawing.Point(203, 44);
+            this.linkLabelFeed.Location = new System.Drawing.Point(304, 69);
+            this.linkLabelFeed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.linkLabelFeed.Name = "linkLabelFeed";
-            this.linkLabelFeed.Size = new System.Drawing.Size(263, 21);
+            this.linkLabelFeed.Size = new System.Drawing.Size(399, 34);
             this.linkLabelFeed.TabIndex = 5;
             this.linkLabelFeed.TabStop = true;
             this.linkLabelFeed.Text = "Feed";
@@ -360,9 +375,10 @@
             this.Description});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(483, 294);
+            this.dataGridView1.Size = new System.Drawing.Size(725, 453);
             this.dataGridView1.TabIndex = 12;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
@@ -415,9 +431,10 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(436, 9);
+            this.label1.Location = new System.Drawing.Point(654, 14);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.Size = new System.Drawing.Size(0, 20);
             this.label1.TabIndex = 4;
             // 
             // splitContainer2
@@ -425,7 +442,8 @@
             this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer2.Location = new System.Drawing.Point(3, 30);
+            this.splitContainer2.Location = new System.Drawing.Point(4, 46);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
@@ -435,8 +453,9 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer1);
-            this.splitContainer2.Size = new System.Drawing.Size(730, 551);
-            this.splitContainer2.SplitterDistance = 243;
+            this.splitContainer2.Size = new System.Drawing.Size(1095, 848);
+            this.splitContainer2.SplitterDistance = 364;
+            this.splitContainer2.SplitterWidth = 6;
             this.splitContainer2.TabIndex = 10;
             // 
             // tableLayoutPanel1
@@ -449,12 +468,13 @@
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 108F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(243, 551);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(364, 848);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // tableLayoutPanel2
@@ -468,22 +488,24 @@
             this.tableLayoutPanel2.Controls.Add(this.comboBoxGenre, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.buttonSearch, 1, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 5);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(237, 105);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(356, 162);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // textBoxSearch
             // 
             this.textBoxSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSearch.Location = new System.Drawing.Point(3, 81);
+            this.textBoxSearch.Location = new System.Drawing.Point(4, 115);
+            this.textBoxSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(154, 23);
+            this.textBoxSearch.Size = new System.Drawing.Size(229, 30);
             this.textBoxSearch.TabIndex = 5;
             this.textBoxSearch.Text = "Search...";
             this.textBoxSearch.Visible = false;
@@ -504,9 +526,10 @@
             "Downloads",
             "Top Charts",
             "Search"});
-            this.comboBoxSource.Location = new System.Drawing.Point(3, 3);
+            this.comboBoxSource.Location = new System.Drawing.Point(4, 5);
+            this.comboBoxSource.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.comboBoxSource.Name = "comboBoxSource";
-            this.comboBoxSource.Size = new System.Drawing.Size(231, 33);
+            this.comboBoxSource.Size = new System.Drawing.Size(348, 45);
             this.comboBoxSource.TabIndex = 1;
             this.comboBoxSource.SelectedIndexChanged += new System.EventHandler(this.comboBoxDisplay_SelectedIndexChanged);
             // 
@@ -520,9 +543,10 @@
             this.comboBoxGenre.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxGenre.ForeColor = System.Drawing.SystemColors.ControlText;
             this.comboBoxGenre.FormattingEnabled = true;
-            this.comboBoxGenre.Location = new System.Drawing.Point(3, 42);
+            this.comboBoxGenre.Location = new System.Drawing.Point(4, 60);
+            this.comboBoxGenre.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.comboBoxGenre.Name = "comboBoxGenre";
-            this.comboBoxGenre.Size = new System.Drawing.Size(231, 33);
+            this.comboBoxGenre.Size = new System.Drawing.Size(348, 45);
             this.comboBoxGenre.TabIndex = 2;
             this.comboBoxGenre.Visible = false;
             this.comboBoxGenre.SelectedIndexChanged += new System.EventHandler(this.comboBoxGenre_SelectedIndexChanged);
@@ -530,9 +554,10 @@
             // buttonSearch
             // 
             this.buttonSearch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonSearch.Location = new System.Drawing.Point(163, 81);
+            this.buttonSearch.Location = new System.Drawing.Point(241, 115);
+            this.buttonSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.Size = new System.Drawing.Size(71, 23);
+            this.buttonSearch.Size = new System.Drawing.Size(106, 35);
             this.buttonSearch.TabIndex = 7;
             this.buttonSearch.Text = "Search";
             this.buttonSearch.UseVisualStyleBackColor = true;
@@ -543,29 +568,31 @@
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.subscriptionListControl1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 184);
+            this.panel1.Location = new System.Drawing.Point(4, 285);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(237, 380);
+            this.panel1.Size = new System.Drawing.Size(356, 585);
             this.panel1.TabIndex = 2;
             // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 3;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 75F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel3.Controls.Add(this.buttonAdd, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.buttonRefresh, 1, 1);
             this.tableLayoutPanel3.Controls.Add(this.progressBarSubscriptions, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 114);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 177);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(237, 64);
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 77F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(356, 98);
             this.tableLayoutPanel3.TabIndex = 3;
             // 
             // buttonAdd
@@ -576,10 +603,11 @@
             this.buttonAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.buttonAdd.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonAdd.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonAdd.Location = new System.Drawing.Point(3, 23);
+            this.buttonAdd.Location = new System.Drawing.Point(4, 36);
+            this.buttonAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.buttonAdd.Size = new System.Drawing.Size(35, 44);
+            this.buttonAdd.Size = new System.Drawing.Size(52, 67);
             this.buttonAdd.TabIndex = 0;
             this.buttonAdd.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.buttonAdd.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -592,9 +620,10 @@
             this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.buttonRefresh.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonRefresh.Location = new System.Drawing.Point(53, 23);
+            this.buttonRefresh.Location = new System.Drawing.Point(79, 36);
+            this.buttonRefresh.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(44, 44);
+            this.buttonRefresh.Size = new System.Drawing.Size(67, 67);
             this.buttonRefresh.TabIndex = 1;
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
@@ -603,43 +632,47 @@
             // 
             this.tableLayoutPanel3.SetColumnSpan(this.progressBarSubscriptions, 3);
             this.progressBarSubscriptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBarSubscriptions.Location = new System.Drawing.Point(3, 3);
+            this.progressBarSubscriptions.Location = new System.Drawing.Point(4, 5);
+            this.progressBarSubscriptions.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progressBarSubscriptions.Name = "progressBarSubscriptions";
-            this.progressBarSubscriptions.Size = new System.Drawing.Size(231, 14);
+            this.progressBarSubscriptions.Size = new System.Drawing.Size(348, 21);
             this.progressBarSubscriptions.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBarSubscriptions.TabIndex = 2;
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 575);
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 885);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(745, 22);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1118, 34);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.Visible = false;
             // 
             // subscriptionListControl1
             // 
-            this.subscriptionListControl1.AutoScroll = true;
             this.subscriptionListControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.subscriptionListControl1.Location = new System.Drawing.Point(0, 0);
+            this.subscriptionListControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.subscriptionListControl1.Name = "subscriptionListControl1";
             this.subscriptionListControl1.SelectedSubscriptionTitle = null;
-            this.subscriptionListControl1.Size = new System.Drawing.Size(237, 380);
+            this.subscriptionListControl1.Size = new System.Drawing.Size(356, 585);
             this.subscriptionListControl1.TabIndex = 0;
             // 
             // RSSMainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(745, 597);
+            this.ClientSize = new System.Drawing.Size(1118, 918);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.splitContainer2);
             this.HelpButton = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(400, 400);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MinimumSize = new System.Drawing.Size(589, 585);
             this.Name = "RSSMainForm";
             this.Text = "RSS Reader";
             this.Load += new System.EventHandler(this.RSSMainForm_Load);
@@ -714,7 +747,6 @@
         private System.Windows.Forms.TextBox textBoxSearch;
         private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.Panel panel1;
-        private SubscriptionListControl subscriptionListControl1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.Button buttonRefresh;
@@ -722,6 +754,7 @@
         private System.Windows.Forms.ToolTip toolTipButtonAdd;
         private System.Windows.Forms.ToolTip toolTipButtonRefresh;
         private System.Windows.Forms.Button buttonSearch;
+        private SubscriptionListControl subscriptionListControl1;
     }
 }
 

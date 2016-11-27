@@ -917,6 +917,7 @@ namespace RSSForm
             PodcastCharts.Instance.Podcasts.Clear();
             PodcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
             PodcastCharts.Instance.GetPodcastsAsync();
+            subscriptionListControl1.LoadSubscriptions(PodcastCharts.Instance.Podcasts);
         }
 
         private void LoadMoreCharts()
