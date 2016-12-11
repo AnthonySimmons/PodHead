@@ -11,24 +11,23 @@ namespace PodHeadForms
         private Subscription _subscription;
 
         private Item _item;
+        
+        private readonly Parser _parser;
+        private readonly Feeds _feeds;
 
-        private SubscriptionInfo()
+        private SubscriptionInfo(Parser parser, Feeds feeds)
         {
             InitializeComponent();
 
             Bitmap ico = new Bitmap(Properties.Resources.Icon);
             Icon = Icon.FromHandle(ico.GetHicon());
-        }
 
-        public SubscriptionInfo(Subscription sub) 
-            : this()
-        {            
-            _subscription = sub;
-            LoadSubscription();
+            _parser = parser;
+            _feeds = feeds;
         }
-
-        public SubscriptionInfo(Subscription sub, Item it)
-            : this()
+        
+        public SubscriptionInfo(Subscription sub, Item it, Parser parser, Feeds feeds)
+            : this(parser, feeds)
         {
             _subscription = sub;
             _item = it;
@@ -41,7 +40,7 @@ namespace PodHeadForms
             {
                 if(!_subscription.IsLoaded)
                 {
-                    Parser.LoadSubscription(_subscription, Feeds.Instance.MaxItems);
+                    _parser.LoadSubscription(_subscription, _feeds.MaxItems);
                 }
 
                 textBoxTitle.Text = _subscription.Title;

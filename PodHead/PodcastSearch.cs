@@ -26,25 +26,33 @@ namespace PodHead
 
         private static object _instanceLock = new object();
 
+        private readonly IConfig _config;
+
+        private readonly Parser _parser;
+
+        private readonly ErrorLogger _errorLogger;
+
         public ConcurrentList<Subscription> Results = new ConcurrentList<Subscription>();
 
-        public static PodcastSearch Instance
+        public static PodcastSearch Get(IConfig config, Parser parser)
         {
-            get
+            lock (_instanceLock)
             {
-                lock(_instanceLock)
+                if (_instance == null)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new PodcastSearch();
-                    }
+                    _instance = new PodcastSearch(config, parser);
                 }
-                return _instance;
             }
+            return _instance;
         }
 
 
-        private PodcastSearch() { }
+        private PodcastSearch(IConfig config, Parser parser)
+        {
+            _config = config;
+            _parser = parser;
+            _errorLogger = ErrorLogger.Get(_config);
+        }
 
         public void SearchAsync(string searchTerm)
         {
@@ -59,7 +67,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 OnErrorEncountered(ex.Message);
             }
         }
@@ -77,7 +85,7 @@ namespace PodHead
                 json = reader.ReadToEnd();
             }
 
-            var subscriptions = PodcastCharts.DeserializeSubscriptions(json);
+            var subscriptions = PodcastCharts.DeserializeSubscriptions(json, _config, _parser);
             Results.Clear();
             Results.AddRange(subscriptions);
      

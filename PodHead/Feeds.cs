@@ -16,29 +16,36 @@ namespace PodHead
 
     public class Feeds
     {
+        private readonly IConfig _config;
+
+        private readonly Parser _parser;
+
         private static object _instanceLock = new object();
 
         public event EventHandler AllFeedsParsed;
 
         private static Feeds _instance;
-        public static Feeds Instance
+
+        private readonly ErrorLogger _errorLogger;
+
+        public static Feeds Get(Parser parser, IConfig config)
         {
-            get
+            lock (_instanceLock)
             {
-                lock(_instanceLock)
+                if (_instance == null)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new Feeds();
-                    }
+                    _instance = new Feeds(parser, config);
                 }
-                return _instance;
             }
+            return _instance;
         }
         
-        private Feeds()
+        private Feeds(Parser parser, IConfig config)
         {
             Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
+            _config = config;
+            _parser = parser;
+            _errorLogger = ErrorLogger.Get(_config);
         }
         
 
@@ -136,7 +143,7 @@ namespace PodHead
             int count = 0;
             foreach (Subscription sub in Subscriptions)
             {
-                Parser.LoadSubscription(sub, MaxItems);
+                _parser.LoadSubscription(sub, MaxItems);
 
                 //Do the increment before the calculation.
                 OnFeedUpdated((double)++count / (double)Subscriptions.Count);
@@ -187,7 +194,7 @@ namespace PodHead
             var sub = e.Argument as Subscription;
             if (sub != null)
             {
-                Parser.LoadSubscriptionAsync(sub);
+                _parser.LoadSubscriptionAsync(sub);
             }
         }
         
@@ -259,7 +266,7 @@ namespace PodHead
 
         public void Save()
         {
-            Save(RSSConfig.ConfigFileName);
+            Save(_config.ConfigFileName);
         }
 
         public void Save(string fileName)
@@ -304,8 +311,13 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
             }
+        }
+
+        public void Load()
+        {
+            Load(_config.ConfigFileName);
         }
 
         //module loads RSS subscription and application configuration information from two seperate files(started, not done)
@@ -322,7 +334,7 @@ namespace PodHead
                         data.ReadXml(fileName);
                         foreach (DataRow dataRow in data.Tables["Subscription"].Rows)
                         {
-                            Subscription ch = new Subscription();
+                            Subscription ch = new Subscription(_config);
                             ch.Category = Convert.ToString(dataRow["Category_Name"]);
                             ch.Title = Convert.ToString(dataRow["Subscription_Name"]);
                             ch.RssLink = Convert.ToString(dataRow["Subscription_URL"]);
@@ -334,7 +346,7 @@ namespace PodHead
             }
             catch (Exception e)
             {
-                ErrorLogger.Log(e);
+                _errorLogger.Log(e);
             }
         }
 

@@ -8,7 +8,8 @@ namespace PodHead.Android.Views
 {
     class DownloadsView : ItemsView
     {
-        public DownloadsView()
+        public DownloadsView(Feeds feeds, Parser parser) 
+            : base(feeds, parser)
         {
             Initialize();
         }

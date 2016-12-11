@@ -43,19 +43,18 @@ namespace PodHead
         private static PodcastCharts _instance;
         private static object _instanceLock = new object();
 
-        public static PodcastCharts Instance
+        private readonly Parser _parser;
+
+        public static PodcastCharts Get(IConfig config, Parser parser)
         {
-            get
+            lock (_instanceLock)
             {
-                lock (_instanceLock)
+                if (_instance == null)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new PodcastCharts();
-                    }
+                    _instance = new PodcastCharts(config, parser);
                 }
-                return _instance;
             }
+            return _instance;
         }
 
 		public ConcurrentList<Subscription> Podcasts; 
@@ -69,9 +68,9 @@ namespace PodHead
 
         private const string EntityPodcast = "podcast";
 
-        public static int Limit { get; set; }
+        public int Limit { get; set; }
 
-        public static string Genre { get; set; }
+        public string Genre { get; set; }
 
         public const int DefaultLimit = 10;
 
@@ -79,11 +78,18 @@ namespace PodHead
 
         public event ErrorEventHandler ErrorEncountered;
 
-        private PodcastCharts() 
+        private readonly IConfig _config;
+
+        private readonly ErrorLogger _errorLogger;
+
+        private PodcastCharts(IConfig config, Parser parser)
 		{
 			Limit = DefaultLimit;
 			Genre = "Comedy";
 			Podcasts = new ConcurrentList<Subscription>();
+            _config = config;
+            _parser = parser;
+            _errorLogger = ErrorLogger.Get(_config);
 		}
 
         public void ClearPodcasts()
@@ -107,7 +113,7 @@ namespace PodHead
             return json;
         }
 
-        public static List<Subscription> DeserializeSubscriptions(string json)
+        public static List<Subscription> DeserializeSubscriptions(string json, IConfig config, Parser parser)
         {
             //Ex.
             //https://itunes.apple.com/lookup?id=278981407&entity=podcast
@@ -119,13 +125,13 @@ namespace PodHead
 
             foreach (var subToken in resultsToken)
             {
-                var sub = new Subscription();
+                var sub = new Subscription(config);
                 sub.RssLink = (string)subToken["feedUrl"];
                 sub.Category = "Podcasts";
                 sub.Title = (string)subToken["collectionName"];
                 sub.ImageUrl = (string)subToken["artworkUrl100"];
                 sub.MaxItems = 0;
-				Parser.LoadSubscriptionAsync (sub);
+				parser.LoadSubscriptionAsync (sub);
                 
                 subscriptions.Add(sub);
             }
@@ -146,7 +152,7 @@ namespace PodHead
             return id;
         }
 
-        private static string GetiTunesSourceUrl()
+        private string GetiTunesSourceUrl()
         {
             var url = string.Empty;
             if (PodcastGenreCodes[Genre] != 0)
@@ -160,7 +166,7 @@ namespace PodHead
             return url;
         }
 
-        private static string GetiTunesSourceRss()
+        private string GetiTunesSourceRss()
         {
             var rss = string.Empty;
             var url = GetiTunesSourceUrl();
@@ -176,18 +182,18 @@ namespace PodHead
             return rss;
         }
 
-        private static Subscription GetiTunesPodcasts()
+        private Subscription GetiTunesPodcasts()
         {
             var url = GetiTunesSourceUrl();
 
-            var sourceSub = new Subscription()
+            var sourceSub = new Subscription(_config)
             {
                 RssLink = url,
                 Title = Genre.ToString(),
                 Category = "iTunes",
                 MaxItems = Limit,
             };
-            Parser.LoadSubscription(sourceSub, Limit);
+            _parser.LoadSubscription(sourceSub, Limit);
 
             return sourceSub;
         }
@@ -209,7 +215,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 OnErrorEncountered(ex.Message);
             }
         }
@@ -251,7 +257,7 @@ namespace PodHead
         {
             var podcastId = GetPodcastId(podcastItem.Link);
             var podcastInfoJson = GetPodcastInfoJson(podcastId);
-            var subscriptions = DeserializeSubscriptions(podcastInfoJson);
+            var subscriptions = DeserializeSubscriptions(podcastInfoJson, _config, _parser);
             var sub = subscriptions.First();
             
             if (Podcasts.FirstOrDefault(p => p.Title == sub.Title) == null)

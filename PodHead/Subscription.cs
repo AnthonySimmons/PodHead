@@ -62,7 +62,7 @@ namespace PodHead
         {
             get
             {
-                return Path.Combine(RSSConfig.AppDataImageFolder, string.Format("{0}.{1}", Title, GetImageFileType()));
+                return Path.Combine(_config.AppDataImageFolder, string.Format("{0}.{1}", Title, GetImageFileType()));
             }
         }
 
@@ -89,10 +89,14 @@ namespace PodHead
             }
         }
 
+        private readonly IConfig _config;
+
         public const int DefaultMaxItems = 10;
 
-        public Subscription()
+        public Subscription(IConfig config)
         {
+            _config = config;
+
             Feed = string.Empty;
             Version = string.Empty;
             Title = string.Empty;

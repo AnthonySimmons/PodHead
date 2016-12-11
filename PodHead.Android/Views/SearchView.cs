@@ -12,16 +12,22 @@ namespace PodHead.Android.Views
     {
         private SearchBar searchEntry = new SearchBar();
 
-        public SearchView()
+        private readonly PodcastSearch _podcastSearch;
+        private readonly IConfig _config;
+
+        public SearchView() 
+            : base()
         {
+            _config = Config.Instance;
+            _podcastSearch = PodcastSearch.Get(_config, _parser);
             Initialize();
         }
         
 		protected override void Initialize()
         {
 			base.Initialize ();
-
-            PodcastSearch.Instance.SearchResultReceived += Instance_SearchResultReceived;
+            
+            _podcastSearch.SearchResultReceived += Instance_SearchResultReceived;
             
             searchEntry.SearchButtonPressed += SearchEntry_SearchButtonPressed;
             searchEntry.BackgroundColor = Color.Gray;
@@ -38,7 +44,7 @@ namespace PodHead.Android.Views
 
         private void SearchEntry_SearchButtonPressed(object sender, EventArgs e)
         {
-            PodcastSearch.Instance.SearchAsync(searchEntry.Text);
+            _podcastSearch.SearchAsync(searchEntry.Text);
         }
 
 
@@ -49,8 +55,8 @@ namespace PodHead.Android.Views
         
         private void PerformSearch()
         {
-            PodcastSearch.Instance.Results.Clear();
-            PodcastSearch.Instance.SearchAsync(searchEntry.Text);
+            _podcastSearch.Results.Clear();
+            _podcastSearch.SearchAsync(searchEntry.Text);
         }
 
         protected override void LoadMore()

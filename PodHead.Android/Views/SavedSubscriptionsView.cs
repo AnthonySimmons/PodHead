@@ -1,28 +1,24 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xamarin.Forms;
-using PodHead;
 
 namespace PodHead.Android.Views
 {
     class SavedSubscriptionsView : SubscriptionsView
     {
         double progressStep;
-
-
+        
         public SavedSubscriptionsView()
+            : base()
         {
             Initialize();
         }
 
 		protected override void Initialize()
         {
-            Feeds.Instance.AllFeedsParsed += Instance_AllFeedsParsed;
-            Feeds.Instance.FeedUpdated += Instance_FeedUpdated;
-            Feeds.Instance.SubscriptionAdded += Instance_SubscriptionAdded;
-            Feeds.Instance.SubscriptionRemoved += Instance_SubscriptionRemoved;
+            _feeds.AllFeedsParsed += Instance_AllFeedsParsed;
+            _feeds.FeedUpdated += Instance_FeedUpdated;
+            _feeds.SubscriptionAdded += Instance_SubscriptionAdded;
+            _feeds.SubscriptionRemoved += Instance_SubscriptionRemoved;
 
             //Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
 			base.Initialize();
@@ -79,7 +75,7 @@ namespace PodHead.Android.Views
                 {
                     progressBar.IsVisible = false;
                     Parser.SubscriptionParsedComplete -= Parser_SubscriptionParsedComplete;
-                    LoadSubscriptions(Feeds.Instance.Subscriptions);
+                    LoadSubscriptions(_feeds.Subscriptions);
                 }
             }
             );
@@ -104,8 +100,8 @@ namespace PodHead.Android.Views
             Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
             progressBar.IsVisible = true;
             progressBar.Progress = 0;
-            progressStep = 1.0 / Feeds.Instance.Subscriptions.Count;
-            Feeds.Instance.ParseAllFeedsAsync();
+            progressStep = 1.0 / _feeds.Subscriptions.Count;
+            _feeds.ParseAllFeedsAsync();
         }
 
     }

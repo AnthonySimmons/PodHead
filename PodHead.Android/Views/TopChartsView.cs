@@ -1,9 +1,5 @@
-using PodHead;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Xamarin.Forms;
 
 namespace PodHead.Android.Views
@@ -16,8 +12,12 @@ namespace PodHead.Android.Views
 
         private static int FieldHeight = 50;
 
+        private readonly PodcastCharts _podcastCharts;
+
         public TopChartsView()
+            : base()
         {
+            _podcastCharts = PodcastCharts.Get(Config.Instance, _parser);
             Initialize();
         }
 
@@ -25,7 +25,7 @@ namespace PodHead.Android.Views
         {
 			base.Initialize ();
 
-            PodcastCharts.Instance.PodcastSourceUpdated += Instance_PodcastSourceUpdated;
+            _podcastCharts.PodcastSourceUpdated += Instance_PodcastSourceUpdated;
             
             GenreLabel.Text = "Genre:";
             GenreLabel.TextColor = Color.Black;
@@ -51,7 +51,7 @@ namespace PodHead.Android.Views
 
         protected override void LoadMore()
         {
-            PodcastCharts.Limit += 10;
+            _podcastCharts.Limit += 10;
             LoadTopChartsAsync();
         }
 
@@ -80,7 +80,7 @@ namespace PodHead.Android.Views
 
         private void LoadTopCharts()
         {
-            LoadSubscriptionResults(PodcastCharts.Instance.Podcasts);
+            LoadSubscriptionResults(_podcastCharts.Podcasts);
         }
 
 
@@ -102,9 +102,9 @@ namespace PodHead.Android.Views
         {
             if (GenrePicker.SelectedIndex >= 0)
             {
-                PodcastCharts.Genre = GenrePicker.Items[GenrePicker.SelectedIndex];
-                PodcastCharts.Instance.ClearPodcasts();
-                PodcastCharts.Instance.GetPodcastsAsync();
+                _podcastCharts.Genre = GenrePicker.Items[GenrePicker.SelectedIndex];
+                _podcastCharts.ClearPodcasts();
+                _podcastCharts.GetPodcastsAsync();
             }
         }
 

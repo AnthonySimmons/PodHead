@@ -15,9 +15,14 @@ namespace PodHead.Android
     {
         public static Activity ActivityContext;
 
+        private ErrorLogger _errorLogger;
+
         protected override void OnCreate(Bundle bundle)
         {
+            _errorLogger = ErrorLogger.Get(Config.Instance);
+
             base.OnCreate(bundle);
+            
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             ActivityContext = this;
@@ -29,24 +34,30 @@ namespace PodHead.Android
 
         private void AndroidEnvironment_UnhandledExceptionRaiser(object sender, RaiseThrowableEventArgs e)
         {
-            ErrorLogger.Log(e.Exception);
+            _errorLogger.Log(e.Exception);
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            ErrorLogger.Log(e.ExceptionObject as Exception);
+            _errorLogger.Log(e.ExceptionObject as Exception);
         }
 
         protected override void OnStop ()
 		{
 			base.OnStop ();
-			Feeds.Instance.Save(RSSConfig.ConfigFileName);
+
+            Parser parser = Parser.Get(Config.Instance);
+            Feeds feeds = Feeds.Get(parser, Config.Instance);
+			feeds.Save();
 		}
 
         protected override void OnSaveInstanceState(Bundle outState)
         {
             base.OnSaveInstanceState(outState);
-            Feeds.Instance.Save(RSSConfig.ConfigFileName);
+
+            Parser parser = Parser.Get(Config.Instance);
+            Feeds feeds = Feeds.Get(parser, Config.Instance);
+            feeds.Save();            
         }
     }
 }

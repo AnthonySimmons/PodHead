@@ -23,7 +23,7 @@ namespace PodHeadForms
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                ErrorLogger.Get(Config.Instance).Log(ex);
                 MessageBox.Show(ex.Message + ex.StackTrace);
             }
         }

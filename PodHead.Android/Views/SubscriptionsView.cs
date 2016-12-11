@@ -19,8 +19,9 @@ namespace PodHead.Android.Views
         protected ScrollView scrollView = new ScrollView();
 
         protected StackLayout stackLayout = new StackLayout();
-        protected ItemsView itemsView = new ItemsView();
-        
+        protected ItemsView itemsView;
+        protected readonly Parser _parser;
+        protected readonly Feeds _feeds;
         
         public event ItemSelectedEventHandler ItemSelected;
         private Button LoadMoreButton = new Button();
@@ -37,8 +38,15 @@ namespace PodHead.Android.Views
 
 		protected List<Image> ImageList = new List<Image> ();
 
+        public SubscriptionsView()
+        {
+            _parser = Parser.Get(Config.Instance);
+            _feeds = Feeds.Get(_parser, Config.Instance);
+        }
+
         protected virtual void Initialize()
-        {            
+        {
+            itemsView = new ItemsView(_feeds, _parser);
             itemsView.PlayItem += ItemsView_PlayItem;
             itemsView.BackSelected += ItemsView_BackSelected;
                  
@@ -180,13 +188,13 @@ namespace PodHead.Android.Views
         {
             var senderImage = (Image)sender;
             var subscription = (Subscription)senderImage.BindingContext;
-            Feeds.Instance.ToggleSubscription(subscription);
+            _feeds.ToggleSubscription(subscription);
             SetSubscribedImage(subscription, senderImage);
         }
         
         private void SetSubscribedImage(Subscription subscription, Image image)
         {
-            var subscribeText = Feeds.Instance.GetSubscribeText(subscription.Title);
+            var subscribeText = _feeds.GetSubscribeText(subscription.Title);
             if (subscribeText == "Subscribe")
             {
                 image.Source = "Subscribe.png";

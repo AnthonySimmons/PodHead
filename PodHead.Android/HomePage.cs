@@ -20,7 +20,7 @@ namespace PodHead.Android
         private SubscriptionsView savedSubscriptionsView = new SavedSubscriptionsView();
         private SearchView searchView = new SearchView();
         private TopChartsView topChartsView = new TopChartsView();
-        private DownloadsView downloadsView = new DownloadsView();
+        private DownloadsView downloadsView;
 
         
         private ContentPage mediaPlayerPage, subscriptionsPage, searchPage, topChartsPage, downloadsPage;
@@ -31,18 +31,30 @@ namespace PodHead.Android
         private const string NowPlaying = "Now Playing";
         private const string Downloads = "Downloads";
 
+        private readonly Feeds _feeds;
+        private readonly Parser _parser;
+        private readonly ErrorLogger _errorLogger;
+        private readonly IConfig _config;
+
         public HomePage()
         {
+            _config = Config.Instance;
+            _errorLogger = ErrorLogger.Get(_config);
+            _parser = Parser.Get(_config);
+            _feeds = Feeds.Get(_parser, _config);
+
             Initialize();
         }
 
         
         private void Initialize()
         {
-            ErrorLogger.ErrorFound += ErrorLogger_ErrorFound;
+            downloadsView = new DownloadsView(_feeds, _parser);
 
-            Feeds.Instance.Load(RSSConfig.ConfigFileName);
-            Feeds.Instance.ParseAllFeedsAsync();
+            _errorLogger.ErrorFound += ErrorLogger_ErrorFound;
+
+            _feeds.Load();
+            _feeds.ParseAllFeedsAsync();
             this.PagesChanged += HomePage_PagesChanged;
             savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
             searchView.ItemSelected += SubscriptionsView_ItemSelected;
@@ -94,8 +106,8 @@ namespace PodHead.Android
 
         private void LoadSubscriptions()
         {
-            savedSubscriptionsView.LoadSubscriptions(Feeds.Instance.Subscriptions);
-            Feeds.Instance.Save(RSSConfig.ConfigFileName);
+            savedSubscriptionsView.LoadSubscriptions(_feeds.Subscriptions);
+            _feeds.Save();
         }
                 
     }

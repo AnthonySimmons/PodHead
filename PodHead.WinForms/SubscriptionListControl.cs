@@ -51,11 +51,19 @@ namespace PodHeadForms
         private IList<Subscription> _subscriptions;
 
         public string SelectedSubscriptionTitle { get; set; }
-        
+
+        private readonly Parser _parser;
+        private readonly Feeds _feeds;
+        private readonly IConfig _config;
+
         public SubscriptionListControl()
         {
             InitializeComponent();
             _toolTipSubscribe = new ToolTip();
+
+            _config = Config.Instance;
+            _parser = Parser.Get(_config);
+            _feeds = Feeds.Get(_parser, _config);
         }
 
         private ContextMenuStrip GetContextMenuStrip(Subscription sub)
@@ -148,15 +156,15 @@ namespace PodHeadForms
         public void LoadSubscriptions(IList<Subscription> subscriptions, SubscriptionState subscriptionState = SubscriptionState.Subscription)
         {
             tableLayoutPanel1.RowCount = 0;
-            _subscriptions = subscriptions;
+            _subscriptions = subscriptions.ToList();
             _subscriptionState = subscriptionState;
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.Controls.Clear();
 
-            if (subscriptions.Any())
+            if (_subscriptions.Any())
             {
                 int i = 0;
-                foreach (var sub in subscriptions)
+                foreach (var sub in _subscriptions)
                 {
                     AddSubscriptionRow(sub, i);
                     i++;
@@ -220,7 +228,7 @@ namespace PodHeadForms
 
         private void AddEmptySubscriptionRow()
         {
-            var subscription = new Subscription();
+            var subscription = new Subscription(_config);
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.Controls.Add(GetCheckbox(subscription));
             tableLayoutPanel1.Controls.Add(GetSubscriptionImage(subscription));
@@ -241,7 +249,7 @@ namespace PodHeadForms
                     Width = ButtonSize,
                     ImageAlign = ContentAlignment.MiddleCenter,
                     Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right,
-                    Checked = Feeds.Instance.ContainsSubscription(sub.Title),
+                    Checked = _feeds.ContainsSubscription(sub.Title),
                     ContextMenuStrip = GetContextMenuStrip(sub),
                 };
                 _toolTipSubscribe.SetToolTip(cbx, GetSubscriptionState(sub));
@@ -273,7 +281,7 @@ namespace PodHeadForms
             if (row >= 0)
             {
                 CheckBox cbx = (CheckBox)tableLayoutPanel1.GetControlFromPosition(ToggleColumn, row);
-                cbx.Checked = Feeds.Instance.ContainsSubscription(sub.Title);
+                cbx.Checked = _feeds.ContainsSubscription(sub.Title);
                 ToggleSubscription(sub);
             }
 
@@ -281,18 +289,18 @@ namespace PodHeadForms
 
         private void ToggleSubscription(Subscription sub)
         { 
-            Feeds.Instance.ToggleSubscription(sub);
+            _feeds.ToggleSubscription(sub);
             
             if(_subscriptionState == SubscriptionState.Subscription)
             {
-                LoadSubscriptions(Feeds.Instance.Subscriptions, SubscriptionState.Subscription);
+                LoadSubscriptions(_feeds.Subscriptions, SubscriptionState.Subscription);
             }
         }
         
         private Image GetSubscriptionMenuImage(Subscription sub)
         {
             var image = Properties.Resources.Remove;
-            if (!Feeds.Instance.ContainsSubscription(sub?.Title))
+            if (!_feeds.ContainsSubscription(sub?.Title))
             {
                 image = Properties.Resources.Subscribe;
             }
@@ -302,7 +310,7 @@ namespace PodHeadForms
         private string GetSubscriptionState(Subscription sub)
         {
             var subState = "Unsubscribe";
-            if(!Feeds.Instance.ContainsSubscription(sub?.Title))
+            if(!_feeds.ContainsSubscription(sub?.Title))
             {
                 subState = "Subscribe";
             }

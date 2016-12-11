@@ -19,6 +19,8 @@ namespace PodHead
 
     public class Item
     {
+        private readonly IConfig _config;
+
         public string Title { get; set; }
 
         public string Description { get; set; }
@@ -67,7 +69,7 @@ namespace PodHead
         {
             get
             {
-                return RSSConfig.DownloadFolder + GetCleanFileName() + GetFileType();
+                return _config.DownloadFolder + GetCleanFileName() + GetFileType();
             }
         }
 
@@ -92,22 +94,23 @@ namespace PodHead
         }
 
 
-		public Item()
+		public Item(IConfig config)
 		{
 			Title = string.Empty;
 			Description = string.Empty;
 			Link = string.Empty;
 			Guid = string.Empty;
 			PubDate = string.Empty;
+            _config = config;
 		}
 
         public void DownloadFile()
         {
             if (!String.IsNullOrEmpty(Link))
             {
-                if (!Directory.Exists(RSSConfig.DownloadFolder))
+                if (!Directory.Exists(_config.DownloadFolder))
                 {
-                    Directory.CreateDirectory(RSSConfig.DownloadFolder);
+                    Directory.CreateDirectory(_config.DownloadFolder);
                 }
 
                 using (WebClient client = new WebClient())

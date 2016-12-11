@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcurrentList.cs" />
+    <Compile Include="IConfig.cs" />
     <Compile Include="PodcastSearch.cs" />
     <Compile Include="RssWebClient.cs">
       <SubType>Component</SubType>
@@ -63,7 +64,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RSSConfig.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

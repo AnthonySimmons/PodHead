@@ -40,8 +40,13 @@ namespace PodHead.Android.Views
 
         int buttonSize = 50;
 
-        public ItemsView()
+        private readonly Parser _parser;
+        private readonly Feeds _feeds;
+
+        public ItemsView(Feeds feeds, Parser parser)
         {
+            _feeds = feeds;
+            _parser = parser;
             Initialize();
         }
 
@@ -82,7 +87,7 @@ namespace PodHead.Android.Views
         private void LoadMoreButton_Clicked(object sender, EventArgs e)
         {
             _subscription.MaxItems += 10;
-            Parser.LoadSubscriptionAsync(_subscription);
+            _parser.LoadSubscriptionAsync(_subscription);
         }
 
         public void LoadSubscription(Subscription subscription)
@@ -91,7 +96,7 @@ namespace PodHead.Android.Views
             if (!subscription.IsLoaded || !subscription.ItemsLoaded)
             {
                 subscription.MaxItems = Math.Max(Subscription.DefaultMaxItems, subscription.MaxItems);
-                Parser.LoadSubscription(subscription, subscription.MaxItems);
+                _parser.LoadSubscription(subscription, subscription.MaxItems);
             }
             //if(subscription.Items.Count == subscription.MaxItems)
             {
@@ -223,7 +228,7 @@ namespace PodHead.Android.Views
 
         private void RefreshButton_Clicked(object sender, EventArgs e)
         {
-            Parser.LoadSubscriptionAsync(_subscription);
+            _parser.LoadSubscriptionAsync(_subscription);
         }
 
         private void SubscribeButton_Clicked(object sender, EventArgs e)
@@ -231,7 +236,7 @@ namespace PodHead.Android.Views
             var subscription = ((View)sender).BindingContext as Subscription;
             if (subscription != null)
             {
-                Feeds.Instance.ToggleSubscription(subscription);
+                _feeds.ToggleSubscription(subscription);
                 SetSubscriptionText(subscription);
             }
         }
@@ -239,7 +244,7 @@ namespace PodHead.Android.Views
         private void SetSubscriptionText(Subscription subscription)
         {
             SubscribeImage.BindingContext = subscription;
-            var subscribeText = Feeds.Instance.GetSubscribeText(subscription.Title);
+            var subscribeText = _feeds.GetSubscribeText(subscription.Title);
             if(subscribeText == "Subscribe")
             {
                 SubscribeImage.Source = "Subscribe.png";

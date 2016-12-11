@@ -20,10 +20,34 @@ namespace PodHead
 
     public delegate void SubscriptionParsedCompleteEventHandler(Subscription subscription);
 
-    public static class Parser
+    public class Parser
     {
+        private static readonly object _lock = new object();
+
+        private static Parser _instance;
+
         public static event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
-        
+
+        private readonly IConfig _config;
+        private readonly ErrorLogger _errorLogger;
+
+        private Parser(IConfig config)
+        {
+            _config = config;
+            _errorLogger = ErrorLogger.Get(_config);
+        }
+
+        public static Parser Get(IConfig config)
+        {
+            lock(_lock)
+            {
+                if(_instance == null)
+                {
+                    _instance = new Parser(config);
+                }
+            }
+            return _instance;
+        }
 
         private static FeedType GetFeedType(string rssString)
         {
@@ -72,7 +96,7 @@ namespace PodHead
         }
         
 
-        public static bool LoadSubscriptionAsync(Subscription sub)
+        public bool LoadSubscriptionAsync(Subscription sub)
         {
             sub.Items.Clear();
             string url = sub.RssLink;
@@ -87,13 +111,13 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 success = false;
             }
             return success;
         }
 
-        public static bool LoadSubscription(Subscription sub, int maxItems)
+        public bool LoadSubscription(Subscription sub, int maxItems)
         {
             sub.Items.Clear();
             string url = sub.RssLink;
@@ -114,13 +138,13 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 success = false;
             }
             return success;
         }
 
-        private static bool LoadSubscription(Subscription sub, string rss, int maxItems)
+        private bool LoadSubscription(Subscription sub, string rss, int maxItems)
         {
             bool success = false;
             try
@@ -147,7 +171,7 @@ namespace PodHead
             catch (Exception e)
             {
                 sub.HasErrors = true;
-                ErrorLogger.Log(e);
+                _errorLogger.Log(e);
             }
             return success;
         }
@@ -170,7 +194,7 @@ namespace PodHead
             }
         }
 
-        private static void LoadSubscriptionOpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
+        private void LoadSubscriptionOpenReadCompleted(object sender, OpenReadCompletedEventArgs e)
         {
             try
             {
@@ -188,7 +212,7 @@ namespace PodHead
             }
             catch(Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
             }
         }
 
@@ -228,7 +252,7 @@ namespace PodHead
             return attribute;
         }
 
-        private static bool LoadXMLRSS2_0(Subscription sub, string rss, int maxItems)
+        private bool LoadXMLRSS2_0(Subscription sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -264,7 +288,7 @@ namespace PodHead
                     foreach(XmlNode item in items)
                     {
                         if (counter++ >= maxItems) { break; }
-                        var it = new Item();
+                        var it = new Item(_config);
                         it.Title = GetXmlElementValue(item, "title");
                         it.Link = GetXmlElementValue(item, "link");
 
@@ -286,14 +310,14 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 success = false;
             }
             sub.HasErrors = !success;
             return success;
         }
 
-        private static bool LoadXMLRSS1_0(Subscription sub, string rss, int maxItems)
+        private bool LoadXMLRSS1_0(Subscription sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -317,7 +341,7 @@ namespace PodHead
                     foreach(XmlNode item in items)
                     {
                         if (count++ >= maxItems) { break; }
-                        var it = new Item();
+                        var it = new Item(_config);
                         it.Title = GetXmlElementValue(item, "title");
                         it.Description = GetXmlElementValue(item, "description");
                         it.Link = GetXmlElementValue(item, "link");
@@ -334,7 +358,7 @@ namespace PodHead
             }
             catch(Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 success = false;                
             }
             sub.HasErrors = !success;
@@ -343,7 +367,7 @@ namespace PodHead
         
 
 
-        private static bool LoadXMLAtom(Subscription sub, string rss, int maxItems)
+        private bool LoadXMLAtom(Subscription sub, string rss, int maxItems)
         {
             bool success = true;
             try
@@ -363,7 +387,7 @@ namespace PodHead
                 foreach (XmlNode entry in entries)
                 {
                     if (count++ >= maxItems) { break; }
-                    var it = new Item();
+                    var it = new Item(_config);
                     it.Title = GetXmlElementValue(entry, "title");
                     it.Description = GetXmlElementValue(entry, "summary");
                     it.PubDate = GetXmlElementValue(entry, "updated");
@@ -388,7 +412,7 @@ namespace PodHead
             }
             catch (Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 success = false;
             }
             sub.HasErrors = !success;

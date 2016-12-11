@@ -42,6 +42,12 @@ namespace PodHeadForms
 
         private ContextMenuStrip ItemsContextMenuStrip;
 
+        private readonly Feeds _feeds;
+        private readonly Parser _parser;
+        private readonly PodcastCharts _podcastCharts;
+        private readonly PodcastSearch _podcastSearch;
+        private readonly ErrorLogger _errorLogger;
+        private readonly IConfig _config;
 
         public RSSMainForm()
         {
@@ -52,20 +58,28 @@ namespace PodHeadForms
             subscriptionListControl1.SubscriptionSelectedEventHandler += subscriptionSelectedHandler;
             subscriptionListControl1.SubscriptionsLoadComplete += SubscriptionListControl1_SubscriptionsLoadComplete;
             subscriptionListControl1.LoadMoreEventHandler += SubscriptionListControl1_LoadMoreEventHandler;
-
-
+            
             comboBoxSource.SelectedIndex = 0;
 
-            PodcastCharts.Instance.PodcastSourceUpdated += PodcastSourceUpdated;
-            PodcastCharts.Instance.ErrorEncountered += PodcastSourceErrorEncountered;
+            _config = Config.Instance;
 
-            PodcastSearch.Instance.SearchResultReceived += PodcastSearchResultReceived;
-            PodcastSearch.Instance.ErrorEncountered += PodcastSourceErrorEncountered;
+            _parser = Parser.Get(_config);
+            _podcastCharts = PodcastCharts.Get(_config, _parser);
+            _podcastSearch = PodcastSearch.Get(_config, _parser);
 
-            Feeds.Instance.FeedUpdated += FeedLoadUpdate;
-            Feeds.Instance.Load(RSSConfig.ConfigFileName);
-            Feeds.Instance.AllFeedsParsed += Instance_AllFeedsParsed;
+            _podcastCharts.PodcastSourceUpdated += PodcastSourceUpdated;
+            _podcastCharts.ErrorEncountered += PodcastSourceErrorEncountered;
 
+            _podcastSearch.SearchResultReceived += PodcastSearchResultReceived;
+            _podcastSearch.ErrorEncountered += PodcastSourceErrorEncountered;
+
+            _feeds = Feeds.Get(_parser, _config);
+            _feeds.FeedUpdated += FeedLoadUpdate;
+            _feeds.Load();
+            _feeds.AllFeedsParsed += Instance_AllFeedsParsed;
+
+            _errorLogger = ErrorLogger.Get(_config);
+            
             //Feeds.Instance.ParseAllFeeds();
             //LoadSubscriptions();
 
@@ -160,18 +174,18 @@ namespace PodHeadForms
             sub = GetSubscription(SelectedSubscriptionTitle);
             if (sub != null)
             {
-                Feeds.Instance.AddChannel(sub);
-                Feeds.Instance.Save(RSSConfig.ConfigFileName);
+                _feeds.AddChannel(sub);
+                _feeds.Save();
             }
         }
 
 
         private void RefreshChannel(string channelTitle)
         {
-            Subscription sub = Feeds.Instance.Subscriptions.FirstOrDefault(c => c.Title == channelTitle);
+            Subscription sub = _feeds.Subscriptions.FirstOrDefault(c => c.Title == channelTitle);
             if (sub != null)
             {
-                Parser.LoadSubscriptionAsync(sub);
+                _parser.LoadSubscriptionAsync(sub);
                 LoadSubscriptions();
             }
         }
@@ -190,7 +204,7 @@ namespace PodHeadForms
 
                 if (sub != null && it != null)
                 {
-                    var info = new SubscriptionInfo(sub, it);
+                    var info = new SubscriptionInfo(sub, it, _parser, _feeds);
                     info.ShowDialog();
                 }
             }
@@ -202,7 +216,7 @@ namespace PodHeadForms
         {
             if (!String.IsNullOrEmpty(SelectedSubscriptionTitle))
             {
-                Subscription ch = Feeds.Instance.Subscriptions.FirstOrDefault(m => m.Title == SelectedSubscriptionTitle);
+                Subscription ch = _feeds.Subscriptions.FirstOrDefault(m => m.Title == SelectedSubscriptionTitle);
                 if (ch != null)
                 {
                     if (!String.IsNullOrEmpty(ch.SiteLink))
@@ -255,7 +269,7 @@ namespace PodHeadForms
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Feeds.Instance.Save(RSSConfig.ConfigFileName);
+            _feeds.Save();
         }
 
 
@@ -277,7 +291,7 @@ namespace PodHeadForms
                 {
                     if (comboBoxSource.SelectedIndex == 0)
                     {
-                        subscriptionListControl1.LoadSubscriptions(Feeds.Instance.Subscriptions, SubscriptionState.Subscription);
+                        subscriptionListControl1.LoadSubscriptions(_feeds.Subscriptions, SubscriptionState.Subscription);
                     }
                 }
                 ));
@@ -286,7 +300,7 @@ namespace PodHeadForms
 
         private void LoadTopCharts()
         {
-            subscriptionListControl1.LoadSubscriptions(PodcastCharts.Instance.Podcasts, SubscriptionState.TopCharts);
+            subscriptionListControl1.LoadSubscriptions(_podcastCharts.Podcasts, SubscriptionState.TopCharts);
         }
 
         private void LoadSearchResults(List<Subscription> subscriptions)
@@ -331,7 +345,7 @@ namespace PodHeadForms
                     if (sub.MaxItems == 0)
                     {
                         sub.MaxItems = 10;
-                        Parser.LoadSubscription(sub, Feeds.Instance.MaxItems);
+                        _parser.LoadSubscription(sub, _feeds.MaxItems);
                     }
 
                     LoadSubscriptionInfo(sub);
@@ -357,7 +371,7 @@ namespace PodHeadForms
 
         private string findDescFromTitle(string title)
         {
-            foreach (Subscription ch in Feeds.Instance.Subscriptions)
+            foreach (Subscription ch in _feeds.Subscriptions)
             {
                 foreach (Item it in ch.Items)
                 {
@@ -516,7 +530,7 @@ namespace PodHeadForms
             catch (Exception ex)
             {
                 success = false;
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
             }
             return success;
         }
@@ -573,14 +587,14 @@ namespace PodHeadForms
 
         private Subscription GetSubscription(string subscriptionTitle)
         {
-            var sub = Feeds.Instance.Subscriptions.FirstOrDefault(s => s.Title == subscriptionTitle);
+            var sub = _feeds.Subscriptions.FirstOrDefault(s => s.Title == subscriptionTitle);
             if (sub == null)
             {
-                sub = PodcastCharts.Instance.Podcasts.FirstOrDefault(s => s.Title == subscriptionTitle);
+                sub = _podcastCharts.Podcasts.FirstOrDefault(s => s.Title == subscriptionTitle);
             }
             if (sub == null)
             {
-                sub = PodcastSearch.Instance.Results.FirstOrDefault(s => s.Title == subscriptionTitle);
+                sub = _podcastSearch.Results.FirstOrDefault(s => s.Title == subscriptionTitle);
             }
             return sub;
         }
@@ -703,7 +717,7 @@ namespace PodHeadForms
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveFileDialog1.ShowDialog();
-            Feeds.Instance.Save(saveFileDialog1.FileName);
+            _feeds.Save(saveFileDialog1.FileName);
 
         }
 
@@ -711,7 +725,7 @@ namespace PodHeadForms
         {
             openFileDialog1.ShowDialog();
 
-            Feeds.Instance.Load(openFileDialog1.FileName);
+            _feeds.Load(openFileDialog1.FileName);
         }
 
         
@@ -726,7 +740,7 @@ namespace PodHeadForms
 
                 Item it = GetItem(selectedSub, title);
 
-                if (it != null && (it.Link.EndsWith(".mp3") || it.Link.EndsWith(".mpeg") || it.Link.EndsWith(".wma")))
+                if (it != null && (it.Link.Contains(".mp3") || it.Link.Contains(".mpeg") || it.Link.Contains(".wma")))
                 {
                     tabControl1.SelectTab(1);
                     if (it.IsDownloaded)
@@ -754,7 +768,7 @@ namespace PodHeadForms
             {
                 if (selected[0].Value != null && selected[0].Value.ToString() == "Load 10 More")
                 {
-                    Feeds.Instance.MaxItems += 10;
+                    _feeds.MaxItems += 10;
                     
                     if (selectedSub != "")
                     {
@@ -764,36 +778,7 @@ namespace PodHeadForms
                 }
                 else if (selected[0].Value != null)
                 {
-                    string ttl = dataGridView1.Rows[selected[0].RowIndex].Cells[ItemColumnTitle].Value.ToString();
-
-                    Item it = GetItem(selectedSub, ttl);
-                    string str = it.Link;
-
-                    if (str.EndsWith(".mp3") || str.EndsWith(".mpeg") || str.EndsWith(".wma"))
-                    {
-                        tabControl1.SelectTab(1);
-                        if (it.IsDownloaded)
-                        {
-                            axWindowsMediaPlayer1.URL = it.FilePath;
-                        }
-                        else
-                        {
-                            axWindowsMediaPlayer1.URL = it.Link;
-                        }
-                    }
-                    else if (!String.IsNullOrEmpty(it.FilePath) && File.Exists(it.FilePath))
-                    {
-                        webBrowser1.Navigate(it.FilePath);
-                    }
-                    else if (str != "")
-                    {
-                        webBrowser1.Navigate(str);
-                    }
-                    else
-                    {
-                        LoadDataGrid(selectedSub);
-                    }
-
+                    PlaySelected();
                 }
             }
         }
@@ -824,7 +809,7 @@ namespace PodHeadForms
             }
             else
             {
-                Subscription sub = Feeds.Instance.GetSubscriptionFromItem(title);
+                Subscription sub = _feeds.GetSubscriptionFromItem(title);
                 if (sub != null)
                 {
                     LoadSubscriptionInfo(sub);
@@ -842,8 +827,8 @@ namespace PodHeadForms
 
                 if (result == DialogResult.OK)
                 {
-                    Parser.LoadSubscription(form.NewSubscription, Feeds.Instance.MaxItems);
-                    Feeds.Instance.AddChannel(form.NewSubscription);
+                    _parser.LoadSubscription(form.NewSubscription, _feeds.MaxItems);
+                    _feeds.AddChannel(form.NewSubscription);
                     LoadSubscriptions();
                 }
             }
@@ -852,7 +837,7 @@ namespace PodHeadForms
         private void LoadDownloads()
         {
             subscriptionListControl1.Clear();
-            LoadDataGrid(Feeds.Instance.DownloadedItems);
+            LoadDataGrid(_feeds.DownloadedItems);
             
         }
 
@@ -913,20 +898,20 @@ namespace PodHeadForms
         private void comboBoxGenre_SelectedIndexChanged(object sender, EventArgs e)
         {
             comboBoxGenre.Enabled = false;
-            PodcastCharts.Limit = PodcastCharts.DefaultLimit;
-            PodcastCharts.Instance.Podcasts.Clear();
-            PodcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
-            PodcastCharts.Instance.GetPodcastsAsync();
-            subscriptionListControl1.LoadSubscriptions(PodcastCharts.Instance.Podcasts);
+            _podcastCharts.Limit = PodcastCharts.DefaultLimit;
+            _podcastCharts.Podcasts.Clear();
+            _podcastCharts.Genre = comboBoxGenre.SelectedItem.ToString();
+            _podcastCharts.GetPodcastsAsync();
+            subscriptionListControl1.LoadSubscriptions(_podcastCharts.Podcasts);
         }
 
         private void LoadMoreCharts()
         {
-            PodcastCharts.Limit += 10;
+            _podcastCharts.Limit += 10;
             switch(comboBoxSource.SelectedItem.ToString())
             {
                 case "Top Charts":
-                    PodcastCharts.Instance.GetPodcastsAsync();
+                    _podcastCharts.GetPodcastsAsync();
                     break;
                 case "Search":
                     Search();
@@ -972,7 +957,7 @@ namespace PodHeadForms
         private void Search()
         {
             DisableSourceButtons();
-            PodcastSearch.Instance.SearchAsync(textBoxSearch.Text);
+            _podcastSearch.SearchAsync(textBoxSearch.Text);
         }
 
         private void UpdateToolStripProgressBar(double updatePercentage)
@@ -1011,14 +996,14 @@ namespace PodHeadForms
 
         private void RSSMainForm_Load(object sender, EventArgs e)
         {
-            Feeds.Instance.ParseAllFeedsAsync();
+            _feeds.ParseAllFeedsAsync();
             this.WindowState = FormWindowState.Maximized;
         }
         
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Feeds.Instance.ParseAllFeedsAsync();
+            _feeds.ParseAllFeedsAsync();
         }
 
 
@@ -1089,20 +1074,27 @@ namespace PodHeadForms
             //Only need to do this for right clicks
             if (e.Button == MouseButtons.Right)
             {
-                //Set the right clicked cell as selected
-                DataGridView.HitTestInfo info = dataGridView1.HitTest(e.X, e.Y);
-                dataGridView1.ClearSelection();
-                if (info.RowIndex >= 0 && info.RowIndex < dataGridView1.Rows.Count
-                 && info.ColumnIndex >= 0 && info.ColumnIndex < dataGridView1.Columns.Count)
+                try
                 {
-                    dataGridView1.Rows[info.RowIndex].Cells[info.ColumnIndex].Selected = true;
-                    string itemTitle = dataGridView1.Rows[info.RowIndex].Cells[info.ColumnIndex].Value.ToString();
-                    Item it = GetItem(selectedSub, itemTitle);
-                    
-                    ItemsContextMenuStrip.Items[0].Visible = !it.IsDownloaded;
-                    ItemsContextMenuStrip.Items[1].Visible = it.IsDownloaded;
+                    //Set the right clicked cell as selected
+                    DataGridView.HitTestInfo info = dataGridView1.HitTest(e.X, e.Y);
+                    dataGridView1.ClearSelection();
+                    if (info.RowIndex >= 0 && info.RowIndex < dataGridView1.Rows.Count
+                     && info.ColumnIndex >= 0 && info.ColumnIndex < dataGridView1.Columns.Count)
+                    {
+                        dataGridView1.Rows[info.RowIndex].Cells[info.ColumnIndex].Selected = true;
+                        string itemTitle = dataGridView1.Rows[info.RowIndex].Cells[ItemColumnTitle].Value.ToString();
+                        Item it = GetItem(selectedSub, itemTitle);
+
+                        ItemsContextMenuStrip.Items[0].Visible = !it.IsDownloaded;
+                        ItemsContextMenuStrip.Items[1].Visible = it.IsDownloaded;
+                    }
                 }
-                
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                    _errorLogger.Log(ex);
+                }
             }
         }
 
@@ -1113,7 +1105,7 @@ namespace PodHeadForms
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
-            Feeds.Instance.ParseAllFeedsAsync();
+            _feeds.ParseAllFeedsAsync();
         }
         
     }

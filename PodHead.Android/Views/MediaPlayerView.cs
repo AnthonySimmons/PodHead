@@ -51,8 +51,11 @@ namespace PodHead.Android.Views
         int currentProgressMs;
         int progressStepMs = 30000;
 
+        private readonly ErrorLogger _errorLogger;
+
         public MediaPlayerView()
         {
+            _errorLogger = ErrorLogger.Get(Config.Instance);
             Initialize();
         }
 
@@ -276,7 +279,7 @@ namespace PodHead.Android.Views
             }
             catch(Exception ex)
             {
-                ErrorLogger.Log(ex);
+                _errorLogger.Log(ex);
                 DisplayError(ex.Message);
             }
         }

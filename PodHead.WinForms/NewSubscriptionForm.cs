@@ -26,7 +26,7 @@ namespace PodHeadForms
         private void ADD_button_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            NewSubscription = new Subscription();
+            NewSubscription = new Subscription(Config.Instance);
             NewSubscription.RssLink = url_entry.Text;
            
             this.Close();
