@@ -74,7 +74,7 @@ namespace PodHead.Android.Views
                 if (scrollView.Content != itemsView)
                 {
                     progressBar.IsVisible = false;
-                    Parser.SubscriptionParsedComplete -= Parser_SubscriptionParsedComplete;
+                    _parser.SubscriptionParsedComplete -= Parser_SubscriptionParsedComplete;
                     LoadSubscriptions(_feeds.Subscriptions);
                 }
             }
@@ -97,7 +97,7 @@ namespace PodHead.Android.Views
 
         private void RefreshButton_Clicked(object sender, EventArgs e)
         {
-            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
+            _parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
             progressBar.IsVisible = true;
             progressBar.Progress = 0;
             progressStep = 1.0 / _feeds.Subscriptions.Count;

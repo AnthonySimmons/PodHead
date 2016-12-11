@@ -16,6 +16,16 @@ namespace PodHead
 
     public class Feeds
     {
+        private const string PodHead = "PodHead";
+        private const string Subscription = "Subscription";
+        private const string CategoryName = "CategoryName";
+        private const string SubscriptionName = "SubscriptionName";
+        private const string SubscriptionUrl = "SubscriptionUrl";
+        private const string PlayedItems = "PlayedItems";
+        private const string Item = "Item";
+        private const string Title = "Title";
+        private const string Percent = "Percent";
+
         private readonly IConfig _config;
 
         private readonly Parser _parser;
@@ -42,10 +52,10 @@ namespace PodHead
         
         private Feeds(Parser parser, IConfig config)
         {
-            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
             _config = config;
             _parser = parser;
             _errorLogger = ErrorLogger.Get(_config);
+            _parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
         }
         
 
@@ -278,36 +288,67 @@ namespace PodHead
                 {
                     Directory.CreateDirectory(dir);
                 }
+                
+                var xmlDocument = new XmlDocument();
+                xmlDocument.PreserveWhitespace = true;
 
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.IndentChars = "\t";
-                settings.Indent = true;
-                using (XmlWriter writer = XmlWriter.Create(fileName, settings))
+                var podHeadElement = xmlDocument.CreateElement(PodHead);
+
+                foreach(Subscription sub in Subscriptions)
                 {
-                    writer.WriteStartDocument();
-                    writer.WriteStartElement("RSS");
+                    var subElement = xmlDocument.CreateElement(Subscription);
 
-                    foreach (Subscription ch in Subscriptions)
+                    var categoryElement = xmlDocument.CreateElement(CategoryName);
+                    var subNameElement = xmlDocument.CreateElement(SubscriptionName);
+                    var subUrlElement = xmlDocument.CreateElement(SubscriptionUrl);
+
+                    categoryElement.InnerText = sub.Category;
+                    subNameElement.InnerText = sub.Title;
+                    subUrlElement.InnerText = sub.RssLink;
+
+                    subElement.AppendChild(categoryElement);
+                    subElement.AppendChild(subNameElement);
+                    subElement.AppendChild(subUrlElement);
+
+                    foreach(Item it in sub.GetPlayed())
                     {
-                        writer.WriteStartElement("Subscription");
-                        writer.WriteElementString("Category_Name", ch.Category);
-                        if (ch.Title == "")
-                        {
-                            writer.WriteElementString("Subscription_Name", "Default Name");
-                        }
-                        else
-                        {
-                            writer.WriteElementString("Subscription_Name", ch.Title);
-                        }
-                        writer.WriteElementString("Subscription_URL", ch.RssLink);
-                        writer.WriteElementString("Subscription_Update", ch.Update.ToString());
+                        var playedItemsElement = xmlDocument.CreateElement(PlayedItems);
+                        var itElement = xmlDocument.CreateElement(Item);
+                        //var titleElement = xmlDocument.CreateElement(Title);
+                        //var percentElement = xmlDocument.CreateElement(Percent);
 
-                        writer.WriteEndElement();
+                        //titleElement.InnerText = it.Title;
+                        //percentElement.InnerText = it.PercentPlayed.ToString();
+
+                        itElement.SetAttribute(Title, it.Title);
+                        itElement.SetAttribute(Percent, it.PercentPlayed.ToString());
+
+                        //itElement.AppendChild(titleElement);
+                        //itElement.AppendChild(percentElement);
+
+                        playedItemsElement.AppendChild(itElement);
+                        subElement.AppendChild(playedItemsElement);
                     }
-
-                    writer.WriteEndElement();
-                    writer.WriteEndDocument();
+                        
+                    podHeadElement.AppendChild(subElement);
                 }
+
+                xmlDocument.AppendChild(podHeadElement);
+
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    IndentChars = "\t",
+                    NewLineChars = Environment.NewLine,
+                    NewLineHandling = NewLineHandling.None,
+                    Encoding = new UTF8Encoding(),
+                };
+
+                using (var writer = XmlWriter.Create(fileName, settings))
+                {
+                    xmlDocument.Save(writer);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -320,28 +361,39 @@ namespace PodHead
             Load(_config.ConfigFileName);
         }
 
-        //module loads RSS subscription and application configuration information from two seperate files(started, not done)
+        
         public void Load(string fileName)
         {
             try
             {
                 if (File.Exists(fileName))
                 {
-                    var contents = File.ReadAllText(fileName);
-                    Subscriptions.Clear();
-                    using (DataSet data = new DataSet())
+                    var xmlDocument = new XmlDocument();
+                    xmlDocument.Load(fileName);
+
+                    var subscriptionElements = xmlDocument.GetElementsByTagName(Subscription);
+                    foreach(XmlElement subElement in subscriptionElements)
                     {
-                        data.ReadXml(fileName);
-                        foreach (DataRow dataRow in data.Tables["Subscription"].Rows)
+                        Subscription subscription = new Subscription(_config);
+
+                        subscription.Category = Convert.ToString(subElement[CategoryName].InnerText);
+                        subscription.Title = Convert.ToString(subElement[SubscriptionName].InnerText);
+                        subscription.RssLink = Convert.ToString(subElement[SubscriptionUrl].InnerText);
+                        
+                        var playedItems = subElement.GetElementsByTagName(Item);
+                        foreach(XmlNode item in playedItems)
                         {
-                            Subscription ch = new Subscription(_config);
-                            ch.Category = Convert.ToString(dataRow["Category_Name"]);
-                            ch.Title = Convert.ToString(dataRow["Subscription_Name"]);
-                            ch.RssLink = Convert.ToString(dataRow["Subscription_URL"]);
-                            ch.Update = Convert.ToInt32(dataRow["Subscription_Update"]);
-                            Subscriptions.Add(ch);
+                            Item it = new Item(_config)
+                            {
+                                Title = Convert.ToString(item.Attributes[Title].Value),
+                                PercentPlayed = Convert.ToDouble(item.Attributes[Percent].Value),
+                            };
+                            subscription.Items.Add(it);
                         }
+
+                        Subscriptions.Add(subscription);
                     }
+                    
                 }
             }
             catch (Exception e)

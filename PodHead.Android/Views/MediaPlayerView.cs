@@ -1,22 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Net;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using System.Timers;
 using Android.Media;
+using PodHead.Android.Utilities;
+
 using Uri = Android.Net.Uri;
 using Color = Xamarin.Forms.Color;
-using PodHead;
-using System.Timers;
-using OS = Android.OS;
-using Button = Xamarin.Forms.Button;
 using StackLayout = Xamarin.Forms.StackLayout;
 using Image = Xamarin.Forms.Image;
 using Label = Xamarin.Forms.Label;
@@ -46,8 +34,10 @@ namespace PodHead.Android.Views
         Label errorLabel = new Label();
         Image image = new Image();
 
-        int imageSize = 50;
+        private Item _currentItem;
 
+        int imageSize = 50;
+        
         int currentProgressMs;
         int progressStepMs = 30000;
 
@@ -235,6 +225,7 @@ namespace PodHead.Android.Views
         {
             try
             {
+                _currentItem = item;
                 currentProgressMs = 0;
 
                 string uri = item.Link;
@@ -298,8 +289,9 @@ namespace PodHead.Android.Views
 
         public void Play()
         {
-            if (mediaPlayer != null)
+            if (mediaPlayer != null && _currentItem != null)
             {
+                _currentItem.PercentPlayed = 0;
                 timer.Start();
                 mediaPlayer.Start();
                 mediaPlayer.SeekTo(currentProgressMs);
@@ -313,12 +305,12 @@ namespace PodHead.Android.Views
             progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
             Device.BeginInvokeOnMainThread(() =>
             {
-                progressSlider.Value = (double)mediaPlayer.CurrentPosition / (double)mediaPlayer.Duration;
+                progressSlider.Value = mediaPlayer.GetPercentage();
             }
             );
             progressSlider.ValueChanged += ProgressSlider_ValueChanged;
         }
-
+        
         public void Pause()
         {
             if(mediaPlayer != null)
@@ -331,8 +323,9 @@ namespace PodHead.Android.Views
 
         public void Stop()
         {
-            if (mediaPlayer != null)
+            if (mediaPlayer != null && _currentItem != null)
             {
+                _currentItem.PercentPlayed = mediaPlayer.GetPercentage() * 100;
                 mediaPlayer.Stop();
                 playPauseButton.Source = "Play.png";
             }

@@ -49,6 +49,8 @@ namespace PodHeadForms
         private readonly ErrorLogger _errorLogger;
         private readonly IConfig _config;
 
+        private Item _nowPlaying;
+
         public RSSMainForm()
         {
             InitializeComponent();
@@ -91,6 +93,16 @@ namespace PodHeadForms
 
             toolTipButtonAdd.SetToolTip(buttonAdd, "Add New Subscription");
             toolTipButtonRefresh.SetToolTip(buttonRefresh, "Reload Subscriptions");
+
+            axWindowsMediaPlayer1.PlayStateChange += AxWindowsMediaPlayer1_PlayStateChange;
+        }
+
+        private void AxWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (axWindowsMediaPlayer1.currentMedia != null && _nowPlaying != null)
+            {
+                _nowPlaying.PercentPlayed = (axWindowsMediaPlayer1.Ctlcontrols.currentPosition / axWindowsMediaPlayer1.currentMedia.duration) * 100;
+            }
         }
 
         private void SubscriptionListControl1_LoadMoreEventHandler(object sender, EventArgs e)
@@ -751,6 +763,7 @@ namespace PodHeadForms
                     {
                         axWindowsMediaPlayer1.URL = it.Link;
                     }
+                    _nowPlaying = it;
                 }
                 else
                 {
@@ -1107,6 +1120,10 @@ namespace PodHeadForms
         {
             _feeds.ParseAllFeedsAsync();
         }
-        
+
+        private void RSSMainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _feeds.Save();
+        }
     }
 }

@@ -41,6 +41,8 @@ namespace PodHead
         
         public int RowNum;
 
+        public double PercentPlayed { get; set; }
+
         public static event DownloadCompleteEvent AnyDownloadComplete;
 
         public event DownloadProgressEvent DownloadProgress;

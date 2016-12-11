@@ -119,7 +119,10 @@ namespace PodHead
         {
             return Items.Where(it => it.IsDownloaded);
         }
-
-        
+         
+        public IEnumerable<Item> GetPlayed()
+        {
+            return Items.Where(it => it.PercentPlayed > double.Epsilon);
+        }       
     }
 }

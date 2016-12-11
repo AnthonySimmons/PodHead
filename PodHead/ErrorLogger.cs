@@ -67,7 +67,7 @@ namespace PodHead
             using (var writer = File.Open(ErrorLogPath, FileMode.Append | FileMode.Create))
             {
                 message += "\n" + new string('-', 100) + "\n";
-                var dateBytes = Encoding.UTF8.GetBytes(DateTime.Now.ToLongDateString());
+                var dateBytes = Encoding.UTF8.GetBytes(DateTime.Now.ToLongDateString() + " " + DateTime.Now.ToLongTimeString() + "\n");
                 var messageBytes = Encoding.UTF8.GetBytes(message);
                 writer.Write(dateBytes, 0, dateBytes.Length);
                 writer.Write(messageBytes, 0, messageBytes.Length);

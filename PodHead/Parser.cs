@@ -26,7 +26,7 @@ namespace PodHead
 
         private static Parser _instance;
 
-        public static event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
+        public event SubscriptionParsedCompleteEventHandler SubscriptionParsedComplete;
 
         private readonly IConfig _config;
         private readonly ErrorLogger _errorLogger;
@@ -216,7 +216,7 @@ namespace PodHead
             }
         }
 
-        private static void OnSubscriptionParsedComplete(Subscription subscription)
+        private void OnSubscriptionParsedComplete(Subscription subscription)
         {
             var copy = SubscriptionParsedComplete;
             if(copy != null)

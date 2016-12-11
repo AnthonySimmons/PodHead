@@ -52,7 +52,7 @@ namespace PodHead.Android.Views
 
         protected virtual void Initialize()
         {
-            Parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
+            _parser.SubscriptionParsedComplete += Parser_SubscriptionParsedComplete;
 
             LoadMoreButton.Clicked += LoadMoreButton_Clicked;
             LoadMoreButton.Text = "Load More";
