@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 
 using RSS;
-using RssApp.Android.Views;
+using PodHead.Android.Views;
 
 using Xamarin.Forms;
 
-namespace RssApp.Android
+namespace PodHead.Android
 {
     public class HomePage : TabbedPage
     {

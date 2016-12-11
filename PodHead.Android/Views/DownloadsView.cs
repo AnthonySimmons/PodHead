@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using RSS;
 
-namespace RssApp.Android.Views
+namespace PodHead.Android.Views
 {
     class DownloadsView : ItemsView
     {

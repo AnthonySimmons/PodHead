@@ -12,7 +12,7 @@ using Android.Widget;
 
 using Xamarin.Forms;
 
-namespace RssApp.Android
+namespace PodHead.Android
 {
     class App : Xamarin.Forms.Application
     {

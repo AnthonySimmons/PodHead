@@ -6,7 +6,7 @@ using System.Text;
 
 using Xamarin.Forms;
 
-namespace RssApp.Android.Views
+namespace PodHead.Android.Views
 {
     class TopChartsView : SubscriptionsView
     {

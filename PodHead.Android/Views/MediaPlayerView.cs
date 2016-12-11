@@ -25,7 +25,7 @@ using TapGestureRecognizer = Xamarin.Forms.TapGestureRecognizer;
 
 using Device = Xamarin.Forms.Device;
 
-namespace RssApp.Android.Views
+namespace PodHead.Android.Views
 {
     class MediaPlayerView : Xamarin.Forms.ScrollView
     {

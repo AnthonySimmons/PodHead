@@ -5,7 +5,7 @@ using System.Text;
 using Xamarin.Forms;
 using RSS;
 
-namespace RssApp.Android.Views
+namespace PodHead.Android.Views
 {
     class SavedSubscriptionsView : SubscriptionsView
     {

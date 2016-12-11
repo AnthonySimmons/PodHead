@@ -8,7 +8,7 @@ using RSS;
 using ProgressBar = Xamarin.Forms.ProgressBar;
 using Button = Xamarin.Forms.Button;
 
-namespace RssApp.Android.Views
+namespace PodHead.Android.Views
 {
     public delegate void PlayItemEventHandler(Item it);
 

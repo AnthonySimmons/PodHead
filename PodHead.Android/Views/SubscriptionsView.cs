@@ -10,7 +10,7 @@ using RSS;
 
 using Button = Xamarin.Forms.Button;
 
-namespace RssApp.Android.Views
+namespace PodHead.Android.Views
 {
     public delegate void ItemSelectedEventHandler(Item item);
     

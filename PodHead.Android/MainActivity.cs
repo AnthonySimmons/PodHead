@@ -5,12 +5,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
-using RssApp;
+using PodHead;
 using RSS;
 
-namespace RssApp.Android
+namespace PodHead.Android
 {
-    [Activity(Label = "RSS", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "PodHead", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
         public static Activity ActivityContext;
