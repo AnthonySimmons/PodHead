@@ -56,7 +56,7 @@ namespace PodHead
 
         public int MaxItems = 25;
 
-        public List<Subscription> Subscriptions = new List<Subscription>();
+        public ConcurrentList<Subscription> Subscriptions = new ConcurrentList<Subscription>();
 
 		public List<string> Categories 
 		{

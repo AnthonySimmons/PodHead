@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConcurrentList.cs" />
     <Compile Include="PodcastSearch.cs" />
     <Compile Include="RssWebClient.cs">
       <SubType>Component</SubType>

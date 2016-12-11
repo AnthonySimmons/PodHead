@@ -28,7 +28,7 @@ namespace PodHead
 
         public int Update { get; set; }
         
-        public List<Item> Items { get; set; }
+        public IList<Item> Items { get; set; }
 
         public string SiteLink { get; set; }
 
@@ -102,7 +102,7 @@ namespace PodHead
             PubDate = string.Empty;
             Ttl = string.Empty;
 
-            Items = new List<Item>();
+            Items = new ConcurrentList<Item>();
             SiteLink = string.Empty;
             ImageUrl = string.Empty;
             Category = string.Empty;

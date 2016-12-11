@@ -31,7 +31,7 @@ namespace PodHead
 
         public DateTime DownloadDate { get; set; }
      
-        public List<author> Authors = new List<author>();
+        public ConcurrentList<author> Authors = new ConcurrentList<author>();
         
         public bool Read { get; set; }
 

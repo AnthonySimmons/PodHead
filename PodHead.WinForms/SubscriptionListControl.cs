@@ -48,7 +48,7 @@ namespace PodHeadForms
 
         private const int SubscribeMenuItemIndex = 1;
 
-        private List<Subscription> _subscriptions;
+        private IList<Subscription> _subscriptions;
 
         public string SelectedSubscriptionTitle { get; set; }
         
@@ -145,7 +145,7 @@ namespace PodHeadForms
         }
         
 
-        public void LoadSubscriptions(List<Subscription> subscriptions, SubscriptionState subscriptionState = SubscriptionState.Subscription)
+        public void LoadSubscriptions(IList<Subscription> subscriptions, SubscriptionState subscriptionState = SubscriptionState.Subscription)
         {
             tableLayoutPanel1.RowCount = 0;
             _subscriptions = subscriptions;

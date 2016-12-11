@@ -58,7 +58,7 @@ namespace PodHead
             }
         }
 
-		public List<Subscription> Podcasts; 
+		public ConcurrentList<Subscription> Podcasts; 
 
         //https://itunes.apple.com/lookup?id=260190086&entity=podcast
         private const string iTunesLookupUrlFormat = "https://itunes.apple.com/lookup?id={0}&entity={1}";
@@ -83,7 +83,7 @@ namespace PodHead
 		{
 			Limit = DefaultLimit;
 			Genre = "Comedy";
-			Podcasts = new List<Subscription>();
+			Podcasts = new ConcurrentList<Subscription>();
 		}
 
         public void ClearPodcasts()

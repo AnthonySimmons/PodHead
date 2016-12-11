@@ -27,7 +27,7 @@ namespace PodHead.Android.Views
         
         protected ProgressBar progressBar = new ProgressBar();
 
-        protected List<Subscription> _subscriptions;
+        protected IList<Subscription> _subscriptions;
 
         protected Image RefreshImage = new Image();
 
@@ -56,7 +56,7 @@ namespace PodHead.Android.Views
         }
         
 
-        public void LoadSubscriptionResults(List<Subscription> subscriptions)
+        public void LoadSubscriptionResults(IList<Subscription> subscriptions)
         {
             //if(subscriptions.Count >= Feeds.Instance.MaxItems - 1)
             {
@@ -65,7 +65,7 @@ namespace PodHead.Android.Views
             LoadSubscriptions(subscriptions);
         }
 
-        public void LoadSubscriptions(List<Subscription> subscriptions)
+        public void LoadSubscriptions(IList<Subscription> subscriptions)
         {
             //Initialize ();
             stackLayout.Children.Clear ();

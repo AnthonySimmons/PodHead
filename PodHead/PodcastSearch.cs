@@ -26,7 +26,7 @@ namespace PodHead
 
         private static object _instanceLock = new object();
 
-        public List<Subscription> Results = new List<Subscription>();
+        public ConcurrentList<Subscription> Results = new ConcurrentList<Subscription>();
 
         public static PodcastSearch Instance
         {
