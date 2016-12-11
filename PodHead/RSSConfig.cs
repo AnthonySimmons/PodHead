@@ -5,13 +5,15 @@ namespace PodHead
 {
     public static class RSSConfig
     {
-        private static string AndroidFolder = "/storage/extSdCard/AppData/PodHead";
+        private const string AndroidFolder = @"/sdcard/Android/data/PodHead.Android.PodHead.Android";
+
         public static string DownloadFolder
         {
             get
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "/PodHead/";
-                
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "/PodHead/";
+                var path = AndroidFolder + "/PodHead/Music";
+
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -19,14 +21,14 @@ namespace PodHead
                 return path;
             }
         }
-
+        
         public static string AppDataFolder
         {
             get
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/PodHead/";
-                //var path = AndroidFolder;
-                if(!Directory.Exists(path))
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/PodHead/";
+                var path = AndroidFolder + "/PodHead/";
+                if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }

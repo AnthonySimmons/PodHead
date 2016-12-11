@@ -111,7 +111,7 @@ namespace PodHead
                 }
 
                 using (WebClient client = new WebClient())
-                {
+                { 
                     client.DownloadProgressChanged += client_DownloadProgressChanged;
                     client.DownloadFileCompleted += client_DownloadFileCompleted;
                     client.DownloadFileAsync(new Uri(Link), FilePath);
@@ -164,15 +164,24 @@ namespace PodHead
             OnDownloadProgress(e.ProgressPercentage);
         }
 
+        private static List<string> fileTypes = new List<string>()
+        {
+            ".mp3",
+            ".wav",
+        };
+
+        private const string DefaultFileType = ".mp3";
+
         private string GetFileType()
         {
-            string type = "";
-            string[] strArr = Link.Split('.');
-            if (strArr.Length > 0)
+            foreach(string fileType in fileTypes)
             {
-                type = "." + strArr[strArr.Length - 1];
+                if(Link.Contains(fileType))
+                {
+                    return fileType;
+                }
             }
-            return type;
+            return DefaultFileType;
         }
 
         private string GetCleanFileName()

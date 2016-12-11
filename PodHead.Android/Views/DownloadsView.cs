@@ -29,13 +29,14 @@ namespace PodHead.Android.Views
 
         protected void RemoveItemControls(Item item)
         {
-            if (ItemControls.ContainsKey(item))
+            if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(itemLayout))
             {
-                var itemLayout = ItemControls[item]["ItemLayout"];
-                ItemControls.Remove(item);
-                if (stackLayout.Children.Contains(itemLayout))
+                var itemLayoutControl = ItemControls[item][itemLayout];
+                Dictionary<string, Xamarin.Forms.View> view;
+                ItemControls.TryRemove(item, out view);
+                if (stackLayout.Children.Contains(itemLayoutControl))
                 {
-                    stackLayout.Children.Remove(itemLayout);
+                    stackLayout.Children.Remove(itemLayoutControl);
                 }
             }
         }

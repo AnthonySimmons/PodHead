@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using PodHead;
 using ProgressBar = Xamarin.Forms.ProgressBar;
 using Button = Xamarin.Forms.Button;
+using System.Collections.Concurrent;
 
 namespace PodHead.Android.Views
 {
@@ -14,6 +15,10 @@ namespace PodHead.Android.Views
 
     class ItemsView : StackLayout
     {
+        protected const string itemLayout = "ItemLayout";
+        protected const string downloadButton = "DownloadButton";
+        protected const string progressBar = "ProgressBar";
+
         public event PlayItemEventHandler PlayItem;
         public event EventHandler BackSelected;
 
@@ -24,7 +29,7 @@ namespace PodHead.Android.Views
         private static int ImageSize = 175;
 
         //private TableView tableView = new TableView();
-        protected Dictionary<Item, Dictionary<string, View>> ItemControls = new Dictionary<Item, Dictionary<string, View>>();
+        protected ConcurrentDictionary<Item, Dictionary<string, View>> ItemControls = new ConcurrentDictionary<Item, Dictionary<string, View>>();
 
         private List<ProgressBar> progressBars = new List<ProgressBar>();
         private Button LoadMoreButton = new Button();
@@ -167,43 +172,43 @@ namespace PodHead.Android.Views
                 var description = new Label() { Text = item.Description, TextColor = Color.Black };
                 
                 var playImage = new Image() { Source = "Play.png", HeightRequest = buttonSize, WidthRequest = buttonSize, };
-                var downloadImage = new Image() { Source = "Download.png", HeightRequest = buttonSize, WidthRequest = buttonSize };
-                downloadImage.BindingContext = item;
+                var downloadImageControl = new Image() { Source = "Download.png", HeightRequest = buttonSize, WidthRequest = buttonSize };
+                downloadImageControl.BindingContext = item;
                 playImage.BindingContext = item;
                 playImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { PlayButton_Clicked(sender, null); }));
-                downloadImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { DownloadButton_Clicked(sender, null); }));
+                downloadImageControl.GestureRecognizers.Add(new TapGestureRecognizer(sender => { DownloadButton_Clicked(sender, null); }));
 
-                var progressBar = new ProgressBar() { IsVisible = false, };
+                var progressBarControl = new ProgressBar() { IsVisible = false, };
 
                 if (item.IsDownloaded)
                 {
-                    downloadImage.Source = "Remove.png";
+                    downloadImageControl.Source = "Remove.png";
                 }
                 
                 var hLayout = new StackLayout();
                 hLayout.Orientation = StackOrientation.Horizontal;
                 hLayout.Children.Add(playImage);
-                hLayout.Children.Add(downloadImage);
+                hLayout.Children.Add(downloadImageControl);
             
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
                 var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
 
-                var itemLayout = new StackLayout();
-                itemLayout.Children.Add(topBoxView);
-                itemLayout.Children.Add(title);
-                itemLayout.Children.Add(description);
+                var itemLayoutControl = new StackLayout();
+                itemLayoutControl.Children.Add(topBoxView);
+                itemLayoutControl.Children.Add(title);
+                itemLayoutControl.Children.Add(description);
                 //itemLayout.Children.Add(tableView);
-                itemLayout.Children.Add(hLayout);
-                itemLayout.Children.Add(progressBar);
+                itemLayoutControl.Children.Add(hLayout);
+                itemLayoutControl.Children.Add(progressBarControl);
 
-                stackLayout.Children.Add(itemLayout);//.Insert(index, itemLayout);
+                stackLayout.Children.Add(itemLayoutControl);//.Insert(index, itemLayout);
 
-                ItemControls.Add(item, new Dictionary<string, View>()
+                ItemControls.TryAdd(item, new Dictionary<string, View>()
                 {
-                    { "ItemLayout", itemLayout },
-                    { "ProgressBar", progressBar},
-                    { "DownloadButton", downloadImage},
+                    { itemLayout, itemLayoutControl },
+                    { progressBar, progressBarControl},
+                    { downloadButton, downloadImageControl},
                 }
                 );
             }
@@ -285,11 +290,11 @@ namespace PodHead.Android.Views
                 if (ItemControls.ContainsKey(item))
                 {
                     var itemControls = ItemControls[item];
-                    if (itemControls.ContainsKey("DownloadButton"))
+                    if (itemControls.ContainsKey(downloadButton))
                     {
-                        var downloadButton = (Image)itemControls["DownloadButton"];
+                        var downloadButtonControl = (Image)itemControls[downloadButton];
                         //downloadButton.Text = "Download";
-                        downloadButton.Source = "Download.png";
+                        downloadButtonControl.Source = "Download.png";
                     }
                 }
             }
@@ -300,12 +305,17 @@ namespace PodHead.Android.Views
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                var downloadButton = (Image)ItemControls[item]["DownloadButton"];
-                //downloadButton.Text = "Remove";
-                downloadButton.Source = "Remove.png";
-                
-                var progressBar = (ProgressBar)ItemControls[item]["ProgressBar"];
-                progressBar.IsVisible = false;
+                if (ItemControls.ContainsKey(item) &&
+                    ItemControls[item].ContainsKey(downloadButton) &&
+                    ItemControls[item].ContainsKey(progressBar))
+                {
+                    var downloadButtonControl = (Image)ItemControls[item][downloadButton];
+                    //downloadButton.Text = "Remove";
+                    downloadButtonControl.Source = "Remove.png";
+
+                    var progressBarControl = (ProgressBar)ItemControls[item][progressBar];
+                    progressBarControl.IsVisible = false;
+                }
             }
             );
         }
@@ -314,9 +324,12 @@ namespace PodHead.Android.Views
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                var progressBar = (ProgressBar)ItemControls[item]["ProgressBar"];
-                progressBar.IsVisible = true;
-                progressBar.Progress = percent / 100;
+                if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(progressBar))
+                {
+                    var progressBarControl = (ProgressBar)ItemControls[item][progressBar];
+                    progressBarControl.IsVisible = true;
+                    progressBarControl.Progress = percent / 100;
+                }
             }
             );
         }

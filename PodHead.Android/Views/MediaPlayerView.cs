@@ -241,7 +241,12 @@ namespace PodHead.Android.Views
                 }
 
                 mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, Uri.Parse(uri));
-                
+
+                if (mediaPlayer == null)
+                {
+                    throw new InvalidOperationException("Cannot play media. URI: " + uri);
+                }
+
                 titleLabel.Text = item.Title;
                 mediaPlayer.SetAudioStreamType(Stream.Music);
                 //mediaPlayer.Prepare();
@@ -271,6 +276,7 @@ namespace PodHead.Android.Views
             }
             catch(Exception ex)
             {
+                ErrorLogger.Log(ex);
                 DisplayError(ex.Message);
             }
         }
