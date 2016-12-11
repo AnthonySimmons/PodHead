@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using RSS;
+using PodHead;
 using PodHead.Android.Views;
 
 using Xamarin.Forms;

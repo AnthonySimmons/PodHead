@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Android.Widget;
 
 using Xamarin.Forms;
-using RSS;
+using PodHead;
 using ProgressBar = Xamarin.Forms.ProgressBar;
 using Button = Xamarin.Forms.Button;
 

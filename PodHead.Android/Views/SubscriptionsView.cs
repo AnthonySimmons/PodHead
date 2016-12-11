@@ -5,7 +5,7 @@ using System.Text;
 
 
 using Xamarin.Forms;
-using RSS;
+using PodHead;
 
 
 using Button = Xamarin.Forms.Button;

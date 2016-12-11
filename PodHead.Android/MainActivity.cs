@@ -6,7 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using PodHead;
-using RSS;
+using PodHead;
 
 namespace PodHead.Android
 {

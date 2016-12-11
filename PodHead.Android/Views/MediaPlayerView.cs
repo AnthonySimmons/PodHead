@@ -13,7 +13,7 @@ using Android.Widget;
 using Android.Media;
 using Uri = Android.Net.Uri;
 using Color = Xamarin.Forms.Color;
-using RSS;
+using PodHead;
 using System.Timers;
 using OS = Android.OS;
 using Button = Xamarin.Forms.Button;
