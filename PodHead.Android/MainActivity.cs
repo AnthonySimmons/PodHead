@@ -18,16 +18,26 @@ namespace PodHead.Android
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AndroidEnvironment.UnhandledExceptionRaiser += AndroidEnvironment_UnhandledExceptionRaiser;
             ActivityContext = this;
 
 			global::Xamarin.Forms.Forms.Init (this, bundle);
             
 			LoadApplication (new App());
         }
-        
 
-		protected override void OnStop ()
+        private void AndroidEnvironment_UnhandledExceptionRaiser(object sender, RaiseThrowableEventArgs e)
+        {
+            ErrorLogger.Log(e.Exception);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            ErrorLogger.Log(e.ExceptionObject as Exception);
+        }
+
+        protected override void OnStop ()
 		{
 			base.OnStop ();
 			Feeds.Instance.Save(RSSConfig.ConfigFileName);

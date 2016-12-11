@@ -5,12 +5,12 @@ namespace PodHead
 {
     public static class RSSConfig
     {
-        private static string AndroidFolder = "/storage/extSdCard/AppData/RSS";
+        private static string AndroidFolder = "/storage/extSdCard/AppData/PodHead";
         public static string DownloadFolder
         {
             get
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "/RSS/";
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic) + "/PodHead/";
                 
                 if (!Directory.Exists(path))
                 {
@@ -24,7 +24,7 @@ namespace PodHead
         {
             get
             {
-                var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/RSS/";
+                var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/PodHead/";
                 //var path = AndroidFolder;
                 if(!Directory.Exists(path))
                 {
