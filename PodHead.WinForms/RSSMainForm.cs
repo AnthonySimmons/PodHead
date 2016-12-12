@@ -26,11 +26,17 @@ namespace PodHeadForms
         const int FileSizeColumnWidth = 75;
         const int FileSizeColumnHeight = 25;
 
+        const int PlayedColumnWidth = 75;
+        const int PlayedColumnHeight = 25;
+
         const string ItemColumnTitle = "Title";
         const string ItemColumnDate = "Date";
         const string ItemColumnDescription = "Description";
         const string ItemColumnDownload = "Download";
         const string ItemColumnDownloadProgress = "DownloadProgress";
+        const string ItemColumnPlayed = "Played";
+
+        const int ItemColumnDownloadIndex = 2;
 
         private const string ItemMenuDownload = "Download";
         private const string ItemMenuDelete = "Delete";
@@ -101,7 +107,9 @@ namespace PodHeadForms
         {
             if (axWindowsMediaPlayer1.currentMedia != null && _nowPlaying != null)
             {
-                _nowPlaying.PercentPlayed = (axWindowsMediaPlayer1.Ctlcontrols.currentPosition / axWindowsMediaPlayer1.currentMedia.duration) * 100;
+                double perc = (axWindowsMediaPlayer1.Ctlcontrols.currentPosition / axWindowsMediaPlayer1.currentMedia.duration);
+                _nowPlaying.PercentPlayed = (int)(perc * 100.0);
+                UpdateDataGridRow(_nowPlaying);
             }
         }
 
@@ -591,6 +599,8 @@ namespace PodHeadForms
                 dataGridView1.Rows[count].Cells[ItemColumnDownloadProgress].Value = GetFileSizeBitmap(it.MbSize);
             }
 
+            dataGridView1.Rows[count].Cells[ItemColumnPlayed].Value = GetPlayedBitmap(it.PercentPlayed);
+
             if (it.Read)
             {
                 dataGridView1.Rows[count].Cells[ItemColumnTitle].Style.BackColor = Color.Red;
@@ -641,34 +651,42 @@ namespace PodHeadForms
 
         private void LoadDataGrid(IEnumerable<Item> items)
         {
-            dataGridView1.SuspendLayout();
-            dataGridView1.Rows.Clear();
-
-            int count = 0;
-
-            foreach (Item it in items)
+            try
             {
-                if ((!showUnread || (showUnread && !it.Read)))
+                dataGridView1.SuspendLayout();
+                dataGridView1.Rows.Clear();
+
+                int count = 0;
+
+                foreach (Item it in items)
                 {
-                    if (it.Read)
+                    if ((!showUnread || (showUnread && !it.Read)))
                     {
-                        dataGridView1.Rows.Add(null, null, "+ " + it.Title);
-                    }
-                    else
-                    {
-                        dataGridView1.Rows.Add(null, null, it.Title);
-                    }
+                        if (it.Read)
+                        {
+                            dataGridView1.Rows.Add(null, null, null, "+ " + it.Title);
+                        }
+                        else
+                        {
+                            dataGridView1.Rows.Add(null, null, null, it.Title);
+                        }
 
-                    UpdateDataGridRow(it, count);
-                    count++;
+                        UpdateDataGridRow(it, count);
+                        count++;
+                    }
                 }
+
+                dataGridView1.ResumeLayout();
+
+                dataGridView1.Sort(dataGridView1.Columns[ItemColumnDate], ListSortDirection.Descending);
+                dataGridView1.Rows.Add(null, null, GetBlankBitmap(), "Load 10 More");
+                dataGridView1.AutoResizeColumns();
             }
-
-            dataGridView1.ResumeLayout();
-
-            dataGridView1.Sort(dataGridView1.Columns[ItemColumnDate], ListSortDirection.Descending);
-            dataGridView1.Rows.Add(null, GetBlankBitmap(), "Load 10 More");
-            dataGridView1.AutoResizeColumns();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                _errorLogger.Log(ex);
+            }
         }
 
 
@@ -703,6 +721,23 @@ namespace PodHeadForms
                     g.FillRectangle(Brushes.Green, 0, 0, bmp.Width, bmp.Height);
                     g.DrawString(MbString, new Font("Times New Roman", 10), Brushes.Black, new PointF(bmp.Width / 8, bmp.Height / 8));
                 }
+            }
+            return bmp;
+        }
+
+        private Bitmap GetPlayedBitmap(double percent)
+        {
+            Bitmap bmp = new Bitmap(PlayedColumnWidth, PlayedColumnHeight);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                if (percent > double.Epsilon)
+                {             
+                    int width = (int)(bmp.Width * (percent / 100.0));
+                    g.FillRectangle(Brushes.LightBlue, 0, 0, width, bmp.Height);
+                }
+                string playedString = ((int)percent).ToString() + "%";
+                g.DrawString(playedString, new Font("Times New Roman", 10, FontStyle.Regular), Brushes.Black, new PointF(bmp.Width / 8, bmp.Height / 8));
             }
             return bmp;
         }
@@ -799,7 +834,7 @@ namespace PodHeadForms
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             string title = GetTitleFromSelectedDataGrid();
-            if (e.ColumnIndex == 1)
+            if (e.ColumnIndex == ItemColumnDownloadIndex)
             {                
                 Item it = GetItem(selectedSub, title);
 

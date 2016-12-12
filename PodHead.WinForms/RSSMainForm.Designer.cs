@@ -53,11 +53,6 @@
             this.linkLabelSite = new System.Windows.Forms.LinkLabel();
             this.linkLabelFeed = new System.Windows.Forms.LinkLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.DownloadProgress = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Download = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Title = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
@@ -77,6 +72,12 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolTipButtonAdd = new System.Windows.Forms.ToolTip(this.components);
             this.toolTipButtonRefresh = new System.Windows.Forms.ToolTip(this.components);
+            this.DownloadProgress = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Played = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Download = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Title = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -209,7 +210,7 @@
             this.tabPageWebsite.Controls.Add(this.webBrowser1);
             this.tabPageWebsite.Location = new System.Drawing.Point(4, 29);
             this.tabPageWebsite.Name = "tabPageWebsite";
-            this.tabPageWebsite.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageWebsite.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageWebsite.Size = new System.Drawing.Size(476, 219);
             this.tabPageWebsite.TabIndex = 1;
             this.tabPageWebsite.Text = "Website";
@@ -231,8 +232,8 @@
             this.tabPageNowPlaying.Controls.Add(this.axWindowsMediaPlayer1);
             this.tabPageNowPlaying.Location = new System.Drawing.Point(4, 29);
             this.tabPageNowPlaying.Name = "tabPageNowPlaying";
-            this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabPageNowPlaying.Size = new System.Drawing.Size(475, 220);
+            this.tabPageNowPlaying.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageNowPlaying.Size = new System.Drawing.Size(476, 219);
             this.tabPageNowPlaying.TabIndex = 0;
             this.tabPageNowPlaying.Text = "Now Playing";
             // 
@@ -243,7 +244,7 @@
             this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
             this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
             this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(467, 212);
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(468, 211);
             this.axWindowsMediaPlayer1.TabIndex = 0;
             // 
             // tabPageSubscription
@@ -253,8 +254,8 @@
             this.tabPageSubscription.Controls.Add(this.tableLayoutPanelSubInfo);
             this.tabPageSubscription.Location = new System.Drawing.Point(4, 29);
             this.tabPageSubscription.Name = "tabPageSubscription";
-            this.tabPageSubscription.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabPageSubscription.Size = new System.Drawing.Size(475, 220);
+            this.tabPageSubscription.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSubscription.Size = new System.Drawing.Size(476, 219);
             this.tabPageSubscription.TabIndex = 2;
             this.tabPageSubscription.Text = "Subscription";
             // 
@@ -276,7 +277,7 @@
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10.20408F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.22449F));
             this.tableLayoutPanelSubInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 77.77778F));
-            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(467, 212);
+            this.tableLayoutPanelSubInfo.Size = new System.Drawing.Size(468, 211);
             this.tableLayoutPanelSubInfo.TabIndex = 3;
             // 
             // textBoxSubDescription
@@ -288,7 +289,7 @@
             this.textBoxSubDescription.Multiline = true;
             this.textBoxSubDescription.Name = "textBoxSubDescription";
             this.textBoxSubDescription.ReadOnly = true;
-            this.textBoxSubDescription.Size = new System.Drawing.Size(253, 141);
+            this.textBoxSubDescription.Size = new System.Drawing.Size(253, 140);
             this.textBoxSubDescription.TabIndex = 3;
             // 
             // labelSubscriptionTitle
@@ -355,6 +356,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.DownloadProgress,
+            this.Played,
             this.Download,
             this.Title,
             this.Date,
@@ -369,45 +371,6 @@
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
             this.dataGridView1.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDown);
             this.dataGridView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dataGridView1_MouseDown);
-            // 
-            // DownloadProgress
-            // 
-            this.DownloadProgress.FillWeight = 50F;
-            this.DownloadProgress.HeaderText = "Size";
-            this.DownloadProgress.Name = "DownloadProgress";
-            this.DownloadProgress.ReadOnly = true;
-            this.DownloadProgress.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.DownloadProgress.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.DownloadProgress.Width = 75;
-            // 
-            // Download
-            // 
-            this.Download.HeaderText = "";
-            this.Download.Name = "Download";
-            this.Download.ReadOnly = true;
-            this.Download.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Download.Width = 25;
-            // 
-            // Title
-            // 
-            this.Title.HeaderText = "Title";
-            this.Title.Name = "Title";
-            this.Title.ReadOnly = true;
-            this.Title.Width = 200;
-            // 
-            // Date
-            // 
-            this.Date.HeaderText = "Date";
-            this.Date.Name = "Date";
-            this.Date.ReadOnly = true;
-            this.Date.Width = 200;
-            // 
-            // Description
-            // 
-            this.Description.HeaderText = "Description";
-            this.Description.Name = "Description";
-            this.Description.ReadOnly = true;
-            this.Description.Width = 500;
             // 
             // openFileDialog1
             // 
@@ -630,6 +593,55 @@
             this.statusStrip1.Text = "statusStrip1";
             this.statusStrip1.Visible = false;
             // 
+            // DownloadProgress
+            // 
+            this.DownloadProgress.FillWeight = 50F;
+            this.DownloadProgress.HeaderText = "Size";
+            this.DownloadProgress.Name = "DownloadProgress";
+            this.DownloadProgress.ReadOnly = true;
+            this.DownloadProgress.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.DownloadProgress.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.DownloadProgress.Width = 75;
+            // 
+            // Played
+            // 
+            this.Played.FillWeight = 50F;
+            this.Played.HeaderText = "Played";
+            this.Played.Name = "Played";
+            this.Played.ReadOnly = true;
+            this.Played.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Played.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.Played.Width = 75;
+            // 
+            // Download
+            // 
+            this.Download.HeaderText = "";
+            this.Download.Name = "Download";
+            this.Download.ReadOnly = true;
+            this.Download.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Download.Width = 25;
+            // 
+            // Title
+            // 
+            this.Title.HeaderText = "Title";
+            this.Title.Name = "Title";
+            this.Title.ReadOnly = true;
+            this.Title.Width = 200;
+            // 
+            // Date
+            // 
+            this.Date.HeaderText = "Date";
+            this.Date.Name = "Date";
+            this.Date.ReadOnly = true;
+            this.Date.Width = 200;
+            // 
+            // Description
+            // 
+            this.Description.HeaderText = "Description";
+            this.Description.Name = "Description";
+            this.Description.ReadOnly = true;
+            this.Description.Width = 500;
+            // 
             // RSSMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -697,11 +709,6 @@
         private System.Windows.Forms.ComboBox comboBoxGenre;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Date;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Title;
-        private System.Windows.Forms.DataGridViewImageColumn Download;
-        private System.Windows.Forms.DataGridViewImageColumn DownloadProgress;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.LinkLabel linkLabelFeed;
         private System.Windows.Forms.LinkLabel linkLabelSite;
@@ -725,6 +732,12 @@
         private System.Windows.Forms.ToolTip toolTipButtonRefresh;
         private System.Windows.Forms.Button buttonSearch;
         private SubscriptionListControl subscriptionListControl1;
+        private System.Windows.Forms.DataGridViewImageColumn DownloadProgress;
+        private System.Windows.Forms.DataGridViewImageColumn Played;
+        private System.Windows.Forms.DataGridViewImageColumn Download;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Title;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Date;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Description;
     }
 }
 

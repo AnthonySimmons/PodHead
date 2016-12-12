@@ -30,10 +30,11 @@ namespace PodHead.Android.Views
 
         protected void RemoveItemControls(Item item)
         {
-            if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(itemLayout))
+            if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(ItemLayout))
             {
-                var itemLayoutControl = ItemControls[item][itemLayout];
+                var itemLayoutControl = ItemControls[item][ItemLayout];
                 Dictionary<string, Xamarin.Forms.View> view;
+                item.PercentPlayedChanged -= Item_PercentPlayedChanged;
                 ItemControls.TryRemove(item, out view);
                 if (stackLayout.Children.Contains(itemLayoutControl))
                 {

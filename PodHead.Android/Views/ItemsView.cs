@@ -15,9 +15,10 @@ namespace PodHead.Android.Views
 
     class ItemsView : StackLayout
     {
-        protected const string itemLayout = "ItemLayout";
-        protected const string downloadButton = "DownloadButton";
-        protected const string progressBar = "ProgressBar";
+        protected const string ItemLayout = "ItemLayout";
+        protected const string DownloadButton = "DownloadButton";
+        protected const string ProgressBar = "ProgressBar";
+        protected const string PercentPlayedLabel = "PercentPlayedLabel";
 
         public event PlayItemEventHandler PlayItem;
         public event EventHandler BackSelected;
@@ -102,6 +103,8 @@ namespace PodHead.Android.Views
             {
                 LoadMoreButton.IsVisible = true;
             }
+            UnbindItemEvents();
+
             stackLayout.Children.Clear();
             Children.Clear();
             ItemControls.Clear();
@@ -119,6 +122,15 @@ namespace PodHead.Android.Views
             scrollView.Content = stackLayout;
             Children.Add(scrollView);
 
+        }
+
+        private void UnbindItemEvents()
+        {
+            foreach(Item item in ItemControls.Keys)
+            {
+                item.DownloadProgress -= Item_DownloadProgress;
+                item.PercentPlayedChanged -= Item_PercentPlayedChanged;
+            }
         }
 
         private void LoadSubscriptionTitle(Subscription subscription)
@@ -189,11 +201,14 @@ namespace PodHead.Android.Views
                 {
                     downloadImageControl.Source = "Remove.png";
                 }
+
+                var percentPlayedLabel = new Label() { FontSize = 16, Text = item.PercentPlayed.ToString() + "%"};
                 
                 var hLayout = new StackLayout();
                 hLayout.Orientation = StackOrientation.Horizontal;
                 hLayout.Children.Add(playImage);
                 hLayout.Children.Add(downloadImageControl);
+                hLayout.Children.Add(percentPlayedLabel);
             
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
@@ -211,15 +226,34 @@ namespace PodHead.Android.Views
 
                 ItemControls.TryAdd(item, new Dictionary<string, View>()
                 {
-                    { itemLayout, itemLayoutControl },
-                    { progressBar, progressBarControl},
-                    { downloadButton, downloadImageControl},
+                    { ItemLayout, itemLayoutControl },
+                    { ProgressBar, progressBarControl},
+                    { DownloadButton, downloadImageControl},
+                    { PercentPlayedLabel, percentPlayedLabel },
                 }
                 );
+
+                item.PercentPlayedChanged += Item_PercentPlayedChanged;
+
             }
         }
 
+        protected void Item_PercentPlayedChanged(Item item)
+        {
+            UpdatePercentPlayed(item);
+        }
 
+        protected virtual void UpdatePercentPlayed(Item item)
+        {
+            if(ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(PercentPlayedLabel))
+            {
+                Label percentPlayedLabel = ItemControls[item][PercentPlayedLabel] as Label;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    percentPlayedLabel.Text = item.PercentPlayed.ToString() + "%";
+                });
+            }
+        }
 
         private void BackButton_Clicked(object sender, EventArgs e)
         {
@@ -295,9 +329,9 @@ namespace PodHead.Android.Views
                 if (ItemControls.ContainsKey(item))
                 {
                     var itemControls = ItemControls[item];
-                    if (itemControls.ContainsKey(downloadButton))
+                    if (itemControls.ContainsKey(DownloadButton))
                     {
-                        var downloadButtonControl = (Image)itemControls[downloadButton];
+                        var downloadButtonControl = (Image)itemControls[DownloadButton];
                         //downloadButton.Text = "Download";
                         downloadButtonControl.Source = "Download.png";
                     }
@@ -311,14 +345,14 @@ namespace PodHead.Android.Views
             Device.BeginInvokeOnMainThread(() =>
             {
                 if (ItemControls.ContainsKey(item) &&
-                    ItemControls[item].ContainsKey(downloadButton) &&
-                    ItemControls[item].ContainsKey(progressBar))
+                    ItemControls[item].ContainsKey(DownloadButton) &&
+                    ItemControls[item].ContainsKey(ProgressBar))
                 {
-                    var downloadButtonControl = (Image)ItemControls[item][downloadButton];
+                    var downloadButtonControl = (Image)ItemControls[item][DownloadButton];
                     //downloadButton.Text = "Remove";
                     downloadButtonControl.Source = "Remove.png";
 
-                    var progressBarControl = (ProgressBar)ItemControls[item][progressBar];
+                    var progressBarControl = (ProgressBar)ItemControls[item][ProgressBar];
                     progressBarControl.IsVisible = false;
                 }
             }
@@ -329,9 +363,9 @@ namespace PodHead.Android.Views
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(progressBar))
+                if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(ProgressBar))
                 {
-                    var progressBarControl = (ProgressBar)ItemControls[item][progressBar];
+                    var progressBarControl = (ProgressBar)ItemControls[item][ProgressBar];
                     progressBarControl.IsVisible = true;
                     progressBarControl.Progress = percent / 100;
                 }

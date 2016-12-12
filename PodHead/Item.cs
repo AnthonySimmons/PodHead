@@ -17,6 +17,8 @@ namespace PodHead
 
     public delegate void DownloadRemovedEvent(Item item);
 
+    public delegate void PercentPlayedChangeEvent(Item item);
+
     public class Item
     {
         private readonly IConfig _config;
@@ -41,13 +43,30 @@ namespace PodHead
         
         public int RowNum;
 
-        public double PercentPlayed { get; set; }
+        private int _percentPlayed;
+        public int PercentPlayed
+        {
+            get
+            {
+                return _percentPlayed;
+            }
+            set
+            {
+                if(_percentPlayed != value)
+                {
+                    _percentPlayed = value;
+                    OnPercentPlayedChanged();
+                }
+            }
+        }
 
         public static event DownloadCompleteEvent AnyDownloadComplete;
 
         public event DownloadProgressEvent DownloadProgress;
 
         public static event DownloadRemovedEvent AnyDownloadRemoved;
+
+        public event PercentPlayedChangeEvent PercentPlayedChanged;
 
         public bool IsDownloaded
         {
@@ -71,7 +90,7 @@ namespace PodHead
         {
             get
             {
-                return _config.DownloadFolder + GetCleanFileName() + GetFileType();
+                return Path.Combine(_config.DownloadFolder, GetCleanFileName() + GetFileType());
             }
         }
 
@@ -158,6 +177,15 @@ namespace PodHead
             if(copy != null)
             {
                 copy.Invoke(this, percent);
+            }
+        }
+
+        protected virtual void OnPercentPlayedChanged()
+        {
+            var copy = PercentPlayedChanged;
+            if (copy != null)
+            {
+                copy.Invoke(this);
             }
         }
 

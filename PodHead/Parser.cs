@@ -98,7 +98,6 @@ namespace PodHead
 
         public bool LoadSubscriptionAsync(Subscription sub)
         {
-            sub.Items.Clear();
             string url = sub.RssLink;
             bool success = true;
             try
@@ -119,7 +118,6 @@ namespace PodHead
 
         public bool LoadSubscription(Subscription sub, int maxItems)
         {
-            sub.Items.Clear();
             string url = sub.RssLink;
             bool success = true;
             try
@@ -288,8 +286,15 @@ namespace PodHead
                     foreach(XmlNode item in items)
                     {
                         if (counter++ >= maxItems) { break; }
-                        var it = new Item(_config);
-                        it.Title = GetXmlElementValue(item, "title");
+
+                        string itemTitle = GetXmlElementValue(item, "title");
+                        Item it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                        bool noItem = it == null;
+                        if (noItem)
+                        {
+                            it = new Item(_config);
+                            it.Title = itemTitle;
+                        }
                         it.Link = GetXmlElementValue(item, "link");
 
                         if (item["enclosure"] != null)
@@ -304,7 +309,11 @@ namespace PodHead
                         it.ParentSubscription = sub;
                         it.IsLoaded = true;
                         sub.ItemsLoaded = true;
-                        sub.Items.Add(it);
+
+                        if (noItem)
+                        {
+                            sub.Items.Add(it);
+                        }
                     }
                 }
             }
@@ -341,8 +350,17 @@ namespace PodHead
                     foreach(XmlNode item in items)
                     {
                         if (count++ >= maxItems) { break; }
-                        var it = new Item(_config);
-                        it.Title = GetXmlElementValue(item, "title");
+                        string itemTitle = GetXmlElementValue(item, "title");
+
+                        Item it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                        bool noItem = it == null;
+                        if (noItem)
+                        {
+                            it = new Item(_config);
+                            it.Title = itemTitle;
+                        }
+
+                        it.Title = itemTitle;
                         it.Description = GetXmlElementValue(item, "description");
                         it.Link = GetXmlElementValue(item, "link");
                         it.Guid = GetXmlElementValue(item, "guid");
@@ -387,8 +405,17 @@ namespace PodHead
                 foreach (XmlNode entry in entries)
                 {
                     if (count++ >= maxItems) { break; }
-                    var it = new Item(_config);
-                    it.Title = GetXmlElementValue(entry, "title");
+
+                    string itemTitle = GetXmlElementValue(entry, "title");
+                    Item it = sub.Items.FirstOrDefault(i => i.Title == itemTitle);
+                    bool noItem = it == null;
+                    if (noItem)
+                    {
+                        it = new Item(_config);
+                        it.Title = itemTitle;
+                    }
+
+                    it.Title = itemTitle;
                     it.Description = GetXmlElementValue(entry, "summary");
                     it.PubDate = GetXmlElementValue(entry, "updated");
                     

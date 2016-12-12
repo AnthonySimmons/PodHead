@@ -34,7 +34,7 @@ namespace PodHead.Android.Views
         Label errorLabel = new Label();
         Image image = new Image();
 
-        private Item _currentItem;
+        private Item _nowPlaying;
 
         int imageSize = 50;
         
@@ -157,6 +157,7 @@ namespace PodHead.Android.Views
         private void SetProgressTime()
         {
             double perc = progressSlider.Value;
+            _nowPlaying.PercentPlayed = (int)(perc * 100.0);
             currentProgressMs = (int)(mediaPlayer.Duration * perc);
             
             mediaPlayer.SeekTo(currentProgressMs);
@@ -221,11 +222,17 @@ namespace PodHead.Android.Views
             }
         }
 
+        private void SetNowPlaying(Item item)
+        {
+            Stop();            
+            _nowPlaying = item;
+        }
+        
         public void LoadPlayer(Item item)
         {
             try
             {
-                _currentItem = item;
+                SetNowPlaying(item);
                 currentProgressMs = 0;
 
                 string uri = item.Link;
@@ -289,13 +296,14 @@ namespace PodHead.Android.Views
 
         public void Play()
         {
-            if (mediaPlayer != null && _currentItem != null)
+            if (mediaPlayer != null && _nowPlaying != null)
             {
-                _currentItem.PercentPlayed = 0;
+                _nowPlaying.PercentPlayed = 0;
                 timer.Start();
                 mediaPlayer.Start();
                 mediaPlayer.SeekTo(currentProgressMs);
                 SetMediaProgress();
+                SetNowPlayingPercentPlayed();
                 playPauseButton.Source = "Pause.png";
             }
         }
@@ -308,6 +316,7 @@ namespace PodHead.Android.Views
                 progressSlider.Value = mediaPlayer.GetPercentage();
             }
             );
+            SetNowPlayingPercentPlayed();
             progressSlider.ValueChanged += ProgressSlider_ValueChanged;
         }
         
@@ -315,6 +324,7 @@ namespace PodHead.Android.Views
         {
             if(mediaPlayer != null)
             {
+                SetNowPlayingPercentPlayed();
                 timer.Stop();
                 mediaPlayer.Pause();
                 playPauseButton.Source = "Play.png";
@@ -323,12 +333,17 @@ namespace PodHead.Android.Views
 
         public void Stop()
         {
-            if (mediaPlayer != null && _currentItem != null)
+            if (mediaPlayer != null && _nowPlaying != null)
             {
-                _currentItem.PercentPlayed = mediaPlayer.GetPercentage() * 100;
+                SetNowPlayingPercentPlayed();
                 mediaPlayer.Stop();
                 playPauseButton.Source = "Play.png";
             }
+        }
+
+        private void SetNowPlayingPercentPlayed()
+        {
+            _nowPlaying.PercentPlayed = (int)(mediaPlayer.GetPercentage() * 100);
         }
 
     }

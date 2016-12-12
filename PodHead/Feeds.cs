@@ -314,18 +314,10 @@ namespace PodHead
                     {
                         var playedItemsElement = xmlDocument.CreateElement(PlayedItems);
                         var itElement = xmlDocument.CreateElement(Item);
-                        //var titleElement = xmlDocument.CreateElement(Title);
-                        //var percentElement = xmlDocument.CreateElement(Percent);
-
-                        //titleElement.InnerText = it.Title;
-                        //percentElement.InnerText = it.PercentPlayed.ToString();
 
                         itElement.SetAttribute(Title, it.Title);
                         itElement.SetAttribute(Percent, it.PercentPlayed.ToString());
-
-                        //itElement.AppendChild(titleElement);
-                        //itElement.AppendChild(percentElement);
-
+                        
                         playedItemsElement.AppendChild(itElement);
                         subElement.AppendChild(playedItemsElement);
                     }
@@ -386,7 +378,7 @@ namespace PodHead
                             Item it = new Item(_config)
                             {
                                 Title = Convert.ToString(item.Attributes[Title].Value),
-                                PercentPlayed = Convert.ToDouble(item.Attributes[Percent].Value),
+                                PercentPlayed = Convert.ToInt32(item.Attributes[Percent].Value),
                             };
                             subscription.Items.Add(it);
                         }
