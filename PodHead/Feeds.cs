@@ -378,7 +378,7 @@ namespace PodHead
                             Item it = new Item(_config)
                             {
                                 Title = Convert.ToString(item.Attributes[Title].Value),
-                                PercentPlayed = Convert.ToInt32(item.Attributes[Percent].Value),
+                                PercentPlayed = Convert.ToDouble(item.Attributes[Percent].Value),
                             };
                             subscription.Items.Add(it);
                         }

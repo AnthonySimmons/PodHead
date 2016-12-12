@@ -12,34 +12,36 @@ using Slider = Xamarin.Forms.Slider;
 using TapGestureRecognizer = Xamarin.Forms.TapGestureRecognizer;
 
 using Device = Xamarin.Forms.Device;
+using Xamarin.Forms;
 
 namespace PodHead.Android.Views
 {
     class MediaPlayerView : Xamarin.Forms.ScrollView
     {
-        private StackLayout stackLayout = new StackLayout();
+        private StackLayout _stackLayout = new StackLayout();
+        
+        MediaPlayer _mediaPlayer;
+        Timer _timer = new Timer();
 
-        MediaPlayer mediaPlayer;
-        Timer timer = new Timer();
-
-        Image playPauseButton = new Image();
-        Image fastFowardButton = new Image();
-        Image rewindButton = new Image();
-        Slider progressSlider = new Slider();
-        Label progressLabel = new Label();
-        Label durationLabel = new Label();
-        Label titleLabel = new Label();
-        Label descriptionLabel = new Label();
-        Label dateLabel = new Label();
-        Label errorLabel = new Label();
-        Image image = new Image();
+        Image _playPauseButton = new Image();
+        Image _fastFowardButton = new Image();
+        Image _rewindButton = new Image();
+        Slider _progressSlider = new Slider();
+        Label _progressLabel = new Label();
+        Label _durationLabel = new Label();
+        Label _titleLabel = new Label();
+        Label _descriptionLabel = new Label();
+        Label _dateLabel = new Label();
+        Label _errorLabel = new Label();
+        Label _streamingLabel = new Label();
+        Image _image = new Image();
 
         private Item _nowPlaying;
 
-        int imageSize = 50;
+        private const int ImageSize = 50;
         
-        int currentProgressMs;
-        int progressStepMs = 30000;
+        private int _currentProgressMs;
+        private const int ProgressStepMs = 30000;
 
         private readonly ErrorLogger _errorLogger;
 
@@ -51,96 +53,110 @@ namespace PodHead.Android.Views
 
         private void Initialize()
         {
-            playPauseButton.Source = "Play.png";
-            playPauseButton.IsVisible = false;
-            playPauseButton.HeightRequest = playPauseButton.WidthRequest = imageSize;
-            playPauseButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => PlayPauseButton_Clicked(sender, null)));
+            _timer.Interval = 1000;
+            _timer.Elapsed += Timer_Elapsed;
 
-            progressSlider.ValueChanged += ProgressSlider_ValueChanged;
-            progressSlider.BackgroundColor = Color.Navy;
-            progressSlider.IsVisible = false;
+            _playPauseButton.Source = "Play.png";
+            _playPauseButton.IsVisible = false;
+            _playPauseButton.HeightRequest = _playPauseButton.WidthRequest = ImageSize;
+            _playPauseButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => PlayPauseButton_Clicked(sender, null)));
+
+            _progressSlider.ValueChanged += ProgressSlider_ValueChanged;
+            _progressSlider.BackgroundColor = Color.Navy;
+            _progressSlider.IsVisible = false;
             
-            titleLabel.TextColor = Color.Black;
-            titleLabel.IsVisible = false;
-            titleLabel.FontSize = 24;
-            titleLabel.HorizontalTextAlignment = Xamarin.Forms.TextAlignment.Center;
+            _titleLabel.TextColor = Color.Black;
+            _titleLabel.IsVisible = false;
+            _titleLabel.FontSize = 24;
+            _titleLabel.HorizontalTextAlignment = TextAlignment.Center;
             
-            playPauseButton.IsVisible = false;
+            _playPauseButton.IsVisible = false;
+            _playPauseButton.HorizontalOptions = LayoutOptions.CenterAndExpand;
 
-            progressLabel.TextColor = Color.Black;
-            progressLabel.IsVisible = false;
-            progressLabel.FontSize = 18;
+            _progressLabel.TextColor = Color.Black;
+            _progressLabel.IsVisible = false;
+            _progressLabel.FontSize = 18;
+            _progressLabel.HorizontalOptions = LayoutOptions.StartAndExpand;
 
-            durationLabel.TextColor = Color.Black;
-            durationLabel.IsVisible = false;
-            durationLabel.FontSize = 18;
+            _durationLabel.TextColor = Color.Black;
+            _durationLabel.IsVisible = false;
+            _durationLabel.FontSize = 18;
+            _durationLabel.HorizontalOptions = LayoutOptions.EndAndExpand;
 
-            descriptionLabel.TextColor = Color.Black;
-            descriptionLabel.IsVisible = false;
-            descriptionLabel.FontSize = 16;
+            _descriptionLabel.TextColor = Color.Black;
+            _descriptionLabel.IsVisible = false;
+            _descriptionLabel.FontSize = 16;
             
-            fastFowardButton.IsVisible = false;
-            fastFowardButton.Source = "FastForward.png";
-            fastFowardButton.HeightRequest = fastFowardButton.WidthRequest = imageSize;
-            fastFowardButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => FastFowardButton_Clicked(sender, null)));
+            _fastFowardButton.IsVisible = false;
+            _fastFowardButton.Source = "FastForward.png";
+            _fastFowardButton.HeightRequest = _fastFowardButton.WidthRequest = ImageSize;
+            _fastFowardButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => FastFowardButton_Clicked(sender, null)));
+            _fastFowardButton.HorizontalOptions = LayoutOptions.Center;
 
-            rewindButton.IsVisible = false;
-            rewindButton.Source = "Rewind.png";
-            rewindButton.HeightRequest = rewindButton.WidthRequest = imageSize;
-            rewindButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => RewindButton_Clicked(sender, null)));
+            _rewindButton.IsVisible = false;
+            _rewindButton.Source = "Rewind.png";
+            _rewindButton.HeightRequest = _rewindButton.WidthRequest = ImageSize;
+            _rewindButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => RewindButton_Clicked(sender, null)));
+            _rewindButton.HorizontalOptions = LayoutOptions.Center;
        
-            dateLabel.TextColor = Color.Black;
-            dateLabel.IsVisible = false;
+            _dateLabel.TextColor = Color.Black;
+            _dateLabel.IsVisible = false;
+
+            _streamingLabel.IsVisible = false;
+            _streamingLabel.FontSize = 18;
+            _streamingLabel.HorizontalTextAlignment = TextAlignment.Center;
+            _streamingLabel.TextColor = Color.Red;
+            _streamingLabel.Text = "Streaming";
+            _streamingLabel.HorizontalOptions = LayoutOptions.Center;
 
             var playLayout = new StackLayout()
             {
-                Orientation = Xamarin.Forms.StackOrientation.Horizontal
+                Orientation = StackOrientation.Horizontal,
             };
+
+            playLayout.Children.Add(_progressLabel);
+            playLayout.Children.Add(_rewindButton);
+            playLayout.Children.Add(_playPauseButton);
+            playLayout.Children.Add(_fastFowardButton);
+            playLayout.Children.Add(_durationLabel);
+
+            playLayout.WidthRequest = Width;
+
+            _image.MinimumHeightRequest = Height / 2;
+            _image.MinimumWidthRequest = Width / 2;
+            _image.HeightRequest = Height / 2;
+            _image.WidthRequest = Width / 2;
+
+            _errorLabel.TextColor = Color.Black;
+            _errorLabel.IsVisible = false;
             
-            playLayout.Children.Add(rewindButton);
-            playLayout.Children.Add(playPauseButton);
-            playLayout.Children.Add(fastFowardButton);
-            playLayout.WidthRequest = this.Width;
+            _stackLayout.Children.Add(_titleLabel);
+            _stackLayout.Children.Add(_descriptionLabel);
+            _stackLayout.Children.Add(_dateLabel);
+            _stackLayout.Children.Add(_streamingLabel);
+            _stackLayout.Children.Add(_image);
+            _stackLayout.Children.Add(_progressSlider);
+            
+            _stackLayout.Children.Add(playLayout);
 
-            image.HeightRequest = Width / 4;
-            image.WidthRequest = Width / 4;
+            _stackLayout.Children.Add(_errorLabel);
 
-            errorLabel.TextColor = Color.Black;
-            errorLabel.IsVisible = false;
-                        
-            var spaceBox = new Xamarin.Forms.BoxView() { WidthRequest = HeightRequest = 125, };
-            var durationLabelLayout = new StackLayout { Orientation = Xamarin.Forms.StackOrientation.Horizontal, };
-            durationLabelLayout.Children.Add(progressLabel);
-            durationLabelLayout.Children.Add(spaceBox);
-            durationLabelLayout.Children.Add(durationLabel);
-
-            stackLayout.Children.Add(titleLabel);
-            stackLayout.Children.Add(descriptionLabel);
-            stackLayout.Children.Add(dateLabel);
-            stackLayout.Children.Add(image);
-            stackLayout.Children.Add(progressSlider);
-            stackLayout.Children.Add(durationLabelLayout);
-
-            stackLayout.Children.Add(playLayout);
-
-            stackLayout.Children.Add(errorLabel);
-
-            Content = stackLayout;   
+            Content = _stackLayout;   
         }
 
         private void RewindButton_Clicked(object sender, EventArgs e)
         {
-            currentProgressMs -= progressStepMs;
-            mediaPlayer.SeekTo(currentProgressMs);
+            _currentProgressMs -= ProgressStepMs;
+            _mediaPlayer.SeekTo(_currentProgressMs);
             
             UpdateProgressTime();
             SetMediaProgress();
         }
-
+        
         private void FastFowardButton_Clicked(object sender, EventArgs e)
         {
-            currentProgressMs += progressStepMs;
-            mediaPlayer.SeekTo(currentProgressMs);
+            _currentProgressMs += ProgressStepMs;
+            _mediaPlayer.SeekTo(_currentProgressMs);
 
             UpdateProgressTime();
             SetMediaProgress();
@@ -148,7 +164,7 @@ namespace PodHead.Android.Views
 
         private void ProgressSlider_ValueChanged(object sender, Xamarin.Forms.ValueChangedEventArgs e)
         {
-            if (mediaPlayer != null)
+            if (_mediaPlayer != null)
             {
                 SetProgressTime();
             }
@@ -156,11 +172,11 @@ namespace PodHead.Android.Views
 
         private void SetProgressTime()
         {
-            double perc = progressSlider.Value;
-            _nowPlaying.PercentPlayed = (int)(perc * 100.0);
-            currentProgressMs = (int)(mediaPlayer.Duration * perc);
+            double perc = _progressSlider.Value;
+            _nowPlaying.PercentPlayed = (perc * 100.0);
+            _currentProgressMs = (int)(_mediaPlayer.Duration * perc);
             
-            mediaPlayer.SeekTo(currentProgressMs);
+            _mediaPlayer.SeekTo(_currentProgressMs);
 
             UpdateProgressTime();
         }
@@ -169,8 +185,8 @@ namespace PodHead.Android.Views
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                int progressSec = currentProgressMs / 1000;
-                progressLabel.Text = GetTimeFormat(progressSec);
+                int progressSec = _currentProgressMs / 1000;
+                _progressLabel.Text = GetTimeFormat(progressSec);
             }
             );
         }
@@ -209,9 +225,9 @@ namespace PodHead.Android.Views
 
         public void TogglePlay()
         {
-            if(mediaPlayer != null)
+            if(_mediaPlayer != null)
             {
-                if(mediaPlayer.IsPlaying)
+                if(_mediaPlayer.IsPlaying)
                 {
                     Pause();
                 }
@@ -224,56 +240,52 @@ namespace PodHead.Android.Views
 
         private void SetNowPlaying(Item item)
         {
-            Stop();            
+            if(_nowPlaying != null)
+            {
+                _nowPlaying.IsPlaying = false;
+            }
+
             _nowPlaying = item;
+            _nowPlaying.IsPlaying = true;
+
+            _progressSlider.Value = item.PercentPlayed / 100.0;
         }
         
         public void LoadPlayer(Item item)
         {
             try
-            {
-                SetNowPlaying(item);
-                currentProgressMs = 0;
+            {                
+                _titleLabel.Text = item.Title;
 
-                string uri = item.Link;
-                if (item.IsDownloaded)
+                _image.Source = new UriImageSource
                 {
-                    uri = item.FilePath;
-                }
+                    Uri = new System.Uri(item.ParentSubscription.ImageUrl),
+                    CachingEnabled = true,
+                };
 
-                mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, Uri.Parse(uri));
+                _image.MinimumHeightRequest = Height / 2;
+                _image.MinimumWidthRequest = Width / 2;
+                _image.HeightRequest = Height / 2;
+                _image.WidthRequest = Width / 2;
 
-                if (mediaPlayer == null)
-                {
-                    throw new InvalidOperationException("Cannot play media. URI: " + uri);
-                }
 
-                titleLabel.Text = item.Title;
-                mediaPlayer.SetAudioStreamType(Stream.Music);
-                //mediaPlayer.Prepare();
-                image.MinimumHeightRequest = Height / 2;
-                image.MinimumWidthRequest = Width / 2;
-                image.HeightRequest = Height / 2;
-                image.WidthRequest = Width / 2;
-                image.Source = item.ParentSubscription.ImageUrl;
+                _descriptionLabel.Text = item.Description;
+                _dateLabel.Text = item.PubDate;
+                
+                _rewindButton.IsVisible = true;
+                _fastFowardButton.IsVisible = true;
+                _dateLabel.IsVisible = true;
+                _progressLabel.IsVisible = true;
+                _playPauseButton.IsVisible = true;
+                _progressSlider.IsVisible = true;
+                _durationLabel.IsVisible = true;
+                _titleLabel.IsVisible = true;
+                _descriptionLabel.IsVisible = true;
+                _image.IsVisible = true;
 
-                durationLabel.Text = GetTimeFormat(mediaPlayer.Duration / 1000);
-                descriptionLabel.Text = item.Description;
-                dateLabel.Text = item.PubDate;
-
-                timer.Interval = 1000;
-                timer.Elapsed += Timer_Elapsed;
-
-                rewindButton.IsVisible = true;
-                fastFowardButton.IsVisible = true;
-                dateLabel.IsVisible = true;
-                progressLabel.IsVisible = true;
-                playPauseButton.IsVisible = true;
-                progressSlider.IsVisible = true;
-                durationLabel.IsVisible = true;
-                titleLabel.IsVisible = true;
-                descriptionLabel.IsVisible = true;
-                image.IsVisible = true;
+                _streamingLabel.IsVisible = !item.IsDownloaded;
+                
+                SetMediaPlayer(item);
             }
             catch(Exception ex)
             {
@@ -282,68 +294,95 @@ namespace PodHead.Android.Views
             }
         }
 
+        private void SetMediaPlayer(Item item)
+        {
+            string uri = item.Link;
+            if (item.IsDownloaded)
+            {
+                uri = item.FilePath;
+            }
+
+            Stop();
+
+            _mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, Uri.Parse(uri));
+
+            if (_mediaPlayer == null)
+            {
+                throw new InvalidOperationException("Cannot play media. URI: " + uri);
+            }
+
+            _mediaPlayer.SetAudioStreamType(Stream.Music);
+            SetNowPlaying(item);
+
+            _durationLabel.Text = GetTimeFormat(_mediaPlayer.Duration / 1000);
+        }
+
         private void DisplayError(string errorMessage)
         {
-            errorLabel.IsVisible = true;
-            errorLabel.Text = errorMessage;
+            _errorLabel.IsVisible = true;
+            _errorLabel.Text = errorMessage;
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            currentProgressMs += 1000;
+            _currentProgressMs += 1000;
+            SetNowPlayingPercentPlayed();
             UpdateProgressTime();
         }
 
         public void Play()
         {
-            if (mediaPlayer != null && _nowPlaying != null)
+            if (_mediaPlayer != null && _nowPlaying != null)
             {
                 _nowPlaying.PercentPlayed = 0;
-                timer.Start();
-                mediaPlayer.Start();
-                mediaPlayer.SeekTo(currentProgressMs);
+                _timer.Start();
+                _mediaPlayer.Start();
+                _mediaPlayer.SeekTo(_currentProgressMs);
                 SetMediaProgress();
                 SetNowPlayingPercentPlayed();
-                playPauseButton.Source = "Pause.png";
+                _playPauseButton.Source = "Pause.png";
+                _nowPlaying.IsPlaying = true;
             }
         }
 
         private void SetMediaProgress()
         {
-            progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
+            _progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
             Device.BeginInvokeOnMainThread(() =>
             {
-                progressSlider.Value = mediaPlayer.GetPercentage();
+                _progressSlider.Value = _mediaPlayer.GetPercentage();
             }
             );
             SetNowPlayingPercentPlayed();
-            progressSlider.ValueChanged += ProgressSlider_ValueChanged;
+            _progressSlider.ValueChanged += ProgressSlider_ValueChanged;
         }
         
         public void Pause()
         {
-            if(mediaPlayer != null)
+            if(_mediaPlayer != null)
             {
                 SetNowPlayingPercentPlayed();
-                timer.Stop();
-                mediaPlayer.Pause();
-                playPauseButton.Source = "Play.png";
+                _timer.Stop();
+                _mediaPlayer.Pause();
+                _playPauseButton.Source = "Play.png";
+                _nowPlaying.IsPlaying = false;
             }
         }
 
         public void Stop()
         {
-            if (mediaPlayer != null && _nowPlaying != null)
+            if (_mediaPlayer != null && _nowPlaying != null)
             {
                 SetNowPlayingPercentPlayed();
-                mediaPlayer.Stop();
-                playPauseButton.Source = "Play.png";
+                _mediaPlayer.Stop();
+                _playPauseButton.Source = "Play.png";
+                _nowPlaying.IsPlaying = false;
             }
         }
 
         private void SetNowPlayingPercentPlayed()
         {
-            _nowPlaying.PercentPlayed = (int)(mediaPlayer.GetPercentage() * 100);
+            _nowPlaying.PercentPlayed = (_mediaPlayer.GetPercentage() * 100);
         }
 
     }

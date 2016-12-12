@@ -55,11 +55,10 @@ namespace PodHead.Android
 
             _feeds.Load();
             _feeds.ParseAllFeedsAsync();
-            this.PagesChanged += HomePage_PagesChanged;
+            PagesChanged += HomePage_PagesChanged;
             savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
             searchView.ItemSelected += SubscriptionsView_ItemSelected;
             topChartsView.ItemSelected += SubscriptionsView_ItemSelected;
-            downloadsView.PlayItem += SubscriptionsView_ItemSelected;
             
             BackgroundColor = Color.White;
                         
@@ -71,8 +70,7 @@ namespace PodHead.Android
             mediaPlayerPage = new ContentPage { Content = mediaPlayerView, Title = NowPlaying };
             downloadsPage = new ContentPage { Content = downloadsView, Title = Downloads, Icon = "@drawable/icon" };
 
-            LoadSubscriptions();
-
+            
             Children.Add(subscriptionsPage);
             Children.Add(downloadsPage);
             Children.Add(mediaPlayerPage);
@@ -98,17 +96,22 @@ namespace PodHead.Android
 
         private void SubscriptionsView_ItemSelected(Item item)
         {
-            mediaPlayerView.LoadPlayer(item);
-            mediaPlayerView.Play();
+            //IsPlaying should be set after this method is called.
 
-            CurrentPage = mediaPlayerPage;
-        }
-
-        private void LoadSubscriptions()
-        {
-            savedSubscriptionsView.LoadSubscriptions(_feeds.Subscriptions);
-            _feeds.Save();
-        }
+            if (item.IsPlaying)
+            {
+                mediaPlayerView.Pause();
+            }
+            else
+            {
+                mediaPlayerView.LoadPlayer(item);
+                mediaPlayerView.Play();
+                if (item.PercentPlayed == 0)
+                {
+                    CurrentPage = mediaPlayerPage;
+                }
+            }
+        }        
                 
     }
 }

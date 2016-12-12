@@ -28,6 +28,8 @@ namespace PodHead.Android.Views
             RefreshImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { RefreshButton_Clicked(sender, null); }));
 
             Children.Insert(0, RefreshImage);
+
+            LoadSubscriptions(_feeds.Subscriptions);
         }
 
         private void Instance_SubscriptionRemoved(Subscription subscription)

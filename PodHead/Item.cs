@@ -19,6 +19,8 @@ namespace PodHead
 
     public delegate void PercentPlayedChangeEvent(Item item);
 
+    public delegate void IsPlayingChangedEvent(Item item);
+
     public class Item
     {
         private readonly IConfig _config;
@@ -43,8 +45,8 @@ namespace PodHead
         
         public int RowNum;
 
-        private int _percentPlayed;
-        public int PercentPlayed
+        private double _percentPlayed;
+        public double PercentPlayed
         {
             get
             {
@@ -52,7 +54,7 @@ namespace PodHead
             }
             set
             {
-                if(_percentPlayed != value)
+                if(Math.Abs(_percentPlayed - value) > double.Epsilon)
                 {
                     _percentPlayed = value;
                     OnPercentPlayedChanged();
@@ -67,6 +69,8 @@ namespace PodHead
         public static event DownloadRemovedEvent AnyDownloadRemoved;
 
         public event PercentPlayedChangeEvent PercentPlayedChanged;
+
+        public event IsPlayingChangedEvent IsPlayingChanged;
 
         public bool IsDownloaded
         {
@@ -114,6 +118,19 @@ namespace PodHead
             }
         }
 
+        private bool _isPlaying;
+        public bool IsPlaying
+        {
+            get { return _isPlaying; }
+            set
+            {
+                if (_isPlaying != value)
+                {
+                    _isPlaying = value;
+                    OnIsPlayingChanged();
+                }
+            }
+        }
 
 		public Item(IConfig config)
 		{
@@ -184,6 +201,15 @@ namespace PodHead
         {
             var copy = PercentPlayedChanged;
             if (copy != null)
+            {
+                copy.Invoke(this);
+            }
+        }
+
+        protected virtual void OnIsPlayingChanged()
+        {
+            var copy = IsPlayingChanged;
+            if(copy != null)
             {
                 copy.Invoke(this);
             }

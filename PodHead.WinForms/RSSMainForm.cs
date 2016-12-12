@@ -108,7 +108,7 @@ namespace PodHeadForms
             if (axWindowsMediaPlayer1.currentMedia != null && _nowPlaying != null)
             {
                 double perc = (axWindowsMediaPlayer1.Ctlcontrols.currentPosition / axWindowsMediaPlayer1.currentMedia.duration);
-                _nowPlaying.PercentPlayed = (int)(perc * 100.0);
+                _nowPlaying.PercentPlayed = (perc * 100.0);
                 UpdateDataGridRow(_nowPlaying);
             }
         }
@@ -599,7 +599,7 @@ namespace PodHeadForms
                 dataGridView1.Rows[count].Cells[ItemColumnDownloadProgress].Value = GetFileSizeBitmap(it.MbSize);
             }
 
-            dataGridView1.Rows[count].Cells[ItemColumnPlayed].Value = GetPlayedBitmap(it.PercentPlayed);
+            dataGridView1.Rows[count].Cells[ItemColumnPlayed].Value = GetPlayedBitmap((int)it.PercentPlayed);
 
             if (it.Read)
             {
@@ -725,13 +725,13 @@ namespace PodHeadForms
             return bmp;
         }
 
-        private Bitmap GetPlayedBitmap(double percent)
+        private Bitmap GetPlayedBitmap(int percent)
         {
             Bitmap bmp = new Bitmap(PlayedColumnWidth, PlayedColumnHeight);
 
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                if (percent > double.Epsilon)
+                if (percent > 0)
                 {             
                     int width = (int)(bmp.Width * (percent / 100.0));
                     g.FillRectangle(Brushes.LightBlue, 0, 0, width, bmp.Height);

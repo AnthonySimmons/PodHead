@@ -19,6 +19,7 @@ namespace PodHead.Android.Views
         protected const string DownloadButton = "DownloadButton";
         protected const string ProgressBar = "ProgressBar";
         protected const string PercentPlayedLabel = "PercentPlayedLabel";
+        protected const string PlayButton = "PlayButton";
 
         public event PlayItemEventHandler PlayItem;
         public event EventHandler BackSelected;
@@ -160,9 +161,19 @@ namespace PodHead.Android.Views
 
         protected void LoadSubscriptionItems(Subscription subscription)
         {
+            UnbindItemEvents(subscription.Items);
             SetSubscriptionText(subscription);
             LoadItems(subscription.Items);
             stackLayout.Children.Add(LoadMoreButton);
+        }
+
+        protected virtual void UnbindItemEvents(IEnumerable<Item> items)
+        {
+            foreach(Item item in items)
+            {
+                item.IsPlayingChanged -= Item_IsPlayingChanged;
+                item.DownloadProgress -= Item_DownloadProgress;
+            }
         }
 
         protected void LoadItems(IEnumerable<Item> items)
@@ -186,6 +197,8 @@ namespace PodHead.Android.Views
                     FontSize = 18,
                     HorizontalTextAlignment = TextAlignment.Center
                 };
+                item.IsPlayingChanged += Item_IsPlayingChanged;
+
                 var description = new Label() { Text = item.Description, TextColor = Color.Black };
                 
                 var playImage = new Image() { Source = "Play.png", HeightRequest = buttonSize, WidthRequest = buttonSize, };
@@ -202,7 +215,13 @@ namespace PodHead.Android.Views
                     downloadImageControl.Source = "Remove.png";
                 }
 
-                var percentPlayedLabel = new Label() { FontSize = 16, Text = item.PercentPlayed.ToString() + "%"};
+                var percentPlayedLabel = new Label
+                {
+                    FontSize = 16,
+                    TextColor = Color.Blue,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    Text = ((int)item.PercentPlayed).ToString() + "%"
+                };
                 
                 var hLayout = new StackLayout();
                 hLayout.Orientation = StackOrientation.Horizontal;
@@ -230,6 +249,7 @@ namespace PodHead.Android.Views
                     { ProgressBar, progressBarControl},
                     { DownloadButton, downloadImageControl},
                     { PercentPlayedLabel, percentPlayedLabel },
+                    { PlayButton, playImage },
                 }
                 );
 
@@ -238,9 +258,23 @@ namespace PodHead.Android.Views
             }
         }
 
+        private void Item_IsPlayingChanged(Item item)
+        {
+            UpdateIsPlaying(item);
+        }
+
         protected void Item_PercentPlayedChanged(Item item)
         {
             UpdatePercentPlayed(item);
+        }
+
+        protected virtual void UpdateIsPlaying(Item item)
+        {
+            if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(PlayButton))
+            {
+                Image playImage = ItemControls[item][PlayButton] as Image;
+                playImage.Source = item.IsPlaying ? "Pause.png" : "Play.png";
+            }
         }
 
         protected virtual void UpdatePercentPlayed(Item item)
@@ -250,7 +284,7 @@ namespace PodHead.Android.Views
                 Label percentPlayedLabel = ItemControls[item][PercentPlayedLabel] as Label;
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    percentPlayedLabel.Text = item.PercentPlayed.ToString() + "%";
+                    percentPlayedLabel.Text = ((int)item.PercentPlayed).ToString() + "%";
                 });
             }
         }
