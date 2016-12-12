@@ -6,11 +6,11 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using PodHead;
-using PodHead;
+using Android.Content.PM;
 
 namespace PodHead.Android
 {
-    [Activity(Label = "PodHead", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "PodHead", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
         public static Activity ActivityContext;

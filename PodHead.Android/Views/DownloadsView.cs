@@ -15,7 +15,8 @@ namespace PodHead.Android.Views
         }
 
         protected override void Initialize()
-        {   
+        {
+            Children.Clear();
             Item.AnyDownloadComplete += Item_AnyDownloadComplete;
             Item.AnyDownloadRemoved += Item_AnyDownloadRemoved;
             scrollView.Content = stackLayout;
