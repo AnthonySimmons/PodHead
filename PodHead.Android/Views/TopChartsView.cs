@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
 
@@ -34,14 +35,19 @@ namespace PodHead.Android.Views
 
             GenrePicker.HeightRequest = FieldHeight;
             GenrePicker.BackgroundColor = Color.Gray;
-                        
-            Children.Insert(0, GenreLabel);
-            Children.Insert(1, GenrePicker);
-            
+                                    
             LoadTopChartsGenres();
 
             //GenrePicker.SelectedIndex = GenrePicker.Items.IndexOf(PodcastCharts.PodcastGenreCodes.Keys.First());
             GenrePicker.SelectedIndexChanged += SourceGenre_SelectedIndexChanged;
+            AddControls();
+        }
+        
+
+        protected override void AddControls()
+        {
+            stackLayout.Children.Insert(0, GenreLabel);
+            stackLayout.Children.Insert(1, GenrePicker);
         }
 
         public void InitializeTopCharts()

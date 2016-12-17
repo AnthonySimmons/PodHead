@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace PodHead.Android.Views
@@ -26,10 +27,13 @@ namespace PodHead.Android.Views
             RefreshImage.Source = "Refresh.png";
             RefreshImage.WidthRequest = RefreshImage.HeightRequest = imageSize;
             RefreshImage.GestureRecognizers.Add(new TapGestureRecognizer(sender => { RefreshButton_Clicked(sender, null); }));
-
-            Children.Insert(0, RefreshImage);
-
+            
             LoadSubscriptions(_feeds.Subscriptions);
+        }
+
+        protected override void AddControls()
+        {
+            stackLayout.Children.Insert(0, RefreshImage);
         }
 
         private void Instance_SubscriptionRemoved(Subscription subscription)

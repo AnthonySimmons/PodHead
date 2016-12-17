@@ -23,6 +23,7 @@ namespace PodHead.Android
             {
                 BarTextColor = Color.White
             };
+
         }
 
         protected override void OnStart()

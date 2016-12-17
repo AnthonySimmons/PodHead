@@ -32,10 +32,15 @@ namespace PodHead.Android.Views
             searchEntry.SearchButtonPressed += SearchEntry_SearchButtonPressed;
             searchEntry.BackgroundColor = Color.Gray;
             searchEntry.TextColor = Color.White;
-            
-            Children.Insert(0, searchEntry);
+
+            AddControls();
         }
-        
+
+        protected override void AddControls()
+        {
+            stackLayout.Children.Insert(0, searchEntry);
+        }
+
 
         private void Instance_SearchResultReceived(List<Subscription> subscriptions)
         {

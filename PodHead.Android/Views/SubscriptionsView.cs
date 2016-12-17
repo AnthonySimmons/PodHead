@@ -73,6 +73,8 @@ namespace PodHead.Android.Views
             LoadSubscriptions(subscriptions);
         }
 
+        protected abstract void AddControls();
+
         public void LoadSubscriptions(IList<Subscription> subscriptions)
         {
             //Initialize ();
@@ -96,6 +98,7 @@ namespace PodHead.Android.Views
             }
             scrollView.Content = stackLayout;
             stackLayout.Children.Add(LoadMoreButton);
+            AddControls();
         }
 
 		protected void ClearImages()
