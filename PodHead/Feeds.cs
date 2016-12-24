@@ -127,7 +127,6 @@ namespace PodHead
             {
                 Subscriptions.Add(sub);
                 OnSubscriptionAdded(sub);
-                Save();
             }
         }
 
@@ -360,6 +359,8 @@ namespace PodHead
             {
                 if (File.Exists(fileName))
                 {
+                    Subscriptions.Clear();
+
                     var xmlDocument = new XmlDocument();
                     xmlDocument.Load(fileName);
 
@@ -382,8 +383,7 @@ namespace PodHead
                             };
                             subscription.Items.Add(it);
                         }
-
-                        Subscriptions.Add(subscription);
+                        AddChannel(subscription);
                     }
                     
                 }

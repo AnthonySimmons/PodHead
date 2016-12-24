@@ -333,7 +333,7 @@ namespace PodHead.Android.Views
         public void Play()
         {
             if (_mediaPlayer != null && _nowPlaying != null)
-            {
+            {                
                 _nowPlaying.PercentPlayed = 0;
                 _timer.Start();
                 _mediaPlayer.Start();
