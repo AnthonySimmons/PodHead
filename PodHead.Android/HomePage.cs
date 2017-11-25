@@ -59,6 +59,7 @@ namespace PodHead.Android
             savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
             searchView.ItemSelected += SubscriptionsView_ItemSelected;
             topChartsView.ItemSelected += SubscriptionsView_ItemSelected;
+            downloadsView.PlayItem += SubscriptionsView_ItemSelected; 
             
             BackgroundColor = Color.White;
                         
@@ -79,6 +80,7 @@ namespace PodHead.Android
 
             this.CurrentPage = subscriptionsPage;            
         }
+        
 
         private void HomePage_PagesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

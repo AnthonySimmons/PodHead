@@ -17,18 +17,18 @@ namespace PodHead.Android.Views
         protected override void Initialize()
         {
             Children.Clear();
+            
             Item.AnyDownloadComplete += Item_AnyDownloadComplete;
             Item.AnyDownloadRemoved += Item_AnyDownloadRemoved;
             scrollView.Content = stackLayout;
             Children.Add(scrollView);
         }
-
+        
         private void Item_AnyDownloadRemoved(Item item)
         {
             RemoveItemControls(item);
         }
-
-
+        
         protected void RemoveItemControls(Item item)
         {
             if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(ItemLayout))

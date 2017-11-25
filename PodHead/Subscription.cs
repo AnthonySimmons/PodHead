@@ -84,7 +84,7 @@ namespace PodHead
         {
             if(File.Exists(ImageFilePath))
             {
-                ImageLoaded = true;
+                ImageLoaded = true;                
                 ImageUrl = ImageFilePath;
             }
         }

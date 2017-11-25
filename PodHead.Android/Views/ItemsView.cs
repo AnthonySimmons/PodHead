@@ -341,6 +341,7 @@ namespace PodHead.Android.Views
                 {
                     item.DownloadProgress += Item_DownloadProgress;
                     Item.AnyDownloadComplete += Item_DownloadComplete;
+                    ItemControls[item][DownloadButton].IsVisible = false;
                     item.DownloadFile();
                 }
                 else
@@ -388,6 +389,7 @@ namespace PodHead.Android.Views
 
                     var progressBarControl = (ProgressBar)ItemControls[item][ProgressBar];
                     progressBarControl.IsVisible = false;
+                    ItemControls[item][DownloadButton].IsVisible = true;
                 }
             }
             );
@@ -416,7 +418,7 @@ namespace PodHead.Android.Views
             }
         }
 
-        private void OnPlayItem(Item it)
+        protected virtual void OnPlayItem(Item it)
         {
             var copy = PlayItem;
             if (copy != null)

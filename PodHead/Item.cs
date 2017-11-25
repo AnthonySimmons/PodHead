@@ -155,6 +155,7 @@ namespace PodHead
                 { 
                     client.DownloadProgressChanged += client_DownloadProgressChanged;
                     client.DownloadFileCompleted += client_DownloadFileCompleted;
+                    
                     client.DownloadFileAsync(new Uri(Link), FilePath);
                 }
             }

@@ -35,8 +35,8 @@ namespace PodHead.Android.Views
         Label _errorLabel = new Label();
         Label _streamingLabel = new Label();
         Image _image = new Image();
-
-        private Item _nowPlaying;
+        
+        private static Item _nowPlaying;
 
         private const int ImageSize = 50;
         
@@ -141,7 +141,18 @@ namespace PodHead.Android.Views
 
             _stackLayout.Children.Add(_errorLabel);
 
-            Content = _stackLayout;   
+            Content = _stackLayout;
+
+            InitNowPlaying();
+        }
+
+        private void InitNowPlaying()
+        {
+            if(_nowPlaying != null)
+            {
+                LoadPlayer(_nowPlaying);
+                SetNowPlaying(_nowPlaying);
+            }
         }
 
         private void RewindButton_Clicked(object sender, EventArgs e)
@@ -257,14 +268,8 @@ namespace PodHead.Android.Views
             {                
                 _titleLabel.Text = item.Title;
 
-                _image.Source = new UriImageSource
-                {
-                    Uri = new System.Uri(item.ParentSubscription.ImageUrl),
-                    CachingEnabled = true,
-                };
-
-                _image.MinimumHeightRequest = Height / 2;
-                _image.MinimumWidthRequest = Width / 2;
+                _image.Source = item.ParentSubscription.ImageUrl;
+                
                 _image.HeightRequest = Height / 2;
                 _image.WidthRequest = Width / 2;
 
