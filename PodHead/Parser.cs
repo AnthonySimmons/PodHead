@@ -223,6 +223,21 @@ namespace PodHead
             }
         }
 
+        private static bool TryGetXmlElementValue(XmlNode parentNode, string elementName, out string value)
+        {
+            try
+            {                
+                value = GetXmlElementValue(parentNode, elementName);
+                return true;
+            }
+            catch
+            {
+                //Bury
+                value = null;
+                return false;
+            }
+        }
+
         private static string GetXmlElementValue(XmlNode parentNode, string elementName)
         {
             string value = string.Empty;
@@ -305,8 +320,20 @@ namespace PodHead
                         it.Description = processDescription(GetXmlElementValue(item, "description"));
                         it.Guid = GetXmlElementValue(item, "guid");
                         it.PubDate = GetXmlElementValue(item, "pubDate");
+
+                        string durationString;
+                        if (TryGetXmlElementValue(item, "itunes:duration", out durationString))
+                        {
+                            TimeSpan durationTimeSpan;
+                            if (TimeSpan.TryParse(durationString, out durationTimeSpan))
+                            {
+                                it.Duration = (int)durationTimeSpan.TotalMilliseconds;
+                            }
+                        }
+
                         it.RowNum = counter;
                         it.ParentSubscription = sub;
+
                         it.IsLoaded = true;
                         sub.ItemsLoaded = true;
 

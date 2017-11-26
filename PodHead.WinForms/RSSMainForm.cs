@@ -108,7 +108,7 @@ namespace PodHeadForms
             if (axWindowsMediaPlayer1.currentMedia != null && _nowPlaying != null)
             {
                 double perc = (axWindowsMediaPlayer1.Ctlcontrols.currentPosition / axWindowsMediaPlayer1.currentMedia.duration);
-                _nowPlaying.PercentPlayed = (perc * 100.0);
+                _nowPlaying.PercentPlayed = perc;
                 UpdateDataGridRow(_nowPlaying);
             }
         }

@@ -13,6 +13,7 @@ using TapGestureRecognizer = Xamarin.Forms.TapGestureRecognizer;
 
 using Device = Xamarin.Forms.Device;
 using Xamarin.Forms;
+using Java.IO;
 
 namespace PodHead.Android.Views
 {
@@ -184,7 +185,7 @@ namespace PodHead.Android.Views
         private void SetProgressTime()
         {
             double perc = _progressSlider.Value;
-            _nowPlaying.PercentPlayed = (perc * 100.0);
+            _nowPlaying.PercentPlayed = perc;
             _currentProgressMs = (int)(_mediaPlayer.Duration * perc);
             
             _mediaPlayer.SeekTo(_currentProgressMs);
@@ -301,15 +302,15 @@ namespace PodHead.Android.Views
 
         private void SetMediaPlayer(Item item)
         {
-            string uri = item.Link;
+            Uri uri = Uri.Parse(item.Link);
             if (item.IsDownloaded)
             {
-                uri = item.FilePath;
+                uri = Uri.FromFile(new File(item.FilePath));
             }
 
             Stop();
-
-            _mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, Uri.Parse(uri));
+            
+            _mediaPlayer = MediaPlayer.Create(MainActivity.ActivityContext, uri);
 
             if (_mediaPlayer == null)
             {
@@ -339,11 +340,12 @@ namespace PodHead.Android.Views
         {
             if (_mediaPlayer != null && _nowPlaying != null)
             {                
-                _nowPlaying.PercentPlayed = 0;
+                _nowPlaying.Position = 0;
                 _timer.Start();
                 _mediaPlayer.Start();
                 _mediaPlayer.SeekTo(_currentProgressMs);
                 SetMediaProgress();
+                _nowPlaying.Duration = _mediaPlayer.Duration;
                 SetNowPlayingPercentPlayed();
                 _playPauseButton.Source = "Pause.png";
                 _nowPlaying.IsPlaying = true;
@@ -387,7 +389,7 @@ namespace PodHead.Android.Views
 
         private void SetNowPlayingPercentPlayed()
         {
-            _nowPlaying.PercentPlayed = (_mediaPlayer.GetPercentage() * 100);
+            _nowPlaying.PercentPlayed = _mediaPlayer.GetPercentage();
         }
 
     }

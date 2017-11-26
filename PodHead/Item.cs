@@ -45,20 +45,67 @@ namespace PodHead
         
         public int RowNum;
 
-        private double _percentPlayed;
+        private int _position;
+        public int Position
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                if(value != _position)
+                {
+                    _position = value;
+                    OnPercentPlayedChanged();
+                }
+            }
+        }
+
+        public string GetFormattedDurationString()
+        {
+            return TimeSpan.FromMilliseconds(Duration).ToString(@"hh\:mm\:ss");
+        }
+
+        public string GetFormattedPositionString()
+        {
+            return TimeSpan.FromMilliseconds(Position).ToString(@"hh\:mm\:ss");
+        }
+        
+        /// <summary>
+        /// Media duration in Milliseconds.
+        /// </summary>
+        private int _duration;
+        public int Duration
+        {
+            get
+            {
+                return _duration;
+            }
+            set
+            {
+                if(value != _duration)
+                {
+                    _duration = value;
+                    OnPercentPlayedChanged();
+                }
+            }
+        }
+
         public double PercentPlayed
         {
             get
             {
-                return _percentPlayed;
+                if(Duration == 0)
+                {
+                    return 0;
+                }
+                return 100.0 * (double)Position / (double)Duration;
             }
             set
             {
-                if(Math.Abs(_percentPlayed - value) > double.Epsilon)
-                {
-                    _percentPlayed = value;
-                    OnPercentPlayedChanged();
-                }
+                Position = (int)(value * Duration);
+                OnPercentPlayedChanged();
             }
         }
 
@@ -251,8 +298,19 @@ namespace PodHead
             if (!string.IsNullOrEmpty(filename))
             {
                 cleanFileName = filename.Replace(":", "").Replace("\\", "").Replace("/", "");
+                cleanFileName = RemoveChars(cleanFileName, Path.GetInvalidFileNameChars());
+                cleanFileName = RemoveChars(cleanFileName, Path.GetInvalidPathChars());
             }
             return cleanFileName;
+        }
+
+        private string RemoveChars(string input, IEnumerable<char> charsToRemove)
+        {
+            foreach(char c in charsToRemove)
+            {
+                input = input.Replace(c.ToString(), string.Empty);
+            }
+            return input;
         }
         
 

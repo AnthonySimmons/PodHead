@@ -24,7 +24,8 @@ namespace PodHead
         private const string PlayedItems = "PlayedItems";
         private const string Item = "Item";
         private const string Title = "Title";
-        private const string Percent = "Percent";
+        private const string Duration = "Duration";
+        private const string Position = "Position";
 
         private readonly IConfig _config;
 
@@ -293,7 +294,7 @@ namespace PodHead
 
                 var podHeadElement = xmlDocument.CreateElement(PodHead);
 
-                foreach(Subscription sub in Subscriptions)
+                foreach(Subscription sub in Subscriptions.ToList())
                 {
                     var subElement = xmlDocument.CreateElement(Subscription);
 
@@ -315,8 +316,8 @@ namespace PodHead
                         var itElement = xmlDocument.CreateElement(Item);
 
                         itElement.SetAttribute(Title, it.Title);
-                        itElement.SetAttribute(Percent, it.PercentPlayed.ToString());
-                        
+                        itElement.SetAttribute(Duration, it.Duration.ToString());
+                        itElement.SetAttribute(Position, it.Position.ToString());
                         playedItemsElement.AppendChild(itElement);
                         subElement.AppendChild(playedItemsElement);
                     }
@@ -379,7 +380,8 @@ namespace PodHead
                             Item it = new Item(_config)
                             {
                                 Title = Convert.ToString(item.Attributes[Title].Value),
-                                PercentPlayed = Convert.ToDouble(item.Attributes[Percent].Value),
+                                Duration = Convert.ToInt32(item.Attributes[Duration].Value),
+                                Position = Convert.ToInt32(item.Attributes[Position].Value),
                             };
                             subscription.Items.Add(it);
                         }

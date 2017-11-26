@@ -20,7 +20,7 @@ namespace PodHead
     {
         
 
-        public static Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int> {
+        public static readonly Dictionary<string, int> PodcastGenreCodes = new Dictionary<string, int> {
             { "All", 0 },
 			{ "Arts", 1301 },
 			{ "Business", 1321 },

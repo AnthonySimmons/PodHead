@@ -19,6 +19,8 @@ namespace PodHead.Android.Views
         protected const string DownloadButton = "DownloadButton";
         protected const string ProgressBar = "ProgressBar";
         protected const string PercentPlayedLabel = "PercentPlayedLabel";
+        protected const string DurationLabel = "DurationLabel";
+        protected const string FileSizeLabel = "FileSizeLabel";
         protected const string PlayButton = "PlayButton";
 
         public event PlayItemEventHandler PlayItem;
@@ -147,15 +149,32 @@ namespace PodHead.Android.Views
             image.HeightRequest = ImageSize;
             image.WidthRequest = ImageSize;
             image.Source = subscription.ImageUrl;
-
+            
             var description = new Label();
             description.TextColor = Color.Black;
             description.Text = subscription.Description;
+
+
+            TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += (s, e) => {
+                Device.OpenUri(new Uri(((Label)s).Text));
+            };
+
+            var siteLinkLabel = new Label();
+            siteLinkLabel.TextColor = Color.Blue;
+            siteLinkLabel.Text = subscription.SiteLink;
+            siteLinkLabel.GestureRecognizers.Add(tapGestureRecognizer);
             
+            var rssLinkLabel = new Label();
+            rssLinkLabel.TextColor = Color.Blue;
+            rssLinkLabel.Text = subscription.RssLink;
+            rssLinkLabel.GestureRecognizers.Add(tapGestureRecognizer);
+
             stackLayout.Children.Add(subscriptionTitle);
             stackLayout.Children.Add(image);
             stackLayout.Children.Add(description);
-            
+            stackLayout.Children.Add(siteLinkLabel);
+            stackLayout.Children.Add(rssLinkLabel);
         }
 
 
@@ -220,15 +239,46 @@ namespace PodHead.Android.Views
                     FontSize = 16,
                     TextColor = Color.Blue,
                     HorizontalTextAlignment = TextAlignment.Center,
-                    Text = ((int)item.PercentPlayed).ToString() + "%"
+                    Text = ((int)item.PercentPlayed).ToString() + "% Played"
                 };
-                
+
+                var durationLabel = new Label
+                {
+                    FontSize = 16,
+                    TextColor = Color.Blue,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    Text = string.Format("{0}/{1}", item.GetFormattedPositionString(), item.GetFormattedDurationString())
+                };
+
+                var fileSizeLabel = new Label
+                {
+                    FontSize = 16,
+                    TextColor = Color.Black,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                };
+
+                if(item.IsDownloaded)
+                {
+                    fileSizeLabel.Text = item.GetFileSizeMb() + " Mb";
+                }
+
                 var hLayout = new StackLayout();
                 hLayout.Orientation = StackOrientation.Horizontal;
                 hLayout.Children.Add(playImage);
                 hLayout.Children.Add(downloadImageControl);
-                hLayout.Children.Add(percentPlayedLabel);
-            
+
+                var infoLayoutHorizontal = new StackLayout();
+                infoLayoutHorizontal.Orientation = StackOrientation.Horizontal;
+                infoLayoutHorizontal.Children.Add(durationLabel);
+                infoLayoutHorizontal.Children.Add(percentPlayedLabel);
+
+                var infoLayoutVertical = new StackLayout();
+                infoLayoutVertical.Orientation = StackOrientation.Vertical;
+                infoLayoutVertical.Children.Add(infoLayoutHorizontal);
+                infoLayoutVertical.Children.Add(fileSizeLabel);
+
+                hLayout.Children.Add(infoLayoutVertical);
+
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
                 var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
@@ -249,7 +299,9 @@ namespace PodHead.Android.Views
                     { ProgressBar, progressBarControl},
                     { DownloadButton, downloadImageControl},
                     { PercentPlayedLabel, percentPlayedLabel },
+                    { DurationLabel, durationLabel },
                     { PlayButton, playImage },
+                    { FileSizeLabel, fileSizeLabel }
                 }
                 );
 
@@ -281,10 +333,12 @@ namespace PodHead.Android.Views
         {
             if(ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(PercentPlayedLabel))
             {
+                Label positionLabel = ItemControls[item][DurationLabel] as Label;
                 Label percentPlayedLabel = ItemControls[item][PercentPlayedLabel] as Label;
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    percentPlayedLabel.Text = ((int)item.PercentPlayed).ToString() + "%";
+                    positionLabel.Text = string.Format("{0}/{1}", item.GetFormattedPositionString(), item.GetFormattedDurationString());
+                    percentPlayedLabel.Text = ((int)item.PercentPlayed).ToString() + "% Played";
                 });
             }
         }
@@ -370,6 +424,11 @@ namespace PodHead.Android.Views
                         //downloadButton.Text = "Download";
                         downloadButtonControl.Source = "Download.png";
                     }
+                    if(itemControls.ContainsKey(FileSizeLabel))
+                    {
+                        var fileSizeLabel = (Label)itemControls[FileSizeLabel];
+                        fileSizeLabel.Text = string.Empty;
+                    }
                 }
             }
             );
@@ -390,6 +449,8 @@ namespace PodHead.Android.Views
                     var progressBarControl = (ProgressBar)ItemControls[item][ProgressBar];
                     progressBarControl.IsVisible = false;
                     ItemControls[item][DownloadButton].IsVisible = true;
+                    Label fileSizeLabel = ItemControls[item][FileSizeLabel] as Label;
+                    fileSizeLabel.Text = item.GetFileSizeMb() + " Mb";
                 }
             }
             );
