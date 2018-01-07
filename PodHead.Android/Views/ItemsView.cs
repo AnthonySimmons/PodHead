@@ -90,7 +90,7 @@ namespace PodHead.Android.Views
 
         private void LoadMoreButton_Clicked(object sender, EventArgs e)
         {
-            _subscription.MaxItems += 10;
+            _subscription.MaxItems += 20;
             _parser.LoadSubscriptionAsync(_subscription);
         }
 

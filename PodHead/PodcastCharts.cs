@@ -72,7 +72,7 @@ namespace PodHead
 
         public string Genre { get; set; }
 
-        public const int DefaultLimit = 10;
+        public const int DefaultLimit = 20;
 
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 

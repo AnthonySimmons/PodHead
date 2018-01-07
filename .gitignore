@@ -4,3 +4,4 @@
 *.user
 **/publish/**
 **/packages/**
+*.vs/*

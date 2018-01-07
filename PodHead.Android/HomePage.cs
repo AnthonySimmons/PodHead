@@ -1,12 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using PodHead;
-using PodHead.Android.Views;
-
+﻿using PodHead.Android.Views;
 using Xamarin.Forms;
 
 namespace PodHead.Android

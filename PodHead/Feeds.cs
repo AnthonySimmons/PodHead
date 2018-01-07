@@ -368,12 +368,13 @@ namespace PodHead
                     var subscriptionElements = xmlDocument.GetElementsByTagName(Subscription);
                     foreach(XmlElement subElement in subscriptionElements)
                     {
-                        Subscription subscription = new Subscription(_config);
+                        Subscription subscription = new Subscription(_config)
+                        {
+                            Category = Convert.ToString(subElement[CategoryName].InnerText),
+                            Title = Convert.ToString(subElement[SubscriptionName].InnerText),
+                            RssLink = Convert.ToString(subElement[SubscriptionUrl].InnerText)
+                        };
 
-                        subscription.Category = Convert.ToString(subElement[CategoryName].InnerText);
-                        subscription.Title = Convert.ToString(subElement[SubscriptionName].InnerText);
-                        subscription.RssLink = Convert.ToString(subElement[SubscriptionUrl].InnerText);
-                        
                         var playedItems = subElement.GetElementsByTagName(Item);
                         foreach(XmlNode item in playedItems)
                         {

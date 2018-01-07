@@ -66,7 +66,7 @@ namespace PodHead.Android.Views
 
         protected override void LoadMore()
         {
-            PodcastSearch.Limit += 10;
+            PodcastSearch.Limit += 20;
             PerformSearch();
         }
 

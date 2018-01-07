@@ -1,5 +1,5 @@
 using System.IO;
-using PodHead;
+using System;
 
 namespace PodHead.Android
 {
@@ -30,13 +30,13 @@ namespace PodHead.Android
             }
         }
 
-        private const string AndroidFolder = @"/sdcard/Android/data/PodHead.Android.PodHead.Android";
+        private static readonly string AndroidFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);//@"/sdcard/Android/data/PodHead.Android.PodHead.Android";
 
         public string DownloadFolder
         {
             get
             {
-                var path = Path.Combine(AndroidFolder, "PodHead", "Music");
+                var path = Path.Combine(AndroidFolder, "PodHead", "Downloads");
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);

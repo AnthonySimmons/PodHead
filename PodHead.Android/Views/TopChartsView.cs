@@ -57,7 +57,7 @@ namespace PodHead.Android.Views
 
         protected override void LoadMore()
         {
-            _podcastCharts.Limit += 10;
+            _podcastCharts.Limit += 20;
             LoadTopChartsAsync();
         }
 
