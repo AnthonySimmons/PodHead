@@ -72,7 +72,7 @@ namespace PodHead
 
         public string Genre { get; set; }
 
-        public const int DefaultLimit = 20;
+        public const int DefaultLimit = 10;
 
         public event PodcastSourceUpdateEventHandler PodcastSourceUpdated;
 
@@ -258,9 +258,9 @@ namespace PodHead
             var podcastId = GetPodcastId(podcastItem.Link);
             var podcastInfoJson = GetPodcastInfoJson(podcastId);
             var subscriptions = DeserializeSubscriptions(podcastInfoJson, _config, _parser);
-            var sub = subscriptions.First();
+            var sub = subscriptions.FirstOrDefault();
             
-            if (Podcasts.FirstOrDefault(p => p.Title == sub.Title) == null)
+            if (sub != null && Podcasts.FirstOrDefault(p => p.Title == sub.Title) == null)
             {
                 Podcasts.Add(sub);
             }

@@ -45,11 +45,30 @@ namespace PodHead.Android.Views
         private const int ProgressStepMs = 30000;
 
         private readonly ErrorLogger _errorLogger;
+        private readonly Parser _parser;
+        private readonly Feeds _feeds;
 
         public MediaPlayerView()
         {
             _errorLogger = ErrorLogger.Get(Config.Instance);
+            _parser = Parser.Get(Config.Instance);
+            _feeds = Feeds.Get(_parser, Config.Instance);
+            _feeds.AllFeedsParsed += Feeds_AllFeedsParsed;
+            
             Initialize();
+        }
+
+        private void Feeds_AllFeedsParsed(object sender, EventArgs e)
+        {
+            LoadNowPlaying();            
+        }
+
+        private void LoadNowPlaying()
+        {
+            if (_feeds.NowPlaying != null)
+            {
+                LoadPlayer(_feeds.NowPlaying);
+            }
         }
 
         private void Initialize()
@@ -290,6 +309,8 @@ namespace PodHead.Android.Views
                 _image.IsVisible = true;
 
                 _streamingLabel.IsVisible = !item.IsDownloaded;
+
+                _feeds.NowPlaying = item;
                 
                 SetMediaPlayer(item);
             }

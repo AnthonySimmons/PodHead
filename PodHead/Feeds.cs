@@ -26,6 +26,7 @@ namespace PodHead
         private const string Title = "Title";
         private const string Duration = "Duration";
         private const string Position = "Position";
+        private const string IsNowPlaying = "IsNowPlaying";
 
         private readonly IConfig _config;
 
@@ -38,6 +39,17 @@ namespace PodHead
         private static Feeds _instance;
 
         private readonly ErrorLogger _errorLogger;
+
+        private Item _nowPlaying;
+        public Item NowPlaying
+        {
+            get { return _nowPlaying; }
+            set
+            {
+                _nowPlaying = value;
+                _nowPlaying.IsNowPlaying = true;
+            }
+        }
 
         public static Feeds Get(Parser parser, IConfig config)
         {
@@ -161,6 +173,8 @@ namespace PodHead
             OnAllFeedsParsed();
 
         }
+        
+
         int subsParsed = 0;
         
         private void OnSubscriptionRemoved(Subscription subscription)
@@ -293,7 +307,7 @@ namespace PodHead
                 xmlDocument.PreserveWhitespace = true;
 
                 var podHeadElement = xmlDocument.CreateElement(PodHead);
-
+                
                 foreach(Subscription sub in Subscriptions.ToList())
                 {
                     var subElement = xmlDocument.CreateElement(Subscription);
@@ -318,6 +332,7 @@ namespace PodHead
                         itElement.SetAttribute(Title, it.Title);
                         itElement.SetAttribute(Duration, it.Duration.ToString());
                         itElement.SetAttribute(Position, it.Position.ToString());
+                        itElement.SetAttribute(IsNowPlaying, it.IsNowPlaying.ToString());
                         playedItemsElement.AppendChild(itElement);
                         subElement.AppendChild(playedItemsElement);
                     }
@@ -347,6 +362,7 @@ namespace PodHead
                 _errorLogger.Log(ex);
             }
         }
+        
 
         public void Load()
         {
@@ -364,7 +380,7 @@ namespace PodHead
 
                     var xmlDocument = new XmlDocument();
                     xmlDocument.Load(fileName);
-
+                    
                     var subscriptionElements = xmlDocument.GetElementsByTagName(Subscription);
                     foreach(XmlElement subElement in subscriptionElements)
                     {
@@ -383,8 +399,14 @@ namespace PodHead
                                 Title = Convert.ToString(item.Attributes[Title].Value),
                                 Duration = Convert.ToInt32(item.Attributes[Duration].Value),
                                 Position = Convert.ToInt32(item.Attributes[Position].Value),
+                                IsNowPlaying = Convert.ToBoolean(item.Attributes[IsNowPlaying].Value)
                             };
                             subscription.Items.Add(it);
+
+                            if(it.IsNowPlaying)
+                            {
+                                NowPlaying = it;
+                            }
                         }
                         AddChannel(subscription);
                     }

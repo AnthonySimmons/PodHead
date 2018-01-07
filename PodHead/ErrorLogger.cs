@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace PodHead
@@ -45,18 +43,11 @@ namespace PodHead
 
         public void Log(Exception ex)
         {
-            string msg = string.Empty;
             try
             {
                 if (ex != null)
                 {
-                    msg = ex.Message;
-                    if (ex.InnerException != null)
-                    {
-                        msg += "\n\n " + ex.InnerException.Message;
-                    }
-                    msg += "\n\n " + ex.StackTrace;
-                    Log(msg);
+                    Log(ex.ToString());
                 }
             }
             catch { }

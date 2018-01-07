@@ -85,7 +85,9 @@ namespace PodHead.Android
 
         private void ErrorLogger_ErrorFound(string message)
         {
+#if DEBUG
             DisplayAlert("Error", message, "Cancel");
+#endif
         }
 
         private void SubscriptionsView_ItemSelected(Item item)

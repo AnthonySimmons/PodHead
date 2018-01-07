@@ -30,7 +30,11 @@ namespace PodHead.Android
             }
         }
 
-        private static readonly string AndroidFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);//@"/sdcard/Android/data/PodHead.Android.PodHead.Android";
+#if DEBUG
+        private static readonly string AndroidFolder = @"/sdcard/Android/data/PodHead.Android.PodHead.Android";
+#else
+        private static readonly string AndroidFolder = /*Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+#endif
 
         public string DownloadFolder
         {

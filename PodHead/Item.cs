@@ -164,6 +164,8 @@ namespace PodHead
                 }
             }
         }
+                
+        public bool IsNowPlaying { get; set; }
 
         private bool _isPlaying;
         public bool IsPlaying
