@@ -281,9 +281,17 @@ namespace PodHead.Android.Views
 
             _progressSlider.Value = item.PercentPlayed / 100.0;
         }
-        
+
         public void LoadPlayer(Item item)
         {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                LoadItemInPlayer(item);
+            });
+        }
+
+        private void LoadItemInPlayer(Item item)
+        { 
             try
             {                
                 _titleLabel.Text = item.Title;

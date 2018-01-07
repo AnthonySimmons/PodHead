@@ -20,6 +20,7 @@ namespace PodHead.Android.Views
 
         protected StackLayout stackLayout = new StackLayout();
         protected ItemsView itemsView;
+        private Label _noResultsLabel;
         protected readonly Parser _parser;
         protected readonly Feeds _feeds;
         
@@ -87,9 +88,9 @@ namespace PodHead.Android.Views
             _subscriptions = subscriptions;
             if(subscriptions.Count == 0)
             {
-                var noResultsLabel = new Label();
-                noResultsLabel.Text = "No Results";
-                stackLayout.Children.Add(noResultsLabel);
+                _noResultsLabel = new Label();
+                _noResultsLabel.Text = "No Results";
+                stackLayout.Children.Add(_noResultsLabel);
             }
 
             foreach (var sub in subscriptions)
@@ -113,10 +114,19 @@ namespace PodHead.Android.Views
 			ImageList.Clear ();
 		}
 
+        private void RemoveNoResultsLabel()
+        {
+            if (_noResultsLabel != null)
+            {
+                stackLayout.Children.Remove(_noResultsLabel);
+            }
+        }
+
         protected void AddSubscription(Subscription sub)
         {
             if (!SubscriptionControls.ContainsKey(sub))
             {
+                RemoveNoResultsLabel();
                 int boxHeight = 2;
                 var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
                 

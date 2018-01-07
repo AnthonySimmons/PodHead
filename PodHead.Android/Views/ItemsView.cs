@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-
-using Android.Widget;
-
 using Xamarin.Forms;
-using PodHead;
 using ProgressBar = Xamarin.Forms.ProgressBar;
 using Button = Xamarin.Forms.Button;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace PodHead.Android.Views
 {
@@ -46,7 +43,7 @@ namespace PodHead.Android.Views
 
         private readonly Parser _parser;
         private readonly Feeds _feeds;
-
+        
         public ItemsView(Feeds feeds, Parser parser)
         {
             _feeds = feeds;
@@ -206,6 +203,14 @@ namespace PodHead.Android.Views
         }
 
         protected void InsertItem(Item item, int index)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                InsertItemInView(item, index);
+            });
+        }
+
+        protected void InsertItemInView(Item item, int index)
         {
             if (!ItemControls.ContainsKey(item))
             {
@@ -386,6 +391,19 @@ namespace PodHead.Android.Views
             }
         }
 
+        private void DeleteDownload(Item item)
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                bool result = await App.Current.MainPage.DisplayAlert("PodHead", "Delete Download?", "Yes", "No");
+                if(result)
+                {
+                    Item.AnyDownloadRemoved += Item_AnyDownloadRemoved;
+                    item.DeleteFile();
+                }
+            });
+        }
+
         private void DownloadButton_Clicked(object sender, EventArgs e)
         {
             var item = ((View)sender).BindingContext as Item;
@@ -400,8 +418,7 @@ namespace PodHead.Android.Views
                 }
                 else
                 {
-                    Item.AnyDownloadRemoved += Item_AnyDownloadRemoved;
-                    item.DeleteFile();
+                    DeleteDownload(item);
                 }
             }
         }

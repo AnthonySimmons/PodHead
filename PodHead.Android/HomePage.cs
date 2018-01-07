@@ -1,4 +1,5 @@
 ﻿using PodHead.Android.Views;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace PodHead.Android
@@ -38,7 +39,6 @@ namespace PodHead.Android
             Initialize();
         }
 
-        
         private void Initialize()
         {
             downloadsView = new DownloadsView(_feeds, _parser);

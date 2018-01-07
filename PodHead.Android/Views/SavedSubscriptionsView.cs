@@ -55,7 +55,10 @@ namespace PodHead.Android.Views
 
         private void Instance_SubscriptionAdded(Subscription subscription)
         {
-            AddSubscription(subscription);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                AddSubscription(subscription);
+            });
         }
 
         protected override void LoadMore()

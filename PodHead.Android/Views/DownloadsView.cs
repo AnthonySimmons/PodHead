@@ -1,14 +1,12 @@
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PodHead;
+using Xamarin.Forms;
 
 namespace PodHead.Android.Views
 {
     class DownloadsView : ItemsView
     {
-        public DownloadsView(Feeds feeds, Parser parser) 
+        public DownloadsView(Feeds feeds, Parser parser)
             : base(feeds, parser)
         {
             Initialize();
@@ -31,17 +29,20 @@ namespace PodHead.Android.Views
         
         protected void RemoveItemControls(Item item)
         {
-            if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(ItemLayout))
+            Device.BeginInvokeOnMainThread(() =>
             {
-                var itemLayoutControl = ItemControls[item][ItemLayout];
-                Dictionary<string, Xamarin.Forms.View> view;
-                item.PercentPlayedChanged -= Item_PercentPlayedChanged;
-                ItemControls.TryRemove(item, out view);
-                if (stackLayout.Children.Contains(itemLayoutControl))
+                if (ItemControls.ContainsKey(item) && ItemControls[item].ContainsKey(ItemLayout))
                 {
-                    stackLayout.Children.Remove(itemLayoutControl);
+                    var itemLayoutControl = ItemControls[item][ItemLayout];
+                    Dictionary<string, Xamarin.Forms.View> view;
+                    item.PercentPlayedChanged -= Item_PercentPlayedChanged;
+                    ItemControls.TryRemove(item, out view);
+                    if (stackLayout.Children.Contains(itemLayoutControl))
+                    {
+                        stackLayout.Children.Remove(itemLayoutControl);
+                    }
                 }
-            }
+            });
         }
 
         private void Item_AnyDownloadComplete(Item item)
