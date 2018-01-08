@@ -324,7 +324,7 @@ namespace PodHead
                     subElement.AppendChild(subNameElement);
                     subElement.AppendChild(subUrlElement);
 
-                    foreach(Item it in sub.GetPlayed())
+                    foreach(Item it in sub.GetPlayed().ToList())
                     {
                         var playedItemsElement = xmlDocument.CreateElement(PlayedItems);
                         var itElement = xmlDocument.CreateElement(Item);

@@ -108,6 +108,18 @@ namespace PodHead.Android
             Feeds feeds = Feeds.Get(parser, Config.Instance);
             feeds.Save();            
         }
+
+        public override void OnBackPressed()
+        {
+            if (HomePage.HasPreviousPages)
+            {
+                App.Current.MainPage.SendBackButtonPressed();
+            }
+            else
+            {
+                base.OnBackPressed();
+            }
+        }
     }
 }
 

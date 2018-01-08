@@ -1,5 +1,5 @@
 ﻿using PodHead.Android.Views;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace PodHead.Android
@@ -29,6 +29,20 @@ namespace PodHead.Android
         private readonly ErrorLogger _errorLogger;
         private readonly IConfig _config;
 
+        private static readonly Stack<Page> _previousPages = new Stack<Page>();
+
+        public static bool HasPreviousPages
+        {
+            get
+            {
+                //The "current" page will always be a "previous" page.
+                return _previousPages.Count > 1 || IsOnItemView;
+            }
+        }
+
+        public static bool IsOnItemView { get; set; }
+                
+
         public HomePage()
         {
             _config = Config.Instance;
@@ -41,6 +55,7 @@ namespace PodHead.Android
 
         private void Initialize()
         {
+            _previousPages.Clear();
             downloadsView = new DownloadsView(_feeds, _parser);
 
             _errorLogger.ErrorFound += ErrorLogger_ErrorFound;
@@ -48,6 +63,7 @@ namespace PodHead.Android
             _feeds.Load();
             _feeds.ParseAllFeedsAsync();
             PagesChanged += HomePage_PagesChanged;
+            CurrentPageChanged += HomePage_CurrentPageChanged;
             savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
             searchView.ItemSelected += SubscriptionsView_ItemSelected;
             topChartsView.ItemSelected += SubscriptionsView_ItemSelected;
@@ -72,7 +88,58 @@ namespace PodHead.Android
 
             this.CurrentPage = subscriptionsPage;            
         }
-        
+
+        private void HomePage_CurrentPageChanged(object sender, System.EventArgs e)
+        {
+            if (_previousPages.Count == 0 || !IsCurrentPageThePreviousPage())
+            {
+                _previousPages.Push(CurrentPage);
+            }
+        }
+
+        private bool IsCurrentPageThePreviousPage()
+        {
+            if (_previousPages.Count == 0)
+            {
+                return false;
+            }
+
+            ContentPage currentContentPage = CurrentPage as ContentPage;
+            ContentPage previousContentPage = _previousPages.Peek() as ContentPage;
+            if(currentContentPage != null && previousContentPage != null)
+            {
+                return Equals(currentContentPage.Content.GetType(), previousContentPage.Content.GetType());
+            }
+            return false;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (!NotifySubscriptionOnBackPressed())
+            {
+                if (_previousPages.Count >= 2)
+                {
+                    _previousPages.Pop(); //The First "previous" is the current page.
+                    Page previousPage = _previousPages.Pop();
+                    CurrentPage = previousPage;
+                }
+            }
+            return base.OnBackButtonPressed();
+        }
+
+        private bool NotifySubscriptionOnBackPressed()
+        {
+            ContentPage currentContentPage = CurrentPage as ContentPage;
+            if (currentContentPage != null)
+            {
+                SubscriptionsView currentSubscriptionView = currentContentPage.Content as SubscriptionsView;
+                if (currentSubscriptionView != null)
+                {
+                    return currentSubscriptionView.OnBackButtonPressed();
+                }
+            }
+            return false;
+        }
 
         private void HomePage_PagesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

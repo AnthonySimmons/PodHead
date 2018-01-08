@@ -78,6 +78,7 @@ namespace PodHead.Android.Views
 
         public void LoadSubscriptions(IList<Subscription> subscriptions)
         {
+            HomePage.IsOnItemView = false;
             //Initialize ();
             stackLayout.Children.Clear ();
             SubscriptionControls.Clear();
@@ -184,6 +185,24 @@ namespace PodHead.Android.Views
             }
         }
 
+        public virtual bool OnBackButtonPressed()
+        {
+            if(IsShowingItemsView)
+            {
+                OnBackSelected();
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsShowingItemsView
+        {
+            get
+            {
+                return scrollView.Content is ItemsView;
+            }
+        }
+
         private void ViewButton_Clicked(object sender)
         {
             var sub = ((View)sender).BindingContext as Subscription;
@@ -192,6 +211,7 @@ namespace PodHead.Android.Views
                 RefreshImage.IsVisible = false;
                 itemsView.IsVisible = true;
                 //progressBar.IsVisible = true;
+                HomePage.IsOnItemView = true;
                 scrollView.Content = itemsView;
                 itemsView.LoadSubscription(sub);
             }
@@ -241,9 +261,14 @@ namespace PodHead.Android.Views
 
         private void ItemsView_BackSelected(object sender, EventArgs e)
         {
+            OnBackSelected();
+        }
+
+        protected virtual void OnBackSelected()
+        {
             RefreshImage.IsVisible = true;
             scrollView.Content = stackLayout;
-			LoadSubscriptions(_subscriptions);
+            LoadSubscriptions(_subscriptions);
         }
 
         private void ItemsView_PlayItem(Item item)
