@@ -31,12 +31,17 @@ namespace PodHead.Android
 
         private static readonly Stack<Page> _previousPages = new Stack<Page>();
 
+        private static readonly object _pageLock = new object();
+
         public static bool HasPreviousPages
         {
             get
             {
-                //The "current" page will always be a "previous" page.
-                return _previousPages.Count > 1 || IsOnItemView;
+                lock (_pageLock)
+                {
+                    //The "current" page will always be a "previous" page.
+                    return _previousPages.Count > 1 || IsOnItemView;
+                }
             }
         }
 
@@ -55,7 +60,10 @@ namespace PodHead.Android
 
         private void Initialize()
         {
-            _previousPages.Clear();
+            lock (_pageLock)
+            {
+                _previousPages.Clear();
+            }
             downloadsView = new DownloadsView(_feeds, _parser);
 
             _errorLogger.ErrorFound += ErrorLogger_ErrorFound;
@@ -91,40 +99,49 @@ namespace PodHead.Android
 
         private void HomePage_CurrentPageChanged(object sender, System.EventArgs e)
         {
-            if (_previousPages.Count == 0 || !IsCurrentPageThePreviousPage())
+            lock (_pageLock)
             {
-                _previousPages.Push(CurrentPage);
+                if (_previousPages.Count == 0 || !IsCurrentPageThePreviousPage())
+                {
+                    _previousPages.Push(CurrentPage);
+                }
             }
         }
 
         private bool IsCurrentPageThePreviousPage()
         {
-            if (_previousPages.Count == 0)
+            lock (_pageLock)
             {
+                if (_previousPages.Count == 0)
+                {
+                    return false;
+                }
+
+                ContentPage currentContentPage = CurrentPage as ContentPage;
+                ContentPage previousContentPage = _previousPages.Peek() as ContentPage;
+                if (currentContentPage != null && previousContentPage != null)
+                {
+                    return Equals(currentContentPage.Content.GetType(), previousContentPage.Content.GetType());
+                }
                 return false;
             }
-
-            ContentPage currentContentPage = CurrentPage as ContentPage;
-            ContentPage previousContentPage = _previousPages.Peek() as ContentPage;
-            if(currentContentPage != null && previousContentPage != null)
-            {
-                return Equals(currentContentPage.Content.GetType(), previousContentPage.Content.GetType());
-            }
-            return false;
         }
 
         protected override bool OnBackButtonPressed()
         {
-            if (!NotifySubscriptionOnBackPressed())
+            lock (_pageLock)
             {
-                if (_previousPages.Count >= 2)
+                if (!NotifySubscriptionOnBackPressed())
                 {
-                    _previousPages.Pop(); //The First "previous" is the current page.
-                    Page previousPage = _previousPages.Pop();
-                    CurrentPage = previousPage;
+                    if (_previousPages.Count >= 2)
+                    {
+                        _previousPages.Pop(); //The First "previous" is the current page.
+                        Page previousPage = _previousPages.Pop();
+                        CurrentPage = previousPage;
+                    }
                 }
+                return base.OnBackButtonPressed();
             }
-            return base.OnBackButtonPressed();
         }
 
         private bool NotifySubscriptionOnBackPressed()
