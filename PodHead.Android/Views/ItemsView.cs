@@ -363,27 +363,31 @@ namespace PodHead.Android.Views
             _parser.LoadSubscriptionAsync(_subscription);
         }
 
-        private void SubscribeButton_Clicked(object sender, EventArgs e)
+        private async void SubscribeButton_Clicked(object sender, EventArgs e)
         {
             var subscription = ((View)sender).BindingContext as Subscription;
             if (subscription != null)
             {
-                _feeds.ToggleSubscription(subscription);
-                SetSubscriptionText(subscription);
+
+                if (!_feeds.ContainsSubscription(subscription.Title) ||
+                    await App.Current.MainPage.DisplayAlert("PodHead", string.Format("Unsubscribe from {0}?", subscription.Title), "Yes", "No"))
+                {
+                    _feeds.ToggleSubscription(subscription);
+                    SetSubscriptionText(subscription);
+                }
             }
         }
 
         private void SetSubscriptionText(Subscription subscription)
         {
             SubscribeImage.BindingContext = subscription;
-            var subscribeText = _feeds.GetSubscribeText(subscription.Title);
-            if(subscribeText == "Subscribe")
-            {
-                SubscribeImage.Source = "Subscribe.png";
-            }
-            else if(subscribeText == "Unsubscribe")
+            if(_feeds.ContainsSubscription(subscription.Title))
             {
                 SubscribeImage.Source = "Unsubscribe.png";
+            }
+            else
+            {
+                SubscribeImage.Source = "Subscribe.png";
             }
         }
 
