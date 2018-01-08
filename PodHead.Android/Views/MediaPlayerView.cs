@@ -65,7 +65,7 @@ namespace PodHead.Android.Views
 
         private void LoadNowPlaying()
         {
-            if (_feeds.NowPlaying != null)
+            if (_feeds.NowPlaying != null && !_feeds.NowPlaying.IsPlaying)
             {
                 LoadPlayer(_feeds.NowPlaying);
             }
@@ -273,11 +273,11 @@ namespace PodHead.Android.Views
         {
             if(_nowPlaying != null)
             {
-                _nowPlaying.IsPlaying = false;
+                _nowPlaying.IsNowPlaying = false;
             }
 
             _nowPlaying = item;
-            _nowPlaying.IsPlaying = true;
+            _nowPlaying.IsNowPlaying = true;
 
             _progressSlider.Value = item.PercentPlayed / 100.0;
         }

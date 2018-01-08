@@ -225,7 +225,12 @@ namespace PodHead.Android.Views
 
                 var description = new Label() { Text = item.Description, TextColor = Color.Black };
                 
-                var playImage = new Image() { Source = "Play.png", HeightRequest = buttonSize, WidthRequest = buttonSize, };
+                var playImage = new Image()
+                {
+                    Source = item.IsPlaying ? "Pause.png" : "Play.png",
+                    HeightRequest = buttonSize,
+                    WidthRequest = buttonSize,
+                };
                 var downloadImageControl = new Image() { Source = "Download.png", HeightRequest = buttonSize, WidthRequest = buttonSize };
                 downloadImageControl.BindingContext = item;
                 playImage.BindingContext = item;
