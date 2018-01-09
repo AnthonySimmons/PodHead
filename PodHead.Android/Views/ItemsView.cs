@@ -48,6 +48,7 @@ namespace PodHead.Android.Views
         {
             _feeds = feeds;
             _parser = parser;
+            BackgroundColor = Color.FromRgb(0, 64, 128);
             Initialize();
         }
 
@@ -139,7 +140,7 @@ namespace PodHead.Android.Views
             subscriptionTitle.HorizontalTextAlignment = TextAlignment.Center;
             subscriptionTitle.FontSize = 20;
             subscriptionTitle.FontAttributes = FontAttributes.Bold;
-            subscriptionTitle.TextColor = Color.Black;
+            subscriptionTitle.TextColor = Color.White;
             subscriptionTitle.Text = subscription.Title;
 
             var image = new Image();
@@ -148,7 +149,7 @@ namespace PodHead.Android.Views
             image.Source = subscription.ImageUrl;
             
             var description = new Label();
-            description.TextColor = Color.Black;
+            description.TextColor = Color.White;
             description.Text = subscription.Description;
 
 
@@ -158,12 +159,12 @@ namespace PodHead.Android.Views
             };
 
             var siteLinkLabel = new Label();
-            siteLinkLabel.TextColor = Color.Blue;
+            siteLinkLabel.TextColor = Color.FromRgb(126, 222, 250);
             siteLinkLabel.Text = subscription.SiteLink;
             siteLinkLabel.GestureRecognizers.Add(tapGestureRecognizer);
             
             var rssLinkLabel = new Label();
-            rssLinkLabel.TextColor = Color.Blue;
+            rssLinkLabel.TextColor = Color.FromRgb(126, 222, 250);
             rssLinkLabel.Text = subscription.RssLink;
             rssLinkLabel.GestureRecognizers.Add(tapGestureRecognizer);
 
@@ -221,13 +222,13 @@ namespace PodHead.Android.Views
                 var title = new Label()
                 {
                     Text = item.Title,
-                    TextColor = Color.Black,
+                    TextColor = Color.White,
                     FontSize = 18,
                     HorizontalTextAlignment = TextAlignment.Center
                 };
                 item.IsPlayingChanged += Item_IsPlayingChanged;
 
-                var description = new Label() { Text = item.Description, TextColor = Color.Black };
+                var description = new Label() { Text = item.Description, TextColor = Color.White };
                 
                 var playImage = new Image()
                 {
@@ -251,7 +252,7 @@ namespace PodHead.Android.Views
                 var percentPlayedLabel = new Label
                 {
                     FontSize = 16,
-                    TextColor = Color.Blue,
+                    TextColor = Color.FromRgb(138, 255, 141),
                     HorizontalTextAlignment = TextAlignment.Center,
                     Text = ((int)item.PercentPlayed).ToString() + "% Played"
                 };
@@ -259,7 +260,7 @@ namespace PodHead.Android.Views
                 var durationLabel = new Label
                 {
                     FontSize = 16,
-                    TextColor = Color.Blue,
+                    TextColor = Color.FromRgb(138, 255, 141),
                     HorizontalTextAlignment = TextAlignment.Center,
                     Text = string.Format("{0}/{1}", item.GetFormattedPositionString(), item.GetFormattedDurationString())
                 };
@@ -267,7 +268,7 @@ namespace PodHead.Android.Views
                 var fileSizeLabel = new Label
                 {
                     FontSize = 16,
-                    TextColor = Color.Black,
+                    TextColor = Color.White,
                     HorizontalTextAlignment = TextAlignment.Center,
                 };
 
@@ -294,8 +295,8 @@ namespace PodHead.Android.Views
                 hLayout.Children.Add(infoLayoutVertical);
 
                 int boxHeight = 2;
-                var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
-                var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
+                var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.White };
+                var botBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.White };
 
                 var itemLayoutControl = new StackLayout();
                 itemLayoutControl.Children.Add(topBoxView);

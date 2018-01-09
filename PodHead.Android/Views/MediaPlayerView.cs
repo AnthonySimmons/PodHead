@@ -55,7 +55,7 @@ namespace PodHead.Android.Views
             _feeds = Feeds.Get(_parser, Config.Instance);
             _feeds.AllFeedsParsed += Feeds_AllFeedsParsed;
             SizeChanged += MediaPlayerView_SizeChanged;
-
+            BackgroundColor = Color.FromRgb(0, 64, 128);
             Initialize();
         }
 
@@ -95,7 +95,7 @@ namespace PodHead.Android.Views
             _progressSlider.BackgroundColor = Color.Navy;
             _progressSlider.IsVisible = false;
             
-            _titleLabel.TextColor = Color.Black;
+            _titleLabel.TextColor = Color.White;
             _titleLabel.IsVisible = false;
             _titleLabel.FontSize = 24;
             _titleLabel.HorizontalTextAlignment = TextAlignment.Center;
@@ -103,17 +103,17 @@ namespace PodHead.Android.Views
             _playPauseButton.IsVisible = false;
             _playPauseButton.HorizontalOptions = LayoutOptions.CenterAndExpand;
 
-            _progressLabel.TextColor = Color.Black;
+            _progressLabel.TextColor = Color.White;
             _progressLabel.IsVisible = false;
             _progressLabel.FontSize = 18;
             _progressLabel.HorizontalOptions = LayoutOptions.StartAndExpand;
 
-            _durationLabel.TextColor = Color.Black;
+            _durationLabel.TextColor = Color.White;
             _durationLabel.IsVisible = false;
             _durationLabel.FontSize = 18;
             _durationLabel.HorizontalOptions = LayoutOptions.EndAndExpand;
 
-            _descriptionLabel.TextColor = Color.Black;
+            _descriptionLabel.TextColor = Color.White;
             _descriptionLabel.IsVisible = false;
             _descriptionLabel.FontSize = 16;
             
@@ -129,7 +129,7 @@ namespace PodHead.Android.Views
             _rewindButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => RewindButton_Clicked(sender, null)));
             _rewindButton.HorizontalOptions = LayoutOptions.Center;
        
-            _dateLabel.TextColor = Color.Black;
+            _dateLabel.TextColor = Color.White;
             _dateLabel.IsVisible = false;
 
             _streamingLabel.IsVisible = false;
@@ -157,7 +157,7 @@ namespace PodHead.Android.Views
             _image.HeightRequest = Height / 2;
             _image.WidthRequest = Width / 2;
 
-            _errorLabel.TextColor = Color.Black;
+            _errorLabel.TextColor = Color.White;
             _errorLabel.IsVisible = false;
             
             _stackLayout.Children.Add(_titleLabel);

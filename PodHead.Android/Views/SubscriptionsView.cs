@@ -43,6 +43,7 @@ namespace PodHead.Android.Views
         {
             _parser = Parser.Get(Config.Instance);
             _feeds = Feeds.Get(_parser, Config.Instance);
+            BackgroundColor = Color.FromRgb(0, 64, 128); 
         }
 
         protected virtual void Initialize()
@@ -56,8 +57,8 @@ namespace PodHead.Android.Views
             LoadMoreButton.IsVisible = false;
                         
             progressBar.IsVisible = false;
-            progressBar.BackgroundColor = Color.Gray;
-            
+            progressBar.BackgroundColor = Color.White;
+
             scrollView.Content = stackLayout;
             
             Children.Insert(0, progressBar);
@@ -129,17 +130,17 @@ namespace PodHead.Android.Views
             {
                 RemoveNoResultsLabel();
                 int boxHeight = 2;
-                var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.Black };
+                var topBoxView = new BoxView() { HeightRequest = boxHeight, BackgroundColor = Color.White };
                 
                 var titleLabel = new Label
                 {
                     Text = sub.Title,
-                    TextColor = Color.Black,
+                    TextColor = Color.White,
                     FontAttributes = FontAttributes.Bold,
                     FontSize = 24,
                     HorizontalTextAlignment = TextAlignment.Center,
                 };
-                var descLabel = new Label { Text = sub.Description, TextColor = Color.Black, };
+                var descLabel = new Label { Text = sub.Description, TextColor = Color.White, };
 
                 var viewSubscriptionTap = new TapGestureRecognizer(ViewButton_Clicked);
                 
