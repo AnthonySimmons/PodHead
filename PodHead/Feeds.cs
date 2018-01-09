@@ -399,7 +399,8 @@ namespace PodHead
                                 Title = Convert.ToString(item.Attributes[Title].Value),
                                 Duration = Convert.ToInt32(item.Attributes[Duration].Value),
                                 Position = Convert.ToInt32(item.Attributes[Position].Value),
-                                IsNowPlaying = Convert.ToBoolean(item.Attributes[IsNowPlaying].Value)
+                                IsNowPlaying = Convert.ToBoolean(item.Attributes[IsNowPlaying].Value),
+                                ParentSubscription = subscription
                             };
                             subscription.Items.Add(it);
 

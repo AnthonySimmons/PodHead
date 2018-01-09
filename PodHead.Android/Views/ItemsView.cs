@@ -167,11 +167,15 @@ namespace PodHead.Android.Views
             rssLinkLabel.Text = subscription.RssLink;
             rssLinkLabel.GestureRecognizers.Add(tapGestureRecognizer);
 
-            stackLayout.Children.Add(subscriptionTitle);
-            stackLayout.Children.Add(image);
-            stackLayout.Children.Add(description);
-            stackLayout.Children.Add(siteLinkLabel);
-            stackLayout.Children.Add(rssLinkLabel);
+            var titleLayout = new StackLayout();
+
+            titleLayout.Children.Add(subscriptionTitle);
+            titleLayout.Children.Add(image);
+            titleLayout.Children.Add(description);
+            titleLayout.Children.Add(siteLinkLabel);
+            titleLayout.Children.Add(rssLinkLabel);
+
+            stackLayout.Children.Add(titleLayout);
         }
 
 
@@ -194,7 +198,7 @@ namespace PodHead.Android.Views
 
         protected void LoadItems(IEnumerable<Item> items)
         {
-            int count = 0;
+            int count = 1;
             foreach(var item in items)
             {
                 InsertItem(item, count);
@@ -301,7 +305,7 @@ namespace PodHead.Android.Views
                 itemLayoutControl.Children.Add(hLayout);
                 itemLayoutControl.Children.Add(progressBarControl);
 
-                stackLayout.Children.Add(itemLayoutControl);//.Insert(index, itemLayout);
+                stackLayout.Children.Insert(index, itemLayoutControl);
 
                 ItemControls.TryAdd(item, new Dictionary<string, View>()
                 {

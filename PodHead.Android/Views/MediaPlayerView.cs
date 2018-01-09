@@ -54,8 +54,18 @@ namespace PodHead.Android.Views
             _parser = Parser.Get(Config.Instance);
             _feeds = Feeds.Get(_parser, Config.Instance);
             _feeds.AllFeedsParsed += Feeds_AllFeedsParsed;
-            
+            SizeChanged += MediaPlayerView_SizeChanged;
+
             Initialize();
+        }
+
+        private void MediaPlayerView_SizeChanged(object sender, EventArgs e)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                _image.HeightRequest = Height / 2;
+                _image.WidthRequest = Width / 2;
+            });
         }
 
         private void Feeds_AllFeedsParsed(object sender, EventArgs e)
@@ -293,14 +303,19 @@ namespace PodHead.Android.Views
         private void LoadItemInPlayer(Item item)
         { 
             try
-            {                
+            {        
+                if(_nowPlaying != null && _nowPlaying.IsPlaying)
+                {
+                    return;
+                }
+
                 _titleLabel.Text = item.Title;
 
                 _image.Source = item.ParentSubscription.ImageUrl;
                 
                 _image.HeightRequest = Height / 2;
                 _image.WidthRequest = Width / 2;
-
+                
 
                 _descriptionLabel.Text = item.Description;
                 _dateLabel.Text = item.PubDate;
@@ -361,8 +376,9 @@ namespace PodHead.Android.Views
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _currentProgressMs += 1000;
-            SetNowPlayingPercentPlayed();
+
             UpdateProgressTime();
+            SetMediaProgress();
         }
 
         public void Play()
@@ -383,14 +399,14 @@ namespace PodHead.Android.Views
 
         private void SetMediaProgress()
         {
-            _progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
             Device.BeginInvokeOnMainThread(() =>
             {
+                _progressSlider.ValueChanged -= ProgressSlider_ValueChanged;
                 _progressSlider.Value = _mediaPlayer.GetPercentage();
+                _progressSlider.ValueChanged += ProgressSlider_ValueChanged;
             }
             );
             SetNowPlayingPercentPlayed();
-            _progressSlider.ValueChanged += ProgressSlider_ValueChanged;
         }
         
         public void Pause()
