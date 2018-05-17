@@ -33,7 +33,28 @@ namespace PodHead
 
         public string Guid { get; set; }
 
-        public string PubDate { get; set; }
+        private string _pubDate;
+        public string PubDate
+        {
+            get
+            {
+                return _pubDate;
+            }
+            set
+            {
+                if (_pubDate != value)
+                {
+                    _pubDate = value;
+                    DateTime pubDateTime;
+                    if (DateTime.TryParse(_pubDate, out pubDateTime))
+                    {
+                        PubDateTime = pubDateTime;
+                    }
+                }
+            }
+        }
+
+        public DateTime PubDateTime { get; private set; }
 
         public DateTime DownloadDate { get; set; }
      

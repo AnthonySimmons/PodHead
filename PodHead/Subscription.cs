@@ -124,5 +124,10 @@ namespace PodHead
         {
             return Items.Where(it => it.PercentPlayed > double.Epsilon);
         }       
+
+        public DateTime? GetLastUpdatedDate()
+        {
+            return Items.OrderByDescending(it => it.PubDateTime).FirstOrDefault()?.PubDateTime;
+        }
     }
 }

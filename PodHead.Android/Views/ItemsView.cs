@@ -5,6 +5,7 @@ using ProgressBar = Xamarin.Forms.ProgressBar;
 using Button = Xamarin.Forms.Button;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace PodHead.Android.Views
 {
@@ -16,6 +17,7 @@ namespace PodHead.Android.Views
         protected const string DownloadButton = "DownloadButton";
         protected const string ProgressBar = "ProgressBar";
         protected const string PercentPlayedLabel = "PercentPlayedLabel";
+        protected const string DateLabel = "DateLabel";
         protected const string DurationLabel = "DurationLabel";
         protected const string FileSizeLabel = "FileSizeLabel";
         protected const string PlayButton = "PlayButton";
@@ -48,7 +50,7 @@ namespace PodHead.Android.Views
         {
             _feeds = feeds;
             _parser = parser;
-            BackgroundColor = Color.FromRgb(0, 64, 128);
+            BackgroundColor = ViewResources.BackgroundColor;
             Initialize();
         }
 
@@ -200,11 +202,17 @@ namespace PodHead.Android.Views
         protected void LoadItems(IEnumerable<Item> items)
         {
             int count = 1;
-            foreach(var item in items)
+            IEnumerable<Item> sortedItems = GetSortedItems(items);
+            foreach (var item in sortedItems)
             {
                 InsertItem(item, count);
                 count++;                
             }
+        }
+
+        protected virtual IEnumerable<Item> GetSortedItems(IEnumerable<Item> items)
+        {
+            return items.OrderByDescending(it => it.PubDateTime);
         }
 
         protected void InsertItem(Item item, int index)
@@ -249,10 +257,18 @@ namespace PodHead.Android.Views
                     downloadImageControl.Source = "Remove.png";
                 }
 
+                var dateLabel = new Label
+                {
+                    FontSize = 16,
+                    HorizontalTextAlignment = TextAlignment.Center,
+                    TextColor = ViewResources.StatsColor,
+                    Text = item.PubDateTime.ToString(ViewResources.DateTimeFormat)
+                };
+
                 var percentPlayedLabel = new Label
                 {
                     FontSize = 16,
-                    TextColor = Color.FromRgb(138, 255, 141),
+                    TextColor = ViewResources.StatsColor,
                     HorizontalTextAlignment = TextAlignment.Center,
                     Text = ((int)item.PercentPlayed).ToString() + "% Played"
                 };
@@ -260,7 +276,7 @@ namespace PodHead.Android.Views
                 var durationLabel = new Label
                 {
                     FontSize = 16,
-                    TextColor = Color.FromRgb(138, 255, 141),
+                    TextColor = ViewResources.StatsColor,
                     HorizontalTextAlignment = TextAlignment.Center,
                     Text = string.Format("{0}/{1}", item.GetFormattedPositionString(), item.GetFormattedDurationString())
                 };
@@ -268,7 +284,7 @@ namespace PodHead.Android.Views
                 var fileSizeLabel = new Label
                 {
                     FontSize = 16,
-                    TextColor = Color.White,
+                    TextColor = ViewResources.StatsColor,
                     HorizontalTextAlignment = TextAlignment.Center,
                 };
 
@@ -289,6 +305,7 @@ namespace PodHead.Android.Views
 
                 var infoLayoutVertical = new StackLayout();
                 infoLayoutVertical.Orientation = StackOrientation.Vertical;
+                infoLayoutVertical.Children.Add(dateLabel);
                 infoLayoutVertical.Children.Add(infoLayoutHorizontal);
                 infoLayoutVertical.Children.Add(fileSizeLabel);
 
@@ -314,6 +331,7 @@ namespace PodHead.Android.Views
                     { ProgressBar, progressBarControl},
                     { DownloadButton, downloadImageControl},
                     { PercentPlayedLabel, percentPlayedLabel },
+                    { DateLabel, dateLabel },
                     { DurationLabel, durationLabel },
                     { PlayButton, playImage },
                     { FileSizeLabel, fileSizeLabel }

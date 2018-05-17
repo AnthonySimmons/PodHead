@@ -103,6 +103,7 @@
     <Compile Include="Views\SearchView.cs" />
     <Compile Include="Views\SubscriptionsView.cs" />
     <Compile Include="Views\TopChartsView.cs" />
+    <Compile Include="Views\ViewResources.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

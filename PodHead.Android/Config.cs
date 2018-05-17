@@ -33,7 +33,7 @@ namespace PodHead.Android
 #if DEBUG
         private static readonly string AndroidFolder = @"/sdcard/Android/data/PodHead.Android.PodHead.Android";
 #else
-        private static readonly string AndroidFolder = /*Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private static readonly string AndroidFolder = @"/sdcard/Android/data/PodHead.Android.PodHead.Android";//Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 #endif
 
         public string DownloadFolder

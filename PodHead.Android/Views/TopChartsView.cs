@@ -29,8 +29,8 @@ namespace PodHead.Android.Views
             _podcastCharts.PodcastSourceUpdated += Instance_PodcastSourceUpdated;
             
             GenreLabel.Text = "Genre:";
-            GenreLabel.TextColor = Color.Black;
-            GenreLabel.FontSize = 18;
+            GenreLabel.TextColor = Color.White;
+            GenreLabel.FontSize = 20;
             GenreLabel.HorizontalTextAlignment = TextAlignment.Center;
 
             GenrePicker.HeightRequest = FieldHeight;

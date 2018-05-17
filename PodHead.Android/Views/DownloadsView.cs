@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace PodHead.Android.Views
 {
@@ -48,6 +49,11 @@ namespace PodHead.Android.Views
         private void Item_AnyDownloadComplete(Item item)
         {
             InsertItem(item, 0);
+        }
+
+        protected override IEnumerable<Item> GetSortedItems(IEnumerable<Item> items)
+        {
+            return items.OrderByDescending(it => it.DownloadDate);
         }
     }
 }

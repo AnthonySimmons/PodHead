@@ -113,5 +113,19 @@ namespace PodHead.Android.Views
             _feeds.ParseAllFeedsAsync();
         }
 
+        protected override void LoadSubscriptionStats(Subscription sub, StackLayout statsLayout)
+        {
+            DateTime? lastUpdated = sub.GetLastUpdatedDate();
+            if (lastUpdated.HasValue && lastUpdated.Value > DateTime.MinValue)
+            {
+                Label lastUpdatedLabel = new Label()
+                {
+                    FontSize = 14,
+                    TextColor = ViewResources.StatsColor,
+                    Text = "Last Updated: \n" + lastUpdated.Value.ToString(ViewResources.DateTimeFormat)
+                };
+                statsLayout.Children.Add(lastUpdatedLabel);
+            }
+        }
     }
 }

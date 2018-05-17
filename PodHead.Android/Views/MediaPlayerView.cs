@@ -55,7 +55,7 @@ namespace PodHead.Android.Views
             _feeds = Feeds.Get(_parser, Config.Instance);
             _feeds.AllFeedsParsed += Feeds_AllFeedsParsed;
             SizeChanged += MediaPlayerView_SizeChanged;
-            BackgroundColor = Color.FromRgb(0, 64, 128);
+            BackgroundColor = ViewResources.BackgroundColor;
             Initialize();
         }
 
@@ -92,7 +92,8 @@ namespace PodHead.Android.Views
             _playPauseButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => PlayPauseButton_Clicked(sender, null)));
 
             _progressSlider.ValueChanged += ProgressSlider_ValueChanged;
-            _progressSlider.BackgroundColor = Color.Navy;
+            _progressSlider.BackgroundColor = Color.Black;
+            
             _progressSlider.IsVisible = false;
             
             _titleLabel.TextColor = Color.White;
@@ -129,7 +130,7 @@ namespace PodHead.Android.Views
             _rewindButton.GestureRecognizers.Add(new TapGestureRecognizer(sender => RewindButton_Clicked(sender, null)));
             _rewindButton.HorizontalOptions = LayoutOptions.Center;
        
-            _dateLabel.TextColor = Color.White;
+            _dateLabel.TextColor = ViewResources.StatsColor;
             _dateLabel.IsVisible = false;
 
             _streamingLabel.IsVisible = false;
@@ -318,8 +319,12 @@ namespace PodHead.Android.Views
                 
 
                 _descriptionLabel.Text = item.Description;
-                _dateLabel.Text = item.PubDate;
-                
+                if (item.PubDateTime > DateTime.MinValue)
+                {
+                    _dateLabel.Text = item.PubDateTime.ToString(ViewResources.DateTimeFormat);
+                }
+                _dateLabel.HorizontalTextAlignment = TextAlignment.Center;
+
                 _rewindButton.IsVisible = true;
                 _fastFowardButton.IsVisible = true;
                 _dateLabel.IsVisible = true;

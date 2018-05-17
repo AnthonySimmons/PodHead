@@ -43,7 +43,7 @@ namespace PodHead.Android.Views
         {
             _parser = Parser.Get(Config.Instance);
             _feeds = Feeds.Get(_parser, Config.Instance);
-            BackgroundColor = Color.FromRgb(0, 64, 128); 
+            BackgroundColor = ViewResources.BackgroundColor;
         }
 
         protected virtual void Initialize()
@@ -140,7 +140,7 @@ namespace PodHead.Android.Views
                     FontSize = 24,
                     HorizontalTextAlignment = TextAlignment.Center,
                 };
-                var descLabel = new Label { Text = sub.Description, TextColor = Color.White, };
+                //var descLabel = new Label { Text = sub.Description, TextColor = Color.White, };
 
                 var viewSubscriptionTap = new TapGestureRecognizer(ViewButton_Clicked);
                 
@@ -167,16 +167,22 @@ namespace PodHead.Android.Views
 
                 var imageLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
                 var buttonLayout = new StackLayout();
+                var statsLayout = new StackLayout();
+
                 buttonLayout.Children.Add(nextImage);
                 buttonLayout.Children.Add(subscribeImage);
+
+                LoadSubscriptionStats(sub, statsLayout);
+
                 imageLayout.Children.Add(image);
                 imageLayout.Children.Add(buttonLayout);
+                imageLayout.Children.Add(statsLayout);
 
 				ImageList.Add (nextImage);
 				ImageList.Add (subscribeImage);
 				ImageList.Add (image);
 
-                var subControls = new List<View> { topBoxView, titleLabel, imageLayout, descLabel };
+                var subControls = new List<View> { topBoxView, titleLabel, imageLayout, /*descLabel*/ };
                 SubscriptionControls.Add(sub, subControls);
 
                 foreach (var subControl in subControls)
@@ -184,6 +190,11 @@ namespace PodHead.Android.Views
                     stackLayout.Children.Add(subControl);
                 }
             }
+        }
+
+        protected virtual void LoadSubscriptionStats(Subscription sub, StackLayout statsLayout)
+        {
+
         }
 
         public virtual bool OnBackButtonPressed()
