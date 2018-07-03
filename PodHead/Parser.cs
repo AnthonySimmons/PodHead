@@ -185,7 +185,11 @@ namespace PodHead
 
         private static void DownloadImage(string imageUrl, string imageFilePath)
         {
-            
+            if(string.IsNullOrEmpty(imageUrl))
+            {
+                return;
+            }
+
             using (var client = new WebClient())
             {
                 client.DownloadFile(new Uri(imageUrl), imageFilePath);

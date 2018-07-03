@@ -39,8 +39,11 @@ namespace PodHead.Android.Views
 
 		protected List<Image> ImageList = new List<Image> ();
 
+        private ErrorLogger _logger;
+
         public SubscriptionsView()
         {
+            _logger = ErrorLogger.Get(Config.Instance);
             _parser = Parser.Get(Config.Instance);
             _feeds = Feeds.Get(_parser, Config.Instance);
             BackgroundColor = ViewResources.BackgroundColor;
@@ -97,7 +100,14 @@ namespace PodHead.Android.Views
 
             foreach (var sub in subscriptions)
             {
-                AddSubscription(sub);
+                try
+                {
+                    AddSubscription(sub);
+                }
+                catch(Exception ex)
+                {
+                    _logger.Log(ex);
+                }
             }
             scrollView.Content = stackLayout;
             stackLayout.Children.Add(LoadMoreButton);
@@ -158,20 +168,30 @@ namespace PodHead.Android.Views
                 nextImage.HeightRequest = nextImage.WidthRequest = imageSize;
                 nextImage.GestureRecognizers.Add(viewSubscriptionTap);
 
-                var subscribeImage = new Image();
-                SetSubscribedImage(sub, subscribeImage);
-                subscribeImage.BindingContext = sub;
-                subscribeImage.HeightRequest = subscribeImage.WidthRequest = imageSize;
-                subscribeImage.GestureRecognizers.Add(new TapGestureRecognizer(SubscribeButton_Clicked));
-                
+                Image subscribeImage = null;
+                try
+                {
+                    subscribeImage = new Image();
+                    SetSubscribedImage(sub, subscribeImage);
+                    subscribeImage.BindingContext = sub;
+                    subscribeImage.HeightRequest = subscribeImage.WidthRequest = imageSize;
+                    subscribeImage.GestureRecognizers.Add(new TapGestureRecognizer(SubscribeButton_Clicked));
+                }
+                catch(Exception ex)
+                {
+                    _logger.Log(ex);
+                }
 
                 var imageLayout = new StackLayout { Orientation = StackOrientation.Horizontal };
                 var buttonLayout = new StackLayout();
                 var statsLayout = new StackLayout();
 
                 buttonLayout.Children.Add(nextImage);
-                buttonLayout.Children.Add(subscribeImage);
-
+                if (subscribeImage != null)
+                {
+                    buttonLayout.Children.Add(subscribeImage);
+                    ImageList.Add(subscribeImage);
+                }
                 LoadSubscriptionStats(sub, statsLayout);
 
                 imageLayout.Children.Add(image);
@@ -179,7 +199,6 @@ namespace PodHead.Android.Views
                 imageLayout.Children.Add(statsLayout);
 
 				ImageList.Add (nextImage);
-				ImageList.Add (subscribeImage);
 				ImageList.Add (image);
 
                 var subControls = new List<View> { topBoxView, titleLabel, imageLayout, /*descLabel*/ };
