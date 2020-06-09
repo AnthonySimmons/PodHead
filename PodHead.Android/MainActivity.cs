@@ -9,19 +9,25 @@ using PodHead;
 using Android.Content.PM;
 using Android.Net;
 using PodHead.Android.Utilities;
+using PodHead.Android.Audio;
+using Android.Media;
 
 namespace PodHead.Android
 {
     [Activity(Label = "PodHead", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
-        public static Activity ActivityContext;
+        public static MainActivity ActivityContext;
 
         private ErrorLogger _errorLogger;
 
         private NetworkChangeBroadcastReceiver _networkChangedReceiver;
 
         private int _networkAlertCount;
+
+        private AudioFocusChangeListener _audioFocusChangeListener;
+
+        public event Action<AudioFocus> AudioFocusChanged;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -42,6 +48,25 @@ namespace PodHead.Android
 
             Application.Context.RegisterReceiver(_networkChangedReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
 
+            _audioFocusChangeListener = new AudioFocusChangeListener();
+            _audioFocusChangeListener.AudioFocusChange += AudioFocusChangeListener_AudioFocusChange;
+        }
+
+        private void AudioFocusChangeListener_AudioFocusChange(AudioFocus obj)
+        {
+            AudioFocusChanged?.Invoke(obj);
+        }
+
+        public void RequestAudioFocus()
+        {
+            AudioManager audioManager = (AudioManager)GetSystemService(AudioService);
+            audioManager.RequestAudioFocus(_audioFocusChangeListener, Stream.Music, AudioFocus.Gain);
+        }
+
+        public void ReleaseAudioFocus()
+        {
+            AudioManager audioManager = (AudioManager)GetSystemService(AudioService);
+            audioManager.AbandonAudioFocus(_audioFocusChangeListener);
         }
 
         private void _networkChangedReceiver_NetworkChangeEvent(object sender, EventArgs e)

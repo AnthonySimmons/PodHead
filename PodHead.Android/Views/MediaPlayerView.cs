@@ -14,6 +14,7 @@ using TapGestureRecognizer = Xamarin.Forms.TapGestureRecognizer;
 using Device = Xamarin.Forms.Device;
 using Xamarin.Forms;
 using Java.IO;
+using PodHead.Android.Audio;
 
 namespace PodHead.Android.Views
 {
@@ -36,7 +37,6 @@ namespace PodHead.Android.Views
         Label _errorLabel = new Label();
         Label _streamingLabel = new Label();
         Image _image = new Image();
-        
         private static Item _nowPlaying;
 
         private const int ImageSize = 50;
@@ -175,6 +175,27 @@ namespace PodHead.Android.Views
             Content = _stackLayout;
 
             InitNowPlaying();
+
+            MainActivity.ActivityContext.AudioFocusChanged += AudioPlayerActivityContext_AudioFocusChange;
+        }
+
+        private void AudioPlayerActivityContext_AudioFocusChange(AudioFocus obj)
+        {
+            switch(obj)
+            {
+                case AudioFocus.Gain:
+                    Play();
+                    break;
+                case AudioFocus.Loss:
+                    Pause();
+                    break;
+                case AudioFocus.LossTransient:
+                    Pause();
+                    break;
+                case AudioFocus.LossTransientCanDuck:
+                    _mediaPlayer.SetVolume(0.1f, 0.1f);
+                    break;
+            }
         }
 
         private void InitNowPlaying()
@@ -367,6 +388,7 @@ namespace PodHead.Android.Views
             }
 
             _mediaPlayer.SetAudioStreamType(Stream.Music);
+            
             SetNowPlaying(item);
 
             _durationLabel.Text = GetTimeFormat(_mediaPlayer.Duration / 1000);
@@ -399,6 +421,7 @@ namespace PodHead.Android.Views
                 SetNowPlayingPercentPlayed();
                 _playPauseButton.Source = "Pause.png";
                 _nowPlaying.IsPlaying = true;
+                MainActivity.ActivityContext.RequestAudioFocus();
             }
         }
 
