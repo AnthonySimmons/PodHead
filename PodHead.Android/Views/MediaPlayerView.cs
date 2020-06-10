@@ -176,25 +176,30 @@ namespace PodHead.Android.Views
 
             InitNowPlaying();
 
-            MainActivity.ActivityContext.AudioFocusChanged += AudioPlayerActivityContext_AudioFocusChange;
+            MainActivity.ActivityContext.PlayEvent += ActivityContext_PlayEvent;
+            MainActivity.ActivityContext.PauseEvent += ActivityContext_PauseEvent;
+            MainActivity.ActivityContext.PlayPauseEvent += ActivityContext_PlayPauseEvent;
         }
 
-        private void AudioPlayerActivityContext_AudioFocusChange(AudioFocus obj)
+        private void ActivityContext_PauseEvent()
         {
-            switch(obj)
+            Pause();
+        }
+
+        private void ActivityContext_PlayEvent()
+        {
+            Play();
+        }
+
+        private void ActivityContext_PlayPauseEvent()
+        {
+            if(_mediaPlayer.IsPlaying)
             {
-                case AudioFocus.Gain:
-                    Play();
-                    break;
-                case AudioFocus.Loss:
-                    Pause();
-                    break;
-                case AudioFocus.LossTransient:
-                    Pause();
-                    break;
-                case AudioFocus.LossTransientCanDuck:
-                    _mediaPlayer.SetVolume(0.1f, 0.1f);
-                    break;
+                Pause();
+            }
+            else
+            {
+                Play();
             }
         }
 

@@ -16,11 +16,24 @@ namespace PodHead.Android.Audio
 {
     internal class AudioFocusChangeListener : Java.Lang.Object, IOnAudioFocusChangeListener
     {
-        public event Action<AudioFocus> AudioFocusChange;
+        public event Action PlayEvent;
+
+        public event Action PauseEvent;
 
         public void OnAudioFocusChange([GeneratedEnum] AudioFocus focusChange)
         {
-            AudioFocusChange?.Invoke(focusChange);
+            switch(focusChange)
+            {
+                case AudioFocus.Gain:
+                case AudioFocus.GainTransient:
+                case AudioFocus.GainTransientExclusive:
+                    PlayEvent?.Invoke();
+                    break;
+                case AudioFocus.Loss:
+                case AudioFocus.LossTransient:
+                    PauseEvent?.Invoke();
+                    break;
+            }
         }
     }
 }

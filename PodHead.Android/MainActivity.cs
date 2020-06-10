@@ -17,6 +17,8 @@ namespace PodHead.Android
     [Activity(Label = "PodHead", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = ScreenOrientation.Portrait)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
+        private bool _isDisposed;
+
         public static MainActivity ActivityContext;
 
         private ErrorLogger _errorLogger;
@@ -27,7 +29,11 @@ namespace PodHead.Android
 
         private AudioFocusChangeListener _audioFocusChangeListener;
 
-        public event Action<AudioFocus> AudioFocusChanged;
+        public event Action PlayPauseEvent;
+
+        public event Action PlayEvent;
+
+        public event Action PauseEvent;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -49,12 +55,23 @@ namespace PodHead.Android
             Application.Context.RegisterReceiver(_networkChangedReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
 
             _audioFocusChangeListener = new AudioFocusChangeListener();
-            _audioFocusChangeListener.AudioFocusChange += AudioFocusChangeListener_AudioFocusChange;
+            _audioFocusChangeListener.PlayEvent += AudioFocusChangeListener_PlayEvent;
+            _audioFocusChangeListener.PauseEvent += AudioFocusChangeListener_PauseEvent;
         }
 
-        private void AudioFocusChangeListener_AudioFocusChange(AudioFocus obj)
+        private void AudioFocusChangeListener_PauseEvent()
         {
-            AudioFocusChanged?.Invoke(obj);
+            PauseEvent?.Invoke();
+        }
+
+        private void AudioFocusChangeListener_PlayEvent()
+        {
+            PlayEvent?.Invoke();
+        }
+
+        public void OnPlayPauseEvent()
+        {
+            PlayPauseEvent?.Invoke();
         }
 
         public void RequestAudioFocus()
@@ -118,8 +135,6 @@ namespace PodHead.Android
 		{
 			base.OnStop ();
 
-            Application.ApplicationContext.UnregisterReceiver(_networkChangedReceiver);
-
             Parser parser = Parser.Get(Config.Instance);
             Feeds feeds = Feeds.Get(parser, Config.Instance);
 			feeds.Save();
@@ -144,6 +159,24 @@ namespace PodHead.Android
             {
                 base.OnBackPressed();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if(disposing && !_isDisposed)
+            {
+                _isDisposed = true;
+                Application.ApplicationContext.UnregisterReceiver(_networkChangedReceiver);
+
+                ReleaseAudioFocus();
+
+                if (_audioFocusChangeListener != null)
+                {
+                    _audioFocusChangeListener.PlayEvent -= AudioFocusChangeListener_PlayEvent;
+                    _audioFocusChangeListener.PauseEvent -= AudioFocusChangeListener_PauseEvent;
+                }
+            }
+            base.Dispose(disposing);
         }
     }
 }

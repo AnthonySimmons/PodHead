@@ -69,7 +69,7 @@ namespace PodHead.Android
             _errorLogger.ErrorFound += ErrorLogger_ErrorFound;
 
             _feeds.Load();
-            _feeds.ParseAllFeedsAsync();
+
             PagesChanged += HomePage_PagesChanged;
             CurrentPageChanged += HomePage_CurrentPageChanged;
             savedSubscriptionsView.ItemSelected += SubscriptionsView_ItemSelected;
